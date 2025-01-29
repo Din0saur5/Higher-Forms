@@ -1,0 +1,24 @@
+
+    {
+      "name": "app-create-test",
+      "version": "1.0.0",
+      "license": "ISC",
+      
+      "scripts": {
+        "client": "npm run dev --prefix client",
+        "server": "npm run serve --prefix server",
+        "build-app": "npm run build --prefix client",
+        "build-server": "npm run build --prefix server",
+        "start": "concurrently --kill-others-on-fail \"npm run client\"  \"npm run server\"",
+        "start:server": "npm run start --prefix server"
+      },
+      "engines": {
+        "node": "14.15.0"
+      },
+     
+      "devDependencies": {
+        "concurrently": "^8.2.2"
+      }
+    }
+    
+    
