@@ -5,10 +5,10 @@
       "license": "ISC",
       
       "scripts": {
+        "install": "npm install --prefix server && npm install --prefix client",
         "client": "npm run dev --prefix client",
         "server": "npm run serve --prefix server",
-        "build-app": "npm run build --prefix client",
-        "build-server": "npm run build --prefix server",
+        "build": "npm run build --prefix client",
         "start": "concurrently --kill-others-on-fail \"npm run client\"  \"npm run server\"",
         "start:server": "npm run start --prefix server"
       },
