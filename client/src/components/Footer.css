@@ -1,0 +1,28 @@
+/* General Footer Styles */
+.footer {
+    background-color: black;
+    color: white;
+    padding: 2rem 1rem;
+    text-align: center;
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .footer-logo-img {
+    width: 100px; /* Adjust logo size as needed */
+    height: auto;
+  }
+  
+  .footer-info {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  

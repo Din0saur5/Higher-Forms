@@ -48,10 +48,14 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Banner with Smoke Animation */}
       <section className="banner-section">
-        <div className="banner-overlay"></div>
-      </section>
+  <video className="smoke-video" autoPlay loop muted>
+    <source src="/assets/smoke-effect.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+  <div className="banner-overlay"></div>
+</section>
+
 
       {/* Contact Section */}
       <section id="contact" className="contact-section">
