@@ -10,7 +10,7 @@ const Strains = () => {
       </section>
 
       {/* 2g Duel Chamber Duo-Flare™ Section */}
-      <section className="label-section">
+      <section className="label-section animated-label">
         <h2 className="label-title">2g Duel Chamber Duo-Flare™</h2>
       </section>
 
@@ -50,20 +50,20 @@ const Strains = () => {
       </section>
 
       {/* 1g Cartridge Section */}
-      <section className="label-section">
+      <section className="label-section animated-label">
         <h2 className="label-title">1g Cartridge V1</h2>
       </section>
       <section className="cartridge-section">
         <div className="cartridge-grid">
-          <div className="cartridge-card">
+          <a href="https://example.com/strawnana" target="_blank" rel="noopener noreferrer" className="cartridge-card">
             <img src="/assets/strawnana.png" alt="Strawnana" />
             <p>Strawnana</p>
-          </div>
-          <div className="cartridge-card">
+          </a>
+          <a href="https://example.com/gelato" target="_blank" rel="noopener noreferrer" className="cartridge-card">
             <img src="/assets/gelato.png" alt="Gelato" />
             <p>Gelato</p>
-          </div>
-          {/* Add more cartridges here */}
+          </a>
+          {/* Add more cartridges with specific links here */}
         </div>
       </section>
 
