@@ -6,13 +6,13 @@ import {
 } from "react-router-dom";
 import Home from "./routes/Home";
 import Navbar from "./components/Navbar";
-import Footer from "./components/Footer"; // Import Footer
+import Footer from "./components/Footer";
 import { Outlet } from "react-router-dom";
 import ErrorPage from "./routes/ErrorPage";
-import AppLayout from "./components/AppLayout"
+import AppLayout from "./components/AppLayout";
 import "./App.css";
 import { getLoggedInUser } from "../api";
-
+import Strains from "./routes/Strains";
 
 const router = createBrowserRouter([
   {
@@ -23,6 +23,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
+      },
+      {
+        path: "/strains",
+        element: <Strains />,
       },
     ],
   },

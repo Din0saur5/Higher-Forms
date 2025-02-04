@@ -4,9 +4,9 @@ import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 
 const supabase = createClient(
-    process.env.VITE_URL,
-    process.env.VITE_ANON
-  );
+  import.meta.env.VITE_URL, 
+  import.meta.env.VITE_ANON 
+);
 
 //get the auth user table data from currently logged in user:
 export const getLoggedInUser = async () => {
