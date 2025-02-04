@@ -2,16 +2,24 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import "./Navbar.css";
 
-const Navbar = () => {
+const Navbar = ({ user }) => {
   const [click, setClick] = useState(false);
   const [showSubscribe, setShowSubscribe] = useState(false);
 
   const handleClick = () => setClick(!click);
   const closeMobileMenu = () => setClick(false);
-  const toggleSubscribe = () => setShowSubscribe(!showSubscribe);
+  const toggleSubscribe = () => setShowSubscribe(!showSubscribe); 
+  
+  //notes for Matt
+  // switch Subscribe to Login, don't change the css though they like bubble button look
+// use tailwind break points to make more responsive, stuff is cutting off on mobile simulator
+//dont worry about hooking up anything other than the state changes and basic routing I will wire up the login logic and the session handling
+
+
 
   return (
     <>
+
       <nav className="navbar">
         <div className="navbar-container container">
           {/* Logo Section */}
@@ -74,13 +82,22 @@ const Navbar = () => {
                 Lab Results
               </NavLink>
             </li>
+            <li className="nav-item">
+              <NavLink
+                to="/rewards"
+                className="nav-links"
+                onClick={closeMobileMenu}
+              >
+                Reward Shop
+              </NavLink>
+            </li>
           </ul>
           <button className="subscribe-btn" onClick={toggleSubscribe}>
             Subscribe
           </button>
         </div>
       </nav>
-      {showSubscribe && (
+      {showSubscribe? (
         <div className="subscribe-modal">
           <div className="subscribe-content">
             <button className="close-btn" onClick={toggleSubscribe}>
@@ -94,7 +111,16 @@ const Navbar = () => {
             </form>
           </div>
         </div>
-      )}
+      ):(
+        //an accounting of form coins on on the profile.
+        // profile pic with a "rewards teir as a border bronze silver gold "
+        //log out
+        <></>
+
+      )
+      
+      }
+
     </>
   );
 };

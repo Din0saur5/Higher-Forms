@@ -9,20 +9,14 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer"; // Import Footer
 import { Outlet } from "react-router-dom";
 import ErrorPage from "./routes/ErrorPage";
+import AppLayout from "./components/AppLayout"
 import "./App.css";
+import { getLoggedInUser } from "../api";
 
-const AppLayout = () => {
-  return (
-    <>
-      <Navbar />
-      <Outlet />
-      <Footer /> {/* Add Footer */}
-    </>
-  );
-};
 
 const router = createBrowserRouter([
   {
+    loader: async () => getLoggedInUser(),
     element: <AppLayout />,
     errorElement: <ErrorPage />,
     children: [
