@@ -14,7 +14,7 @@ const Home = () => {
       >
         <div className="text-center">
           <img
-            src="/HFhero.png"
+            src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/Hero1500.png"
             alt="Higher Forms Banner"
             className="max-w-full h-auto object-cover mx-auto"
           />
@@ -49,9 +49,9 @@ const Home = () => {
         {/* Right Side - Black Background with Image */}
         <div className="flex-1 bg-black flex items-center justify-center">
           <img
-            src="/Missions.png"
+            src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/DFHero800.png"
             alt="Mission"
-            className="h-auto w-2/3 md:w-1/2 object-contain hover-glow"
+            className="h-auto w-2/3 md:w-1/2 object-contain "
           />
         </div>
       </section>

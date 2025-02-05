@@ -10,7 +10,7 @@ const Footer = () => {
           <div className="flex-1">
             <h3 className="text-2xl font-bold mb-4">HIGHER FORMS</h3>
             <p className="flex items-center mb-2">
-              <img src="/HFemail.png" alt="Email Icon" className="w-6 h-6 mr-2" />
+              <img src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/HFemail.png" alt="Email Icon" className="w-6 h-6 mr-2" />
               <span>sales@higher-forms.com</span>
             </p>
             <p className="flex items-center">

@@ -25,7 +25,7 @@ const Navbar = ({ user }) => {
         {/* Navbar Start - Logo */}
         <div className="navbar-start flex items-center space-x-2">
           <a href="/" className="flex items-center hover:opacity-80 transition duration-300">
-            <img src="/HFlogo.png" alt="Higher Forms Logo" className="h-12 w-auto" />
+            <img src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/HFlogo.png" alt="Higher Forms Logo" className="h-12 w-auto" />
             <span className="text-xl font-bold font-roboto ml-2">
               Higher <br /> Forms
             </span>
