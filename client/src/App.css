@@ -8,6 +8,8 @@
   margin: 0;
   padding: 0;
   font-family: "Roboto", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Scrollbar styling */
@@ -31,6 +33,12 @@
 html, body {
   max-width: 100%;
   overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+/* Ensure smooth scrolling works on Safari */
+html {
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Base page styling */
@@ -58,6 +66,17 @@ html, body {
     justify-content: center;
     width: 100%;
   }
+}
+
+/* Navbar Fix for Safari */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 50;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 /* Hover glow for images */
@@ -103,11 +122,39 @@ html, body {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
+/* Fix Safari Issues with Flexbox */
+.flex {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
 /* Parallax section */
 .banner-section video {
   opacity: 0.7;
+  width: 100%;
+  height: auto;
 }
 
 .banner-section h2 {
   text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.8);
+}
+
+/* 2g Duel Chamber images - Mobile View */
+@media screen and (max-width: 768px) {
+  .duel-chamber img {
+    width: 75%;
+    display: block;
+    margin: 0 auto;
+  }
+}
+
+/* 1g Cartridge images - Show Left 50% in Mobile View */
+@media screen and (max-width: 768px) {
+  .cartridge img {
+    width: 200%;
+    object-fit: cover;
+    object-position: left;
+    transform: translateX(-25%);
+  }
 }
