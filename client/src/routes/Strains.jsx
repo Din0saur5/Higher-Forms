@@ -1,6 +1,30 @@
 import React from "react";
 
 const Strains = () => {
+  // 1g Cartridge data
+  const cartridges = [
+    { img: "/assets/AcaiGel.png", title: "Acai Gel" },
+    { img: "/assets/BBerryJam.png", title: "Blueberry Jam" },
+    { img: "/assets/BlckChryPnch.png", title: "Black Cherry Punch" },
+    { img: "/assets/CnlpHze.png", title: "Cantaloupe Haze" },
+    { img: "/assets/GDddyPrpl.png", title: "Granddaddy Purple" },
+    { img: "/assets/GrpGod.png", title: "Grape God" },
+    { img: "/assets/KeyLime.png", title: "Key Lime" },
+    { img: "/assets/OGKush.png", title: "OG Kush" },
+    { img: "/assets/OrngCrmscl.png", title: "Orange Creamsicle" },
+    { img: "/assets/Papaya.png", title: "Papaya" },
+    { img: "/assets/PappleXprs.png", title: "Pineapple Express" },
+    { img: "/assets/PnkLmnd.png", title: "Pink Lemonade" },
+    { img: "/assets/PrplPnch.png", title: "Purple Punch" },
+    { img: "/assets/PssnFrt.png", title: "Passion Fruit" },
+    { img: "/assets/StrDwgGv.png", title: "Strawberry Guava" },
+    { img: "/assets/StrwShrtCk.png", title: "Strawberry Shortcake" },
+    { img: "/assets/zkttlz.png", title: "Zkittlez" },
+    { img: "/assets/WddngCake.png", title: "Wedding Cake" },
+    { img: "/assets/Gelato.png", title: "Gelato" },
+    { img: "/assets/StrwNana.png", title: "Strawnana" },
+  ];
+
   return (
     <div className="strains-container">
       {/* Hero Section */}
@@ -57,6 +81,59 @@ const Strains = () => {
               </p>
             </div>
           </div>
+
+          {/* Berry Medley Card */}
+          <div className="card bg-black text-white shadow-xl">
+            <div>
+              <img
+                src="/assets/BrryMdly.png"
+                alt="Berry Medley"
+                className="rounded-lg w-full h-auto"
+              />
+            </div>
+            <div className="px-8 py-4 text-center">
+              <h3 className="text-2xl font-bold">Berry Medley</h3>
+              <p className="mt-4 text-lg">
+                A luscious, sweet berry explosion ideal for evening relaxation.
+              </p>
+            </div>
+          </div>
+
+          {/* OG Tropics Card */}
+          <div className="card bg-black text-white shadow-xl">
+            <div>
+              <img
+                src="/assets/OGTrop.png"
+                alt="OG Tropics"
+                className="rounded-lg w-full h-auto"
+              />
+            </div>
+            <div className="px-8 py-4 text-center">
+              <h3 className="text-2xl font-bold">OG Tropics</h3>
+              <p className="mt-4 text-lg">
+                A nostalgic and refreshing mix with balanced relaxation and
+                mental clarity.
+              </p>
+            </div>
+          </div>
+
+          {/* Punch Party Card */}
+          <div className="card bg-black text-white shadow-xl">
+            <div>
+              <img
+                src="/assets/PnchPrty.png"
+                alt="Punch Party"
+                className="rounded-lg w-full h-auto"
+              />
+            </div>
+            <div className="px-8 py-4 text-center">
+              <h3 className="text-2xl font-bold">Punch Party</h3>
+              <p className="mt-4 text-lg">
+                A bold, fruity fusion offering a balanced body high and mental
+                clarity.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -69,42 +146,27 @@ const Strains = () => {
         </div>
       </section>
       <section className="py-8 bg-base-200">
-        <div className="container mx-auto grid gap-8 grid-cols-1">
-          <a
-            href="https://www.example.com/strawnana"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="card bg-black text-white shadow-lg cursor-pointer hover:shadow-xl transform hover:scale-105 transition-all"
-          >
-            <figure>
-              <img
-                src="/assets/strawnana.png"
-                alt="Strawnana"
-                className="rounded-lg"
-              />
-            </figure>
-            <div className="card-body text-center">
-              <h3 className="text-lg font-bold">Strawnana</h3>
-            </div>
-          </a>
-
-          <a
-            href="https://www.example.com/gelato"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="card bg-black text-white shadow-lg cursor-pointer hover:shadow-xl transform hover:scale-105 transition-all"
-          >
-            <figure>
-              <img
-                src="/assets/gelato.png"
-                alt="Gelato"
-                className="rounded-lg"
-              />
-            </figure>
-            <div className="card-body text-center">
-              <h3 className="text-lg font-bold">Gelato</h3>
-            </div>
-          </a>
+        <div className="container mx-auto space-y-8">
+          {cartridges.map((cartridge, index) => (
+            <a
+              key={index}
+              href="#"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="card bg-black text-white shadow-lg cursor-pointer hover:shadow-xl transform hover:scale-105 transition-all"
+            >
+              <div>
+                <img
+                  src={cartridge.img}
+                  alt={cartridge.title}
+                  className="rounded-lg w-full h-auto"
+                />
+              </div>
+              <div className="px-8 py-4 text-center">
+                <h3 className="text-2xl font-bold">{cartridge.title}</h3>
+              </div>
+            </a>
+          ))}
         </div>
       </section>
     </div>
