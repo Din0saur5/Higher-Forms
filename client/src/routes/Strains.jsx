@@ -4,26 +4,26 @@ import { motion } from "framer-motion";
 const Strains = () => {
   // 1g Cartridge data
   const cartridges = [
-    { img: "/assets/AcaiGel.png", title: "Acai Gel" },
-    { img: "/assets/BBerryJam.png", title: "Blueberry Jam" },
-    { img: "/assets/BlckChryPnch.png", title: "Black Cherry Punch" },
-    { img: "/assets/CnlpHze.png", title: "Cantaloupe Haze" },
-    { img: "/assets/GDddyPrpl.png", title: "Granddaddy Purple" },
-    { img: "/assets/GrpGod.png", title: "Grape God" },
-    { img: "/assets/KeyLime.png", title: "Key Lime" },
-    { img: "/assets/OGKush.png", title: "OG Kush" },
-    { img: "/assets/OrngCrmscl.png", title: "Orange Creamsicle" },
-    { img: "/assets/Papaya.png", title: "Papaya" },
-    { img: "/assets/PappleXprs.png", title: "Pineapple Express" },
-    { img: "/assets/PnkLmnd.png", title: "Pink Lemonade" },
-    { img: "/assets/PrplPnch.png", title: "Purple Punch" },
-    { img: "/assets/PssnFrt.png", title: "Passion Fruit" },
-    { img: "/assets/StrDwgGv.png", title: "Strawberry Guava" },
-    { img: "/assets/StrwShrtCk.png", title: "Strawberry Shortcake" },
-    { img: "/assets/zkttlz.png", title: "Zkittlez" },
-    { img: "/assets/WddngCake.png", title: "Wedding Cake" },
-    { img: "/assets/Gelato.png", title: "Gelato" },
-    { img: "/assets/StrwNana.png", title: "Strawnana" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/AcaiGel.png", title: "" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/BBerryJam.png", title: "" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/BlckChryPnch.png", title: "" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/CnlpHze.png", title: "" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/GDddyPrpl.png", title: "" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/GrpGod.png", title: "" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/KeyLime.png", title: "" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/OGKush.png", title: "" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/OrngCrmscl.png", title: "" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/Papaya.png", title: "" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/PappleXprs.png", title: "" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/PnkLmnd.png", title: "" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/PrplPnch.png", title: "" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/PssnFrt.png", title: "" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/StrDwgGv.png", title: "" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/StrwShrtCk.png", title: "" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/StrwNana.png", title: "" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/WddngCake.png", title: "" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/Gelato.png", title: "" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/zkttlz.png", title: "" },
   ];
 
   return (
@@ -57,78 +57,93 @@ const Strains = () => {
 
       {/* Product Cards Section */}
       <motion.section
-        className="py-8 bg-base-200"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 1 }}
-        viewport={{ once: true }}
-      >
-        <div className="container mx-auto space-y-8">
-          {/* Citrus Fusion Card */}
-          <motion.div
-            className="card bg-black text-white shadow-xl"
-            whileHover={{ scale: 1.05 }}
-          >
-            <div>
-              <img
-                src="/assets/CitFus.png"
-                alt="Citrus Fusion"
-                className="rounded-lg w-full h-auto"
-              />
-            </div>
-            <div className="px-8 py-4 text-center">
-              <h3 className="text-2xl font-bold">Citrus Fusion</h3>
-              <p className="mt-4 text-lg">
-                A tangy and creamy citrus blend offering an uplifting buzz and a
-                smooth, serene comedown.
-              </p>
-            </div>
-          </motion.div>
+          className="py-8 bg-base-200"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+          viewport={{ once: true }}
+        >
+          <div className="container mx-auto space-y-8">
+            {/* Citrus Fusion Card */}
+            <motion.div
+              className="card bg-black text-white shadow-xl"
+              whileHover={{ scale: 1.05 }}
+            >
+              <div>
+                <img
+                  src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Duo/CitFus.png"
+                  alt="Citrus Fusion"
+                  className="rounded-lg w-full h-auto"
+                />
+              </div>
+              <div className="px-8 py-4 text-center">
+                <p className="mt-4 text-lg">
+                  A tangy and creamy citrus blend offering an uplifting buzz and a
+                  smooth, serene comedown.
+                </p>
+              </div>
+            </motion.div>
 
-          {/* Dessert Delight Card */}
-          <motion.div
-            className="card bg-black text-white shadow-xl"
-            whileHover={{ scale: 1.05 }}
-          >
-            <div>
-              <img
-                src="/assets/DsrtDlight.png"
-                alt="Dessert Delight"
-                className="rounded-lg w-full h-auto"
-              />
-            </div>
-            <div className="px-8 py-4 text-center">
-              <h3 className="text-2xl font-bold">Dessert Delight</h3>
-              <p className="mt-4 text-lg">
-                Indulgent, dessert-inspired pairing with euphoric effects and a
-                soothing, mellow finish.
-              </p>
-            </div>
-          </motion.div>
+            {/* Dessert Delight Card */}
+            <motion.div
+              className="card bg-black text-white shadow-xl"
+              whileHover={{ scale: 1.05 }}
+            >
+              <div>
+                <img
+                  src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Duo/DsrtDlight.png"
+                  alt="Dessert Delight"
+                  className="rounded-lg w-full h-auto"
+                />
+              </div>
+              <div className="px-8 py-4 text-center">
+                <p className="mt-4 text-lg">
+                  Indulgent, dessert-inspired pairing with euphoric effects and a
+                  soothing, mellow finish.
+                </p>
+              </div>
+            </motion.div>
 
-          {/* Berry Medley Card */}
-          <motion.div
-            className="card bg-black text-white shadow-xl"
-            whileHover={{ scale: 1.05 }}
-          >
-            <div>
-              <img
-                src="/assets/BrryMdly.png"
-                alt="Berry Medley"
-                className="rounded-lg w-full h-auto"
-              />
-            </div>
-            <div className="px-8 py-4 text-center">
-              <h3 className="text-2xl font-bold">Berry Medley</h3>
-              <p className="mt-4 text-lg">
-                A luscious, sweet berry explosion ideal for evening relaxation.
-              </p>
-            </div>
-          </motion.div>
-        </div>
-      </motion.section>
+            {/* Berry Medley Card */}
+            <motion.div
+              className="card bg-black text-white shadow-xl"
+              whileHover={{ scale: 1.05 }}
+            >
+              <div>
+                <img
+                  src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Duo/BrryMdly.png"
+                  alt="Berry Medley"
+                  className="rounded-lg w-full h-auto"
+                />
+              </div>
+              <div className="px-8 py-4 text-center">
+                <p className="mt-4 text-lg">
+                  A luscious, sweet berry explosion ideal for evening relaxation.
+                </p>
+              </div>
+            </motion.div>
 
-      {/* 1g Cartridge Section */}
+            {/* OG Tropics Card */}
+            <motion.div
+              className="card bg-black text-white shadow-xl"
+              whileHover={{ scale: 1.05 }}
+            >
+              <div>
+                <img
+                  src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Duo/OGTrop.png"
+                  alt="OG Tropics"
+                  className="rounded-lg w-full h-auto"
+                />
+              </div>
+              <div className="px-8 py-4 text-center">
+                <p className="mt-4 text-lg">
+                  A nostalgic and refreshing mix with balanced relaxation and mental clarity.
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        </motion.section>
+        {/* 1g Cartridge Section */}
       <motion.section
         className="py-8 bg-base-100"
         initial={{ opacity: 0, y: 50 }}
