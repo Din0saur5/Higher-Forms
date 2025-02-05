@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 
 const Strains = () => {
   // 1g Cartridge data
@@ -28,26 +29,46 @@ const Strains = () => {
   return (
     <div className="strains-container">
       {/* Hero Section */}
-      <section className="hero bg-black text-white py-16">
+      <motion.section
+        className="hero bg-black text-white py-16"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+      >
         <div className="text-center">
           <h1 className="text-4xl font-bold uppercase">Meet Our Strains</h1>
         </div>
-      </section>
+      </motion.section>
 
       {/* 2g Duel Chamber Duo-Flare™ Section */}
-      <section className="py-8 bg-base-100">
+      <motion.section
+        className="py-8 bg-base-100"
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+        viewport={{ once: true }}
+      >
         <div className="container mx-auto text-center">
           <h2 className="text-2xl font-bold uppercase border-b-2 border-primary inline-block pb-2">
             2g Duel Chamber Duo-Flare™
           </h2>
         </div>
-      </section>
+      </motion.section>
 
       {/* Product Cards Section */}
-      <section className="py-8 bg-base-200">
+      <motion.section
+        className="py-8 bg-base-200"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        viewport={{ once: true }}
+      >
         <div className="container mx-auto space-y-8">
           {/* Citrus Fusion Card */}
-          <div className="card bg-black text-white shadow-xl">
+          <motion.div
+            className="card bg-black text-white shadow-xl"
+            whileHover={{ scale: 1.05 }}
+          >
             <div>
               <img
                 src="/assets/CitFus.png"
@@ -62,10 +83,13 @@ const Strains = () => {
                 smooth, serene comedown.
               </p>
             </div>
-          </div>
+          </motion.div>
 
           {/* Dessert Delight Card */}
-          <div className="card bg-black text-white shadow-xl">
+          <motion.div
+            className="card bg-black text-white shadow-xl"
+            whileHover={{ scale: 1.05 }}
+          >
             <div>
               <img
                 src="/assets/DsrtDlight.png"
@@ -80,10 +104,13 @@ const Strains = () => {
                 soothing, mellow finish.
               </p>
             </div>
-          </div>
+          </motion.div>
 
           {/* Berry Medley Card */}
-          <div className="card bg-black text-white shadow-xl">
+          <motion.div
+            className="card bg-black text-white shadow-xl"
+            whileHover={{ scale: 1.05 }}
+          >
             <div>
               <img
                 src="/assets/BrryMdly.png"
@@ -97,63 +124,41 @@ const Strains = () => {
                 A luscious, sweet berry explosion ideal for evening relaxation.
               </p>
             </div>
-          </div>
-
-          {/* OG Tropics Card */}
-          <div className="card bg-black text-white shadow-xl">
-            <div>
-              <img
-                src="/assets/OGTrop.png"
-                alt="OG Tropics"
-                className="rounded-lg w-full h-auto"
-              />
-            </div>
-            <div className="px-8 py-4 text-center">
-              <h3 className="text-2xl font-bold">OG Tropics</h3>
-              <p className="mt-4 text-lg">
-                A nostalgic and refreshing mix with balanced relaxation and
-                mental clarity.
-              </p>
-            </div>
-          </div>
-
-          {/* Punch Party Card */}
-          <div className="card bg-black text-white shadow-xl">
-            <div>
-              <img
-                src="/assets/PnchPrty.png"
-                alt="Punch Party"
-                className="rounded-lg w-full h-auto"
-              />
-            </div>
-            <div className="px-8 py-4 text-center">
-              <h3 className="text-2xl font-bold">Punch Party</h3>
-              <p className="mt-4 text-lg">
-                A bold, fruity fusion offering a balanced body high and mental
-                clarity.
-              </p>
-            </div>
-          </div>
+          </motion.div>
         </div>
-      </section>
+      </motion.section>
 
       {/* 1g Cartridge Section */}
-      <section className="py-8 bg-base-100">
+      <motion.section
+        className="py-8 bg-base-100"
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1 }}
+        viewport={{ once: true }}
+      >
         <div className="container mx-auto text-center">
           <h2 className="text-2xl font-bold uppercase border-b-2 border-primary inline-block pb-2">
             1g Cartridge V1
           </h2>
         </div>
-      </section>
-      <section className="py-8 bg-base-200">
+      </motion.section>
+
+      <motion.section
+        className="py-8 bg-base-200"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        viewport={{ once: true }}
+      >
         <div className="container mx-auto space-y-8">
           {cartridges.map((cartridge, index) => (
-            <a
+            <motion.a
               key={index}
               href="#"
               target="_blank"
               rel="noopener noreferrer"
-              className="card bg-black text-white shadow-lg cursor-pointer hover:shadow-xl transform hover:scale-105 transition-all"
+              className="card bg-black text-white shadow-lg cursor-pointer hover:shadow-xl transform"
+              whileHover={{ scale: 1.05 }}
             >
               <div>
                 <img
@@ -165,10 +170,10 @@ const Strains = () => {
               <div className="px-8 py-4 text-center">
                 <h3 className="text-2xl font-bold">{cartridge.title}</h3>
               </div>
-            </a>
+            </motion.a>
           ))}
         </div>
-      </section>
+      </motion.section>
     </div>
   );
 };

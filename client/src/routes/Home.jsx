@@ -1,10 +1,17 @@
 import React from "react";
+import { motion } from "framer-motion";
+import { Parallax } from "react-parallax";
 
 const Home = () => {
   return (
     <div className="home-container">
       {/* Hero Section */}
-      <section className="hero bg-black text-white flex justify-center items-center">
+      <motion.section
+        className="hero bg-black text-white flex justify-center items-center"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+      >
         <div className="text-center">
           <img
             src="/HFhero.png"
@@ -12,7 +19,7 @@ const Home = () => {
             className="max-w-full h-auto object-cover mx-auto"
           />
         </div>
-      </section>
+      </motion.section>
 
       {/* Mission Section */}
       <section
@@ -44,7 +51,7 @@ const Home = () => {
           <img
             src="/Missions.png"
             alt="Mission"
-            className="h-auto w-2/3 md:w-1/2 object-contain"
+            className="h-auto w-2/3 md:w-1/2 object-contain hover-glow"
           />
         </div>
       </section>
@@ -66,22 +73,24 @@ const Home = () => {
       </section>
 
       {/* Smoke Effect Banner Section */}
-      <section className="banner-section relative h-80 overflow-hidden">
-        <video
-          className="absolute inset-0 w-full h-full object-cover"
-          autoPlay
-          loop
-          muted
-        >
-          <source src="/assets/smoke-effect.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <h2 className="text-4xl font-bold uppercase text-primary">
-            Experience Purity
-          </h2>
-        </div>
-      </section>
+      <Parallax bgImage="/assets/smoke-effect.jpg" strength={300}>
+        <section className="banner-section relative h-80 overflow-hidden">
+          <video
+            className="absolute inset-0 w-full h-full object-cover"
+            autoPlay
+            loop
+            muted
+          >
+            <source src="/assets/smoke-effect.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <h2 className="text-4xl font-bold uppercase text-primary gradient-text">
+              Experience Purity
+            </h2>
+          </div>
+        </section>
+      </Parallax>
     </div>
   );
 };
