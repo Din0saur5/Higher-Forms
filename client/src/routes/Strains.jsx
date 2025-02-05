@@ -21,50 +21,40 @@ const Strains = () => {
 
       {/* Product Cards Section */}
       <section className="py-8 bg-base-200">
-        <div className="container mx-auto grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
+        <div className="container mx-auto space-y-8">
+          {/* Citrus Fusion Card */}
           <div className="card bg-black text-white shadow-xl">
-            <div className="card-body flex">
-              <div className="flex-1">
-                <video
-                  autoPlay
-                  loop
-                  muted
-                  className="rounded-lg w-full h-auto"
-                >
-                  <source src="/assets/citrus-fusion.mp4" type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-              </div>
-              <div className="flex-1 px-4">
-                <h3 className="text-lg font-bold">Citrus Fusion</h3>
-                <p>
-                  A tangy and creamy citrus blend offering an uplifting buzz and
-                  a smooth, serene comedown.
-                </p>
-              </div>
+            <div>
+              <img
+                src="/assets/CitFus.png"
+                alt="Citrus Fusion"
+                className="rounded-lg w-full h-auto"
+              />
+            </div>
+            <div className="px-8 py-4 text-center">
+              <h3 className="text-2xl font-bold">Citrus Fusion</h3>
+              <p className="mt-4 text-lg">
+                A tangy and creamy citrus blend offering an uplifting buzz and a
+                smooth, serene comedown.
+              </p>
             </div>
           </div>
 
+          {/* Dessert Delight Card */}
           <div className="card bg-black text-white shadow-xl">
-            <div className="card-body flex">
-              <div className="flex-1">
-                <video
-                  autoPlay
-                  loop
-                  muted
-                  className="rounded-lg w-full h-auto"
-                >
-                  <source src="/assets/dessert-delight.mp4" type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-              </div>
-              <div className="flex-1 px-4">
-                <h3 className="text-lg font-bold">Dessert Delight</h3>
-                <p>
-                  Indulgent, dessert-inspired pairing with euphoric effects and
-                  a soothing, mellow finish.
-                </p>
-              </div>
+            <div>
+              <img
+                src="/assets/DsrtDlight.png"
+                alt="Dessert Delight"
+                className="rounded-lg w-full h-auto"
+              />
+            </div>
+            <div className="px-8 py-4 text-center">
+              <h3 className="text-2xl font-bold">Dessert Delight</h3>
+              <p className="mt-4 text-lg">
+                Indulgent, dessert-inspired pairing with euphoric effects and a
+                soothing, mellow finish.
+              </p>
             </div>
           </div>
         </div>
@@ -79,7 +69,7 @@ const Strains = () => {
         </div>
       </section>
       <section className="py-8 bg-base-200">
-        <div className="container mx-auto grid gap-8 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <div className="container mx-auto grid gap-8 grid-cols-1">
           <a
             href="https://www.example.com/strawnana"
             target="_blank"
