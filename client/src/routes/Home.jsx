@@ -15,29 +15,37 @@ const Home = () => {
       </section>
 
       {/* Mission Section */}
-      <section id="mission" className="py-16 bg-base-100">
-        <div className="container mx-auto flex flex-col md:flex-row items-center space-y-8 md:space-y-0 md:space-x-12 px-4">
-          <div className="flex-1 px-4">
-            <h2 className="text-4xl font-bold uppercase pb-2 mb-6">Mission</h2>
-            <p className="italic text-lg mt-4 mb-6">
-              "Not Mixed or adulterated with any other substances or material"
-            </p>
-            <p className="mt-4 text-base leading-relaxed">
-              At Higher Forms, this definition of purity is at the core of
-              everything we do. Our mission is to deliver a truly pure
-              experience by offering premium Category 3 Distillate housed in
-              cutting-edge ceramic cartridges. These cartridges ensure smooth,
-              large clouds and bold, strain-specific flavors, setting a new
-              standard for quality and satisfaction in every product we create.
-            </p>
-          </div>
-          <div className="flex-1 px-4">
-            <img
-              src="/Missions.png"
-              alt="Mission"
-              className="rounded-lg shadow-lg"
-            />
-          </div>
+      <section
+        id="mission"
+        className="flex flex-col md:flex-row items-stretch w-full"
+      >
+        {/* Left Side - Off White Background */}
+        <div className="flex-1 bg-gray-100 p-8 md:p-12">
+          <h2 className="text-sm font-bold uppercase text-gray-600 tracking-widest mb-4">
+            Mission
+          </h2>
+          <h3 className="text-4xl font-extrabold text-black mb-2">pure</h3>
+          <p className="italic text-lg text-gray-500 mb-4">/pyʊər/ (adj.)</p>
+          <p className="italic text-lg text-gray-700 mb-4">
+            "Not Mixed or adulterated with any other substances or material"
+          </p>
+          <p className="text-base text-gray-800 leading-relaxed">
+            At Higher Forms, this definition of purity is at the core of
+            everything we do. Our mission is to deliver a truly pure experience
+            by offering premium Category 3 Distillate housed in cutting-edge
+            ceramic cartridges. These cartridges ensure smooth, large clouds
+            and bold, strain-specific flavors, setting a new standard for
+            quality and satisfaction in every product we create.
+          </p>
+        </div>
+
+        {/* Right Side - Black Background with Image */}
+        <div className="flex-1 bg-black flex items-center justify-center">
+          <img
+            src="/Missions.png"
+            alt="Mission"
+            className="h-auto w-2/3 md:w-1/2 object-contain"
+          />
         </div>
       </section>
 
