@@ -14,7 +14,6 @@ if (data?.user){
 }
   const [userData, setUserData] = useState(user);
 
-
 //this is acting as our session handling portal.
 
   return (

@@ -9,9 +9,6 @@ import { useState } from 'react';
 // sign up 
 // check display name
 
-
-
-
 const validationSchema = Yup.object({
   email: Yup.string()
     .email('Invalid email address')

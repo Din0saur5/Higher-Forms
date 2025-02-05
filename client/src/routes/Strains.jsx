@@ -1,114 +1,120 @@
 import React from "react";
-import "./Strains.css";
 
 const Strains = () => {
   return (
     <div className="strains-container">
       {/* Hero Section */}
-      <section className="hero-section">
-        <h1 className="animated-title">Meet Our Strains</h1>
+      <section className="hero bg-black text-white py-16">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold uppercase">Meet Our Strains</h1>
+        </div>
       </section>
 
       {/* 2g Duel Chamber Duo-Flare™ Section */}
-      <section className="label-section animated-label">
-        <h2 className="label-title">2g Duel Chamber Duo-Flare™</h2>
+      <section className="py-8 bg-base-100">
+        <div className="container mx-auto text-center">
+          <h2 className="text-2xl font-bold uppercase border-b-2 border-primary inline-block pb-2">
+            2g Duel Chamber Duo-Flare™
+          </h2>
+        </div>
       </section>
 
       {/* Product Cards Section */}
-      <section className="product-section">
-        <div className="product-card">
-          <div className="card-left">
-            <video autoPlay loop muted className="product-video">
-              <source src="/assets/citrus-fusion.mp4" type="video/mp4" />
-              Your browser does not support video.
-            </video>
-          </div>
-          <div className="card-right">
-            <h3>Citrus Fusion</h3>
-            <p>
-              A tangy and creamy citrus blend offering an uplifting buzz and a
-              smooth, serene comedown.
-            </p>
-          </div>
-        </div>
-        <div className="product-card">
-          <div className="card-left">
-            <video autoPlay loop muted className="product-video">
-              <source src="/assets/dessert-delight.mp4" type="video/mp4" />
-              Your browser does not support video.
-            </video>
-          </div>
-          <div className="card-right">
-            <h3>Dessert Delight</h3>
-            <p>
-              Indulgent, dessert-inspired pairing with euphoric effects and a
-              soothing, mellow finish.
-            </p>
-          </div>
-        </div>
-        {/* Add more cards here */}
-      </section>
-
-      {/* 1g Cartridge Section */}
-      <section className="label-section animated-label">
-        <h2 className="label-title">1g Cartridge V1</h2>
-      </section>
-      <section className="cartridge-section">
-        <div className="cartridge-grid">
-          <a href="https://example.com/strawnana" target="_blank" rel="noopener noreferrer" className="cartridge-card">
-            <img src="/assets/strawnana.png" alt="Strawnana" />
-            <p>Strawnana</p>
-          </a>
-          <a href="https://example.com/gelato" target="_blank" rel="noopener noreferrer" className="cartridge-card">
-            <img src="/assets/gelato.png" alt="Gelato" />
-            <p>Gelato</p>
-          </a>
-          {/* Add more cartridges with specific links here */}
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section id="contact" className="contact-section">
-        <div className="contact-content">
-          <div className="contact-info">
-            <h3>HIGHER FORMS</h3>
-            <p>
-              <img src="/HFemail.png" alt="Email Icon" />
-              <span>sales@higher-forms.com</span>
-            </p>
-            <p>
-              <img src="/HFIG.png" alt="Instagram Icon" />
-              <a
-                href="https://instagram.com/higherforms"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                @higherforms
-              </a>
-            </p>
-            <div className="contact-logo">
-              <img src="/HFCC.png" alt="Higher Forms Cannabis Logo" />
+      <section className="py-8 bg-base-200">
+        <div className="container mx-auto grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
+          <div className="card bg-black text-white shadow-xl">
+            <div className="card-body flex">
+              <div className="flex-1">
+                <video
+                  autoPlay
+                  loop
+                  muted
+                  className="rounded-lg w-full h-auto"
+                >
+                  <source src="/assets/citrus-fusion.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+              <div className="flex-1 px-4">
+                <h3 className="text-lg font-bold">Citrus Fusion</h3>
+                <p>
+                  A tangy and creamy citrus blend offering an uplifting buzz and
+                  a smooth, serene comedown.
+                </p>
+              </div>
             </div>
           </div>
 
-          <form className="contact-form">
-            <label htmlFor="first-name">First Name*</label>
-            <input id="first-name" type="text" placeholder="Enter your first name" />
+          <div className="card bg-black text-white shadow-xl">
+            <div className="card-body flex">
+              <div className="flex-1">
+                <video
+                  autoPlay
+                  loop
+                  muted
+                  className="rounded-lg w-full h-auto"
+                >
+                  <source src="/assets/dessert-delight.mp4" type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+              <div className="flex-1 px-4">
+                <h3 className="text-lg font-bold">Dessert Delight</h3>
+                <p>
+                  Indulgent, dessert-inspired pairing with euphoric effects and
+                  a soothing, mellow finish.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
-            <label htmlFor="last-name">Last Name*</label>
-            <input id="last-name" type="text" placeholder="Enter your last name" />
+      {/* 1g Cartridge Section */}
+      <section className="py-8 bg-base-100">
+        <div className="container mx-auto text-center">
+          <h2 className="text-2xl font-bold uppercase border-b-2 border-primary inline-block pb-2">
+            1g Cartridge V1
+          </h2>
+        </div>
+      </section>
+      <section className="py-8 bg-base-200">
+        <div className="container mx-auto grid gap-8 grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <a
+            href="https://www.example.com/strawnana"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="card bg-black text-white shadow-lg cursor-pointer hover:shadow-xl transform hover:scale-105 transition-all"
+          >
+            <figure>
+              <img
+                src="/assets/strawnana.png"
+                alt="Strawnana"
+                className="rounded-lg"
+              />
+            </figure>
+            <div className="card-body text-center">
+              <h3 className="text-lg font-bold">Strawnana</h3>
+            </div>
+          </a>
 
-            <label htmlFor="email">Email*</label>
-            <input id="email" type="email" placeholder="Enter your email" />
-
-            <label htmlFor="subject">Subject*</label>
-            <input id="subject" type="text" placeholder="Enter subject" />
-
-            <label htmlFor="message">Message*</label>
-            <textarea id="message" placeholder="Enter your message"></textarea>
-
-            <button type="submit">Submit</button>
-          </form>
+          <a
+            href="https://www.example.com/gelato"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="card bg-black text-white shadow-lg cursor-pointer hover:shadow-xl transform hover:scale-105 transition-all"
+          >
+            <figure>
+              <img
+                src="/assets/gelato.png"
+                alt="Gelato"
+                className="rounded-lg"
+              />
+            </figure>
+            <div className="card-body text-center">
+              <h3 className="text-lg font-bold">Gelato</h3>
+            </div>
+          </a>
         </div>
       </section>
     </div>

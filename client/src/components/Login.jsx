@@ -6,8 +6,6 @@ function Login({setLogin}) {
 //login 
 //forgot password 
 
-
-
   return (
     <div className='flex h-screen items-center justify-center'>
       <div className="card border rounded-xl p-4 bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">

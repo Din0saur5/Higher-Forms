@@ -12,7 +12,7 @@ import "./App.css";
 import { getLoggedInUser } from "../api";
 import Strains from "./routes/Strains";
 import Log from "./routes/Log";
-
+import LabResults from "./routes/LabResults";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: "/login",
         element: <Log/>,
+      },
+      {
+        path: "/lab-results",
+        element: <LabResults />, 
       },
     ],
   },
