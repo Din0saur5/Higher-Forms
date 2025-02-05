@@ -1,7 +1,7 @@
 // create supabase client and run all fetches through here
 
 import { createClient } from "@supabase/supabase-js";
-import { cookies } from "next/headers";
+
 
 const supabase = createClient(
   import.meta.env.VITE_URL, 
@@ -62,3 +62,21 @@ export const getLoggedInUser = async () => {
       return data;
     }
   };
+
+
+
+  //SignUp
+  export const SignUp = async (email, password, name) => {
+
+    let { data, error } = await supabase.auth.signUp({
+      email: 'someone@email.com',
+      password: 'OrZHaOgECIcwfVAFpOrL'
+    })
+    if (error) {
+      console.log("Error patching row:", error.message);
+      return null; // Or handle the error as appropriate
+    } else {
+      return data;
+    }
+
+  }

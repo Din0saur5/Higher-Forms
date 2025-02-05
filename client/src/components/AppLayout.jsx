@@ -19,7 +19,7 @@ if (data?.user){
 
   return (
     <UserContext.Provider value={{userData, setUserData}}>
-      <Navbar user= {userData}/> 
+      <Navbar /> 
       <Outlet  />
       <Footer />
     </UserContext.Provider>

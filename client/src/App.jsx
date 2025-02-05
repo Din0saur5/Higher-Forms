@@ -5,14 +5,14 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import Home from "./routes/Home";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-import { Outlet } from "react-router-dom";
+
 import ErrorPage from "./routes/ErrorPage";
 import AppLayout from "./components/AppLayout";
 import "./App.css";
 import { getLoggedInUser } from "../api";
 import Strains from "./routes/Strains";
+import Log from "./routes/Log";
+
 
 const router = createBrowserRouter([
   {
@@ -27,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: "/strains",
         element: <Strains />,
+      },
+      {
+        path: "/login",
+        element: <Log/>,
       },
     ],
   },

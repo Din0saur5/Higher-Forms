@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import "./Navbar.css";
+// import "./Navbar.css";
+import { useUserContext } from '../components/UserContext';
 
 const Navbar = ({ user }) => {
   const [click, setClick] = useState(false);
   const [showSubscribe, setShowSubscribe] = useState(false);
-
+  const {userData, setUserData} = useUserContext()
   const handleClick = () => setClick(!click);
   const closeMobileMenu = () => setClick(false);
   const toggleSubscribe = () => setShowSubscribe(!showSubscribe); 
@@ -19,107 +20,73 @@ const Navbar = ({ user }) => {
 
   return (
     <>
-
-      <nav className="navbar">
-        <div className="navbar-container container">
-          {/* Logo Section */}
-          <div className="navbar-logo">
-            <img src="/HFlogo.png" alt="Higher Forms Logo" className="logo-img" />
-            <div className="logo-text">
-              <span>HIGHER</span>
-              <span>FORMS</span>
-            </div>
-          </div>
-          <div className="menu-icon" onClick={handleClick}>
-            {click ? "X" : "☰"}
-          </div>
-          {/* Navigation Links */}
-          <ul className={click ? "nav-menu active" : "nav-menu"}>
-            <li className="nav-item">
-              <NavLink
-                to="/"
-                className={({ isActive }) =>
-                  "nav-links" + (isActive ? " activated" : "")
-                }
-                onClick={closeMobileMenu}
-              >
-                Home
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                to="/verify"
-                className="nav-links"
-                onClick={closeMobileMenu}
-              >
-                Verify
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                to="/strains"
-                className="nav-links"
-                onClick={closeMobileMenu}
-              >
-                Strains
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                to="/contact"
-                className="nav-links"
-                onClick={closeMobileMenu}
-              >
-                Contact Us
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                to="/lab-results"
-                className="nav-links"
-                onClick={closeMobileMenu}
-              >
-                Lab Results
-              </NavLink>
-            </li>
-            <li className="nav-item">
-              <NavLink
-                to="/rewards"
-                className="nav-links"
-                onClick={closeMobileMenu}
-              >
-                Reward Shop
-              </NavLink>
-            </li>
-          </ul>
-          <button className="subscribe-btn" onClick={toggleSubscribe}>
-            Subscribe
-          </button>
-        </div>
-      </nav>
-      {showSubscribe? (
-        <div className="subscribe-modal">
-          <div className="subscribe-content">
-            <button className="close-btn" onClick={toggleSubscribe}>
-              ✕
-            </button>
-            <h2>SUBSCRIBE</h2>
-            <p>Sign up to receive Higher Forms news and updates.</p>
-            <form>
-              <input type="email" placeholder="Email" required />
-              <button type="submit">Subscribe</button>
-            </form>
-          </div>
-        </div>
-      ):(
-        //an accounting of form coins on on the profile.
-        // profile pic with a "rewards teir as a border bronze silver gold "
-        //log out
-        <></>
-
-      )
+ <nav className="navbar bg-base-100 px-4">
+      {/* Navbar Start - Logo */}
+      <div className="navbar-start flex items-center space-x-2">
+        <img src="/HFlogo.png" alt="Higher Forms Logo" className="h-10 w-auto" />
+        <a className="text-xl font-bold font-roboto ">Higher <br></br>Forms</a>
+      </div>
       
-      }
+      {/* Navbar Center - Navigation Links */}
+      <div className="navbar-center hidden md:flex">
+        <ul className="menu menu-horizontal font-roboto px-1 space-x-4">
+          <li className="max-lg:hidden"><a href="/">Home</a></li>
+          <li><a href="/verify">Verify</a></li>
+          <li><a href="/strains">Strains</a></li>
+          <li>
+            <a href="#contact" onClick={(e) => {
+              e.preventDefault();
+              window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+            }}>
+              Contact Us
+            </a>
+          </li>
+          <li><a href="/lab-results">Lab Results</a></li>
+          <li><a href="/rewards">Rewards Shop</a></li>
+        </ul>
+      </div>
+      <div className="md:hidden">
+        <div className="dropdown">
+          <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 6h16M4 12h16M4 18h7" />
+            </svg>
+          </div>
+      <ul
+        tabIndex={0}
+        className="menu font-roboto menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
+       <li><a href="/">Home</a></li>
+          <li><a href="/verify">Verify</a></li>
+          <li><a href="/strains">Strains</a></li>
+          <li>
+            <a href="#contact" onClick={(e) => {
+              e.preventDefault();
+              window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+            }}>
+              Contact Us
+            </a>
+          </li>
+          <li><a href="/lab-results">Lab Results</a></li>
+          <li><a href="/rewards">Rewards Shop</a></li>
+      </ul>
+    </div>
+      </div>
+      {/* Navbar End - Login Button */}
+      <div className="navbar-end">
+        <a href="/login" className="btn">Login</a>
+      </div>
+    </nav>
+      
+      
 
     </>
   );
