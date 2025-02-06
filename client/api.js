@@ -68,15 +68,46 @@ export const getLoggedInUser = async () => {
   //SignUp
   export const SignUp = async (email, password, name) => {
 
-    let { data, error } = await supabase.auth.signUp({
-      email: 'someone@email.com',
-      password: 'OrZHaOgECIcwfVAFpOrL'
+    let { data:user, error:error1 } = await supabase.auth.signUp({
+      email: email,
+      password: password
     })
-    if (error) {
+    if (error1) {
       console.log("Error patching row:", error.message);
       return null; // Or handle the error as appropriate
     } else {
-      return data;
-    }
-
+      const { data, error } = await supabase
+          .from('users')
+          .update({ display_name: name })
+          .eq('id', user.id)
+          .select()
+          if (error) {
+            console.log("Error patching row:", error.message);
+            return null; 
+          }else {
+              return data
+            }
+     }
+  }
+//Login
+  export const LogIn = async (email, password) =>{
+    let { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password
+    })
+    if (error) {
+      console.log("Error logging user in", error.message);
+      return null; 
+    }else {
+      const { data:user, error:error1 } = await supabase
+      .from('users')
+      .eq('id', data.id)
+      .select()
+      if (error) {
+        console.log("Error patching row:", error.message);
+        return null; 
+      }else {
+          return data
+        }
+      }
   }

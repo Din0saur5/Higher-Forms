@@ -4,7 +4,8 @@ import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-
+import { SignUp } from '../../api';
+import { useUserContext } from "../components/UserContext";
 // fns to add 
 // sign up 
 // check display name
@@ -27,7 +28,7 @@ const validationSchema = Yup.object({
 });
 
 const SignupForm = ({setLogin}) => {
-  const server = import.meta.env.VITE_URL
+  const { userData, setUserData } = useUserContext();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false) 
   
@@ -59,43 +60,21 @@ const SignupForm = ({setLogin}) => {
     });
   };
 
-  function signup(email, displayName, password) {
-    const url = `${server}/signup`; // Change to your actual server URL
-    const data = {
-      email: email,
-      display_name: displayName,
-      password: password
 
-    };
+  async function signup(email, displayName, password) {
   
-    fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-      credentials: 'include' // if you're handling sessions
-    })
-    .then(response =>{ if(response.ok){
-      return response.json()
-        
+    
+    response = await SignUp(email,password,displayName)
+     if(response.ok){
+      setUserData(response.json())
+      navigate('/home')  
     } else{
       throw new Error("HTTP error " + response.status)
     }
-    })
-    .then(data=>{
-      setUserData(data)
-      navigate('/home')
      
-    })
+    }
     
-      
-    
-    .catch((error) => {
-      console.error('Error:', error);
-      location.reload()
-    });
-  }
+  
 
 
 
