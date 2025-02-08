@@ -73,7 +73,7 @@ export const getLoggedInUser = async () => {
       password: password
     })
     if (error1) {
-      console.log("Error patching row:", error.message);
+      console.log("Error adding to auth table row:", error.message);
       return null; // Or handle the error as appropriate
     } else {
       const { data, error } = await supabase
@@ -82,7 +82,7 @@ export const getLoggedInUser = async () => {
           .eq('id', user.id)
           .select()
           if (error) {
-            console.log("Error patching row:", error.message);
+            console.log("Error adding to public table row:", error.message);
             return null; 
           }else {
               return data
