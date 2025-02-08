@@ -1,7 +1,7 @@
 // create supabase client and run all fetches through here
 
 import { createClient } from "@supabase/supabase-js";
-
+import { validate, parse } from 'uuid'
 
 const supabase = createClient(
   import.meta.env.VITE_URL, 
@@ -73,13 +73,18 @@ export const getLoggedInUser = async () => {
       password: password
     })
     if (error1) {
-      console.log("Error adding to auth table row:", error.message);
+      console.log("Error adding to auth table row:", error1.message);
       return null; // Or handle the error as appropriate
     } else {
+      console.log(user.user)
+      
+      
+      
+
       const { data, error } = await supabase
           .from('users')
           .update({ display_name: name })
-          .eq('id', user.id)
+          .eq('id', user.user.id)
           .select()
           if (error) {
             console.log("Error adding to public table row:", error.message);
@@ -88,7 +93,10 @@ export const getLoggedInUser = async () => {
               return data
             }
      }
+    
+   
   }
+
 //Login
   export const LogIn = async (email, password) =>{
     let { data, error } = await supabase.auth.signInWithPassword({
