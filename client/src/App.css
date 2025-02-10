@@ -158,3 +158,28 @@ html {
     transform: translateX(-25%);
   }
 }
+
+/* Fix Carousel Thumbnails */
+.carousel .thumbs-wrapper {
+  display: flex;
+  justify-content: center; /* Center thumbnails */
+  overflow: visible !important; /* Prevent cutting off thumbnails */
+}
+
+.carousel .thumb {
+  margin: 0 5px; /* Add some space between thumbnails */
+  border-radius: 6px; /* Make thumbnails rounded */
+  max-width: 80px; /* Uniform thumbnail size */
+  height: auto; /* Maintain aspect ratio */
+}
+
+.carousel .thumb img {
+  object-fit: contain; /* Ensure the image fits well within the thumbnail */
+  width: 100%;
+  height: auto;
+}
+
+/* Ensure entire container adjusts */
+.carousel .slider-wrapper {
+  overflow: visible !important; /* Prevent any element overflow */
+}

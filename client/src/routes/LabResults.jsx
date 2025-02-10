@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import { Carousel } from "react-responsive-carousel"; // Make sure to install this package: `npm install react-responsive-carousel`
+import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 const LabResults = () => {
   const [fullScreenImage, setFullScreenImage] = useState(null);
+
   const images = [
-    "/path/to/image1.png",
-    "/path/to/image2.png",
-    "/path/to/image3.png", // Add all your image paths here
+    "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/labresults/l1.jpg",
+    "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/labresults/l2.jpg",
+    "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/labresults/l3.jpg",
+    "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/labresults/l4.jpg",
   ];
 
   const handleImageClick = (src) => {
@@ -39,20 +41,49 @@ const LabResults = () => {
         </div>
 
         {/* Right Carousel Section */}
-        <div className="md:w-1/2">
-          <Carousel
-            showThumbs={true}
-            infiniteLoop={true}
-            useKeyboardArrows={true}
-            dynamicHeight={true}
-            onClickItem={(index) => handleImageClick(images[index])}
-          >
-            {images.map((src, index) => (
-              <div key={index}>
-                <img src={src} alt={`Lab result ${index + 1}`} />
-              </div>
-            ))}
-          </Carousel>
+        <div className="md:w-1/2 relative">
+        <Carousel
+  showThumbs={true}
+  infiniteLoop={true}
+  useKeyboardArrows={true}
+  dynamicHeight={true}
+  thumbWidth={80} // Adjust thumbnail size for proper spacing
+  onClickItem={(index) => handleImageClick(images[index])}
+  renderArrowPrev={(clickHandler, hasPrev) =>
+    hasPrev && (
+      <button
+        onClick={clickHandler}
+        className="absolute left-2 md:left-4 top-1/2 transform -translate-y-1/2 bg-gray-800/80 hover:bg-white text-white hover:text-black rounded-full p-4 shadow-lg transition duration-300 z-50"
+        aria-label="Previous Slide"
+        style={{ display: "block" }} 
+      >
+        ❮
+      </button>
+    )
+  }
+  renderArrowNext={(clickHandler, hasNext) =>
+    hasNext && (
+      <button
+        onClick={clickHandler}
+        className="absolute right-2 md:right-4 top-1/2 transform -translate-y-1/2 bg-gray-800/80 hover:bg-white text-white hover:text-black rounded-full p-4 shadow-lg transition duration-300"
+        aria-label="Next Slide"
+      >
+        ❯
+      </button>
+    )
+  }
+>
+  {images.map((src, index) => (
+    <div key={index} className="flex justify-center">
+      <img
+        src={src}
+        alt={`Lab result ${index + 1}`}
+        className="rounded-lg object-contain w-full max-w-[500px] h-auto"
+      />
+    </div>
+  ))}
+</Carousel>
+
         </div>
       </section>
 
