@@ -26,6 +26,14 @@ const Strains = () => {
     { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/zkttlz.png", title: "" },
   ];
 
+  // 2g Duo-Flare™ products
+  const duos = [
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Duo/CitFus.png", title: "Citrus Fusion", description: "A tangy and creamy citrus blend offering an uplifting buzz and a smooth, serene comedown." },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Duo/DsrtDlight.png", title: "Dessert Delight", description: "Indulgent, dessert-inspired pairing with euphoric effects and a soothing, mellow finish." },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Duo/BrryMdly.png", title: "Berry Medley", description: "A luscious, sweet berry explosion ideal for evening relaxation." },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Duo/OGTrop.png", title: "OG Tropics", description: "A nostalgic and refreshing mix with balanced relaxation and mental clarity." },
+  ];
+
   return (
     <div className="strains-container">
       {/* Hero Section */}
@@ -40,7 +48,7 @@ const Strains = () => {
         </div>
       </motion.section>
 
-      {/* 2g Duel Chamber Duo-Flare™ Section */}
+      {/* 2g Duo-Flare™ Section */}
       <motion.section
         className="py-8 bg-base-100"
         initial={{ opacity: 0, y: 50 }}
@@ -55,95 +63,38 @@ const Strains = () => {
         </div>
       </motion.section>
 
-      {/* Product Cards Section */}
+      {/* 2g Product Grid */}
       <motion.section
-          className="py-8 bg-base-200"
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          transition={{ duration: 1 }}
-          viewport={{ once: true }}
-        >
-          <div className="container mx-auto space-y-8">
-            {/* Citrus Fusion Card */}
+        className="py-8 bg-base-200"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        viewport={{ once: true }}
+      >
+        <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+          {duos.map((duo, index) => (
             <motion.div
-              className="card bg-black text-white shadow-xl"
+              key={index}
+              className="card bg-black text-white shadow-xl relative overflow-hidden"
               whileHover={{ scale: 1.05 }}
             >
-              <div>
+              <div className="relative w-full h-[300px] overflow-hidden">
                 <img
-                  src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Duo/CitFus.png"
-                  alt="Citrus Fusion"
-                  className="rounded-lg w-full h-auto"
+                  src={duo.img}
+                  alt={duo.title}
+                  className="absolute top-[12.5%] left-0 w-full h-[75%] object-cover"
                 />
               </div>
               <div className="px-8 py-4 text-center">
-                <p className="mt-4 text-lg">
-                  A tangy and creamy citrus blend offering an uplifting buzz and a
-                  smooth, serene comedown.
-                </p>
+                <h3 className="text-xl font-bold">{duo.title}</h3>
+                <p className="mt-2 text-lg">{duo.description}</p>
               </div>
             </motion.div>
+          ))}
+        </div>
+      </motion.section>
 
-            {/* Dessert Delight Card */}
-            <motion.div
-              className="card bg-black text-white shadow-xl"
-              whileHover={{ scale: 1.05 }}
-            >
-              <div>
-                <img
-                  src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Duo/DsrtDlight.png"
-                  alt="Dessert Delight"
-                  className="rounded-lg w-full h-auto"
-                />
-              </div>
-              <div className="px-8 py-4 text-center">
-                <p className="mt-4 text-lg">
-                  Indulgent, dessert-inspired pairing with euphoric effects and a
-                  soothing, mellow finish.
-                </p>
-              </div>
-            </motion.div>
-
-            {/* Berry Medley Card */}
-            <motion.div
-              className="card bg-black text-white shadow-xl"
-              whileHover={{ scale: 1.05 }}
-            >
-              <div>
-                <img
-                  src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Duo/BrryMdly.png"
-                  alt="Berry Medley"
-                  className="rounded-lg w-full h-auto"
-                />
-              </div>
-              <div className="px-8 py-4 text-center">
-                <p className="mt-4 text-lg">
-                  A luscious, sweet berry explosion ideal for evening relaxation.
-                </p>
-              </div>
-            </motion.div>
-
-            {/* OG Tropics Card */}
-            <motion.div
-              className="card bg-black text-white shadow-xl"
-              whileHover={{ scale: 1.05 }}
-            >
-              <div>
-                <img
-                  src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Duo/OGTrop.png"
-                  alt="OG Tropics"
-                  className="rounded-lg w-full h-auto"
-                />
-              </div>
-              <div className="px-8 py-4 text-center">
-                <p className="mt-4 text-lg">
-                  A nostalgic and refreshing mix with balanced relaxation and mental clarity.
-                </p>
-              </div>
-            </motion.div>
-          </div>
-        </motion.section>
-        {/* 1g Cartridge Section */}
+      {/* 1g Cartridge Section */}
       <motion.section
         className="py-8 bg-base-100"
         initial={{ opacity: 0, y: 50 }}
@@ -158,6 +109,7 @@ const Strains = () => {
         </div>
       </motion.section>
 
+      {/* 1g Product Grid */}
       <motion.section
         className="py-8 bg-base-200"
         initial={{ opacity: 0 }}
@@ -165,27 +117,24 @@ const Strains = () => {
         transition={{ duration: 1 }}
         viewport={{ once: true }}
       >
-        <div className="container mx-auto space-y-8">
+        <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6">
           {cartridges.map((cartridge, index) => (
-            <motion.a
+            <motion.div
               key={index}
-              href="#"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="card bg-black text-white shadow-lg cursor-pointer hover:shadow-xl transform"
+              className="card bg-black text-white shadow-lg border border-gray-800 rounded-lg overflow-hidden"
               whileHover={{ scale: 1.05 }}
             >
-              <div>
+              <div className="relative w-full h-[200px] overflow-hidden">
                 <img
                   src={cartridge.img}
                   alt={cartridge.title}
-                  className="rounded-lg w-full h-auto"
+                  className="absolute top-0 left-0 w-[200%] h-full object-cover object-left sm:object-left-center"
                 />
               </div>
               <div className="px-8 py-4 text-center">
-                <h3 className="text-2xl font-bold">{cartridge.title}</h3>
+                <h3 className="text-lg font-bold">{cartridge.title}</h3>
               </div>
-            </motion.a>
+            </motion.div>
           ))}
         </div>
       </motion.section>
