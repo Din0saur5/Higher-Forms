@@ -13,6 +13,7 @@ import Strains from "./routes/Strains";
 import Log from "./routes/Log";
 import LabResults from "./routes/LabResults";
 import RewardShop from "./routes/RewardShop";
+import { UserProvider } from "./components/UserContext";
 
 const router = createBrowserRouter([
   {
@@ -45,5 +46,7 @@ const router = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById("root")).render(
-  <RouterProvider router={router} />
+  <UserProvider>
+    <RouterProvider router={router} />
+  </UserProvider>
 );
