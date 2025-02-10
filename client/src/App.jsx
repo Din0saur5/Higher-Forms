@@ -12,6 +12,7 @@ import { getLoggedInUser } from "../api";
 import Strains from "./routes/Strains";
 import Log from "./routes/Log";
 import LabResults from "./routes/LabResults";
+import RewardShop from "./routes/RewardShop";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         path: "/lab-results",
         element: <LabResults />, 
+      },
+      {
+        path: "/rewards",
+        element: <RewardShop />,
       },
     ],
   },
