@@ -1,9 +1,6 @@
 import * as React from "react";
 import { createRoot } from "react-dom/client";
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./routes/Home";
 import ErrorPage from "./routes/ErrorPage";
 import AppLayout from "./components/AppLayout";
@@ -14,6 +11,7 @@ import Log from "./routes/Log";
 import LabResults from "./routes/LabResults";
 import RewardShop from "./routes/RewardShop";
 import { UserProvider } from "./components/UserContext";
+import AgeVerification from "./components/AgeVerification";
 
 const router = createBrowserRouter([
   {
@@ -21,32 +19,26 @@ const router = createBrowserRouter([
     element: <AppLayout />,
     errorElement: <ErrorPage />,
     children: [
-      {
-        path: "/",
-        element: <Home />,
-      },
-      {
-        path: "/strains",
-        element: <Strains />,
-      },
-      {
-        path: "/login",
-        element: <Log/>,
-      },
-      {
-        path: "/lab-results",
-        element: <LabResults />, 
-      },
-      {
-        path: "/rewards",
-        element: <RewardShop />,
-      },
+      { path: "/", element: <Home /> },
+      { path: "/strains", element: <Strains /> },
+      { path: "/login", element: <Log /> },
+      { path: "/lab-results", element: <LabResults /> },
+      { path: "/rewards", element: <RewardShop /> },
     ],
   },
 ]);
 
-createRoot(document.getElementById("root")).render(
-  <UserProvider>
-    <RouterProvider router={router} />
-  </UserProvider>
-);
+const App = () => {
+  const [ageConfirmed, setAgeConfirmed] = React.useState(
+    localStorage.getItem("ageVerified") === "true"
+  );
+
+  return (
+    <UserProvider>
+      {!ageConfirmed && <AgeVerification onConfirm={() => setAgeConfirmed(true)} />}
+      {ageConfirmed && <RouterProvider router={router} />}
+    </UserProvider>
+  );
+};
+
+createRoot(document.getElementById("root")).render(<App />);
