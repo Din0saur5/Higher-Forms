@@ -1,18 +1,19 @@
 import { useState } from "react";
-import { LogIn } from "../../api"; 
+import { LogIn } from "../../api";
 import { useUserContext } from "../components/UserContext";
 import { useNavigate } from "react-router-dom";
 
 function Login({ setLogin }) {
-  const { setUserData } = useUserContext(); 
-  const navigate = useNavigate(); 
+  const { setUserData } = useUserContext();
+  const navigate = useNavigate();
 
   const [loginValue, setLoginValue] = useState({
     email: "",
     password: "",
   });
 
-  const [errorMessage, setErrorMessage] = useState(""); 
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     setLoginValue({
@@ -23,21 +24,24 @@ function Login({ setLogin }) {
 
   const login = async (e) => {
     e.preventDefault();
-    setErrorMessage(""); 
+    setErrorMessage("");
+    setIsLoading(true);
 
     try {
-      const response = await LogIn(loginValue.email, loginValue.password);
-      if (response.ok) {
-        const userData = await response.json();
-        setUserData(userData); 
-        navigate("/rewards"); 
-      } else {
+      const userData = await LogIn(loginValue.email, loginValue.password);
+
+      if (!userData) {
         setErrorMessage("Invalid email or password. Please try again.");
+      } else {
+        setUserData(userData);
+        navigate("/profile"); // Redirect to profile after login
       }
     } catch (error) {
       console.error("Login error:", error);
       setErrorMessage("An error occurred during login. Please try again.");
     }
+
+    setIsLoading(false);
   };
 
   return (
@@ -49,28 +53,26 @@ function Login({ setLogin }) {
               <span className="label-text">Email</span>
             </label>
             <input
-              type="email"
-              name="email"
-              placeholder="email"
-              className="input input-bordered"
-              required
-              value={loginValue.email}
-              onChange={handleChange}
-            />
-          </div>
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Password</span>
-            </label>
-            <input
-              type="password"
-              name="password"
-              placeholder="password"
-              className="input input-bordered"
-              required
-              value={loginValue.password}
-              onChange={handleChange}
-            />
+  type="email"
+  name="email"
+  placeholder="email"
+  className="input input-bordered"
+  required
+  value={loginValue.email}
+  onChange={handleChange}
+  autoComplete="email"  
+/>
+
+<input
+  type="password"
+  name="password"
+  placeholder="password"
+  className="input input-bordered"
+  required
+  value={loginValue.password}
+  onChange={handleChange}
+  autoComplete="current-password" 
+/>
             <label className="label">
               <a href="#" className="label-text-alt link link-hover">
                 Forgot password?
@@ -79,13 +81,11 @@ function Login({ setLogin }) {
           </div>
 
           {/* Show error message if login fails */}
-          {errorMessage && (
-            <div className="text-red-500 text-sm mt-2">{errorMessage}</div>
-          )}
+          {errorMessage && <div className="text-red-500 text-sm mt-2">{errorMessage}</div>}
 
           <div className="form-control mt-6">
-            <button type="submit" className="btn btn-primary">
-              Login
+            <button type="submit" className="btn btn-primary" disabled={isLoading}>
+              {isLoading ? "Logging in..." : "Login"}
             </button>
           </div>
         </form>

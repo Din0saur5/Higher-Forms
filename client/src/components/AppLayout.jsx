@@ -1,28 +1,27 @@
-
-import { UserContext } from './UserContext';
-import { Outlet, useLoaderData, useNavigate  } from 'react-router-dom';
+import { UserProvider } from "./UserContext"; // ✅ Correct import
+import { Outlet, useLoaderData, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 import Footer from "./Footer";
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 const AppLayout = () => { 
   const navigate = useNavigate();
   const data = useLoaderData();
-  let user =null
-if (data?.user){
-    user = data.user
-}
+  let user = null;
+
+  if (data?.user) {
+    user = data.user;
+  }
+
   const [userData, setUserData] = useState(user);
 
-//this is acting as our session handling portal.
-
   return (
-    <UserContext.Provider value={{userData, setUserData}}>
-      <Navbar /> 
-      <Outlet  />
+    <UserProvider> {/* ✅ Wrap the entire layout in UserProvider */}
+      <Navbar />
+      <Outlet />
       <Footer />
-    </UserContext.Provider>
-  
-);
-}
+    </UserProvider>
+  );
+};
+
 export default AppLayout;
