@@ -58,13 +58,13 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Logo (Always Visible) */}
-        <div className="lg:flex lg:items-center">
+        {/* Logo - Centered when Menu is Open */}
+        <div className={`absolute left-1/2 transform -translate-x-1/2 transition-all duration-300 lg:relative lg:left-0 ${click ? "z-50" : ""}`}>
           <NavLink to="/" className="flex items-center hover:opacity-80 transition duration-300">
             <img
               src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/HFlogo.png"
               alt="Higher Forms Logo"
-              className="h-10 w-auto md:h-12"
+              className={`h-10 w-auto md:h-12 transition-all duration-300 ${click ? "scale-110" : ""}`}
             />
             <span className="text-lg md:text-xl font-bold font-roboto ml-2 hidden md:inline">
               Higher <br className="hidden lg:block" /> Forms
@@ -107,53 +107,59 @@ const Navbar = () => {
       </nav>
 
       {/* Mobile Dropdown Menu (Closes on Click Outside) */}
+      {click && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40"
+          onClick={closeMobileMenu} // Clicking outside menu closes it
+        ></div>
+      )}
+      
       <div
-        className={`fixed top-0 left-0 w-full h-screen bg-black bg-opacity-75 transition-transform duration-300 ease-in-out ${
-          click ? "translate-x-0" : "-translate-x-full"
-        } lg:hidden z-50`}
+        className={`fixed top-0 left-0 w-64 h-full bg-base-100 shadow-lg p-4 transition-transform duration-300 ease-in-out ${
+          click ? "translate-x-0 z-50" : "-translate-x-full"
+        } lg:hidden`}
+        ref={menuRef}
       >
-        <div ref={menuRef} className="bg-base-100 w-64 h-full shadow-lg p-4 relative">
-          {/* Close Button */}
-          <button
-            onClick={handleClick}
-            className="absolute top-4 right-4 text-black focus:outline-none"
-          >
-            ✕
-          </button>
+        {/* Close Button */}
+        <button
+          onClick={handleClick}
+          className="absolute top-4 right-4 text-black focus:outline-none"
+        >
+          ✕
+        </button>
 
-          {/* Mobile Menu Items */}
-          <ul className="menu menu-compact p-2">
-            <li><NavLink to="/verify" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Verify</NavLink></li>
-            <li><NavLink to="/strains" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Strains</NavLink></li>
-            <li><NavLink to="/lab-results" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Lab Results</NavLink></li>
-            <li><NavLink to="/rewards" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Rewards Shop</NavLink></li>
-            <li>
-              <a
-                href="#contact"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-                  closeMobileMenu();
-                }}
-                className="hover:text-primary transition duration-300"
-              >
-                Contact Us
-              </a>
-            </li>
-            {!userData ? (
-              <li><NavLink to="/login" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Login</NavLink></li>
-            ) : (
-              <>
-                <li><NavLink to="/profile" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Profile</NavLink></li>
-                <li>
-                  <button onClick={handleLogout} className="hover:text-red-500 text-error transition duration-300">
-                    Logout
-                  </button>
-                </li>
-              </>
-            )}
-          </ul>
-        </div>
+        {/* Mobile Menu Items */}
+        <ul className="menu menu-compact p-2">
+          <li><NavLink to="/verify" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Verify</NavLink></li>
+          <li><NavLink to="/strains" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Strains</NavLink></li>
+          <li><NavLink to="/lab-results" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Lab Results</NavLink></li>
+          <li><NavLink to="/rewards" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Rewards Shop</NavLink></li>
+          <li>
+            <a
+              href="#contact"
+              onClick={(e) => {
+                e.preventDefault();
+                window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+                closeMobileMenu();
+              }}
+              className="hover:text-primary transition duration-300"
+            >
+              Contact Us
+            </a>
+          </li>
+          {!userData ? (
+            <li><NavLink to="/login" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Login</NavLink></li>
+          ) : (
+            <>
+              <li><NavLink to="/profile" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Profile</NavLink></li>
+              <li>
+                <button onClick={handleLogout} className="hover:text-red-500 text-error transition duration-300">
+                  Logout
+                </button>
+              </li>
+            </>
+          )}
+        </ul>
       </div>
 
       <div className="pt-20"></div>
