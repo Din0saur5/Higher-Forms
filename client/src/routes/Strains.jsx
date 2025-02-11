@@ -4,26 +4,26 @@ import { motion } from "framer-motion";
 const Strains = () => {
   // 1g Cartridge data
   const cartridges = [
-    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/AcaiGel.png", title: "" },
-    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/BBerryJam.png", title: "" },
-    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/BlckChryPnch.png", title: "" },
-    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/CnlpHze.png", title: "" },
-    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/GDddyPrpl.png", title: "" },
-    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/GrpGod.png", title: "" },
-    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/KeyLime.png", title: "" },
-    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/OGKush.png", title: "" },
-    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/OrngCrmscl.png", title: "" },
-    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/Papaya.png", title: "" },
-    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/PappleXprs.png", title: "" },
-    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/PnkLmnd.png", title: "" },
-    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/PrplPnch.png", title: "" },
-    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/PssnFrt.png", title: "" },
-    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/StrDwgGv.png", title: "" },
-    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/StrwShrtCk.png", title: "" },
-    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/StrwNana.png", title: "" },
-    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/WddngCake.png", title: "" },
-    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/Gelato.png", title: "" },
-    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/zkttlz.png", title: "" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/AcaiGel.png", link: "https://www.leafly.com/strains/acai-berry-gelato" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/BBerryJam.png", link: "https://www.leafly.com/strains/blueberry-jam" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/BlckChryPnch.png", link: "https://www.leafly.com/strains/black-cherry-punch" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/CnlpHze.png", link: "https://www.leafly.com/strains/cannalope-haze" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/GDddyPrpl.png", link: "https://www.leafly.com/strains/granddaddy-purple" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/GrpGod.png", link: "https://www.leafly.com/strains/grape-god" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/KeyLime.png", link: "https://www.leafly.com/strains/key-lime-pie" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/OGKush.png", link: "https://www.leafly.com/strains/og-kush" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/OrngCrmscl.png", link: "https://www.leafly.com/strains/orange-creamsicle" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/Papaya.png", link: "https://www.leafly.com/strains/papaya" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/PappleXprs.png", link: "https://www.leafly.com/strains/pineapple-express" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/PnkLmnd.png", link: "https://www.leafly.com/strains/pink-lemonade" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/PrplPnch.png", link: "https://www.leafly.com/strains/purple-punch" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/PssnFrt.png", link: "https://www.leafly.com/strains/passion-fruit" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/StrDwgGv.png", link: "https://www.leafly.com/strains/stardawg-guava" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/StrwShrtCk.png", link: "https://www.leafly.com/strains/strawberry-shortcake" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/StrwNana.png", link: "https://www.leafly.com/strains/strawberry-banana" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/WddngCake.png", link: "https://www.leafly.com/strains/wedding-cake" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/Gelato.png", link: "https://www.leafly.com/strains/gelato" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/zkttlz.png", link: "https://www.leafly.com/brands/zkittlez" },
   ];
 
   // 2g Duo-Flare™ products
@@ -110,19 +110,15 @@ const Strains = () => {
       </motion.section>
 
       {/* 1g Product Grid */}
-      <motion.section
-        className="py-8 bg-base-200"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ duration: 1 }}
-        viewport={{ once: true }}
-      >
+      <motion.section className="py-8 bg-base-200" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 1 }} viewport={{ once: true }}>
         <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6">
           {cartridges.map((cartridge, index) => (
-            <motion.div
+            <motion.a
               key={index}
-              className="card bg-black text-white shadow-lg border border-gray-800 rounded-lg overflow-hidden"
-              whileHover={{ scale: 1.05 }}
+              href={cartridge.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="card bg-black text-white shadow-lg border border-gray-800 rounded-lg overflow-hidden transition transform hover:scale-105"
             >
               <div className="relative w-full h-[200px] overflow-hidden">
                 <img
@@ -134,7 +130,7 @@ const Strains = () => {
               <div className="px-8 py-4 text-center">
                 <h3 className="text-lg font-bold">{cartridge.title}</h3>
               </div>
-            </motion.div>
+            </motion.a>
           ))}
         </div>
       </motion.section>
