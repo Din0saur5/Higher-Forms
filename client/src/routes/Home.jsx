@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Parallax } from "react-parallax";
+import { Flame, Thermometer, Heart, Coffee } from "lucide-react";
 
 const Home = () => {
   return (
@@ -72,9 +73,9 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Smoke Effect Banner Section */}
-      <Parallax bgImage="/assets/smoke-effect.jpg" strength={300}>
-        <section className="banner-section relative h-80 overflow-hidden">
+       {/* Smoke Effect Banner Section with Cards */}
+       <Parallax bgImage="/assets/smoke-effect.jpg" strength={300}>
+        <section className="banner-section relative h-80 overflow-hidden flex items-center justify-center">
           <video
             className="absolute inset-0 w-full h-full object-cover"
             autoPlay
@@ -84,10 +85,40 @@ const Home = () => {
             <source src="/assets/smoke-effect.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
-          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <h2 className="text-4xl font-bold uppercase text-primary gradient-text">
+          <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center px-6">
+            <h2 className="text-4xl font-bold uppercase text-primary gradient-text mb-8">
               Experience Purity
             </h2>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 w-full max-w-5xl">
+              {[
+                {
+                  icon: <Coffee size={40} />, 
+                  title: "Proprietary Ceramic Core",
+                  text: "All cartridges feature a proprietary ceramic core. The result of thousands of hours of R&D and testing. The porous core has a unique design of microscopic inlets. Smoothly absorbing oil for consistent vaporization, even heating, and flavor retention."
+                },
+                {
+                  icon: <Flame size={40} />, 
+                  title: "Heating Element",
+                  text: "By embedding the heating coil in the center of the ceramic core, hot wires are not directly exposed to your oils. Instead, heat is evenly transmitted throughout the core. No overheating, burnt flavors, or dry hits. The cartridges are never pre-coated with harmful substances such as glycols or glycerin."
+                },
+                {
+                  icon: <Heart size={40} />, 
+                  title: "SmartPulse Power Control",
+                  text: "The longer the session, the hotter cartridges run degrading your oil. The solution? SmartPulse.™ An advanced algorithm designed to stabilize the temperature by sending short intermittent power-pulses to the cartridge. Overheating is avoided and your consumers get to enjoy your full flavor profile. No matter whether they take a single puff, or fifteen."
+                },
+                {
+                  icon: <Thermometer size={40} />, 
+                  title: "Consistent Temperature",
+                  text: "For best flavors you need a cartridge that consistently regulates temperature. Our cartridges are set at 1.4 ohms with an industry leading variance of no more than 0.05 ohms. By keeping ohms consistent in our specifically formulated coil, our cartridges prevent heat spikes, maintaining a consistent temperature for flavor preservation."
+                }
+              ].map((item, index) => (
+                <div key={index} className="bg-gray-100 p-6 rounded-lg shadow-lg text-center">
+                  <div className="flex justify-center mb-4 text-black">{item.icon}</div>
+                  <h3 className="text-xl font-bold text-black mb-2">{item.title}</h3>
+                  <p className="text-gray-700 text-sm">{item.text}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
       </Parallax>
