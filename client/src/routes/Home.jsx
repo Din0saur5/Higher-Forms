@@ -86,7 +86,11 @@ const Home = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 w-full max-w-7xl">
               {[
                 {
-                  icon: <Coffee size={48} className="text-black" />,
+                  icon: <img
+                  src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/icons/newcore.png"
+                  alt="Ceramic Core"
+                  className="h-12 w-12"
+                />,
                   title: "Proprietary Ceramic Core",
                   text: "All cartridges feature a proprietary ceramic core. The result of thousands of hours of R&D and testing. The porous core has a unique design of microscopic inlets. Smoothly absorbing oil for consistent vaporization, even heating, and flavor retention."
                 },
