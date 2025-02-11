@@ -34,13 +34,13 @@ const Navbar = () => {
               className="h-10 w-auto md:h-12"
             />
             <span className="text-lg md:text-xl font-bold font-roboto ml-2">
-              Higher <br className="hidden md:block" /> Forms
+              Higher <br className="hidden lg:block" /> Forms
             </span>
           </NavLink>
         </div>
 
         {/* Navbar Center - Navigation Links (Desktop) */}
-        <div className="navbar-center hidden md:flex">
+        <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal font-roboto space-x-4">
             <li><NavLink to="/verify" className="hover:text-primary transition duration-300">Verify</NavLink></li>
             <li><NavLink to="/strains" className="hover:text-primary transition duration-300">Strains</NavLink></li>
@@ -57,12 +57,13 @@ const Navbar = () => {
               </a>
             </li>
             <li><NavLink to="/lab-results" className="hover:text-primary transition duration-300">Lab Results</NavLink></li>
+            <li><NavLink to="/verify" className="hover:text-primary transition duration-300">Verify</NavLink></li>
             <li><NavLink to="/rewards" className="hover:text-primary transition duration-300">Rewards Shop</NavLink></li>
           </ul>
         </div>
 
         {/* Mobile Dropdown - Fixing Click Issues */}
-        <div className="navbar-end md:hidden relative">
+        <div className="navbar-end lg:hidden relative">
           <button
             onClick={handleClick}
             className="btn btn-ghost btn-circle focus:outline-none"
@@ -110,7 +111,7 @@ const Navbar = () => {
               ) : (
                 <>
                   <li><NavLink to="/profile" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Profile</NavLink></li>
-                  <li><button onClick={handleLogout} className="hover:text-red-500 transition duration-300">Logout</button></li>
+                  <li><button onClick={handleLogout} className="hover:text-red-500 text-error transition duration-300">Logout</button></li>
                 </>
               )}
             </ul>
@@ -118,7 +119,7 @@ const Navbar = () => {
         </div>
 
         {/* Navbar End - Show Login or Profile/Logout */}
-        <div className="navbar-end hidden md:flex">
+        <div className="navbar-end flex">
           {!userData ? (
             <NavLink to="/login" className="btn btn-primary px-4 py-2 rounded-md hover:bg-primary-focus transition duration-300">
               Login

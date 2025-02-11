@@ -13,6 +13,8 @@ import LabResults from "./routes/LabResults";
 import RewardShop from "./routes/RewardShop";
 import { UserProvider } from "./components/UserContext";
 import AgeVerification from "./components/AgeVerification";
+import Verify from "./routes/Verify";
+import WalletAnimation from "./components/FormcoinAddingAni";
 
 const router = createBrowserRouter([
   {
@@ -27,6 +29,8 @@ const router = createBrowserRouter([
       { path: "/login", element: <Log /> },
       { path: "/lab-results", element: <LabResults /> },
       { path: "/rewards", element: <RewardShop /> },
+      {path: "/verify", element: <Verify />},
+      {path: '/coins', element: <WalletAnimation />}
     ],
   },
 ]);
