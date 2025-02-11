@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useUserContext } from "../components/UserContext";
 import { LogOut } from "../../api";
@@ -7,6 +7,7 @@ const Navbar = () => {
   const { userData, setUserData } = useUserContext();
   const [click, setClick] = useState(false);
   const navigate = useNavigate();
+  const menuRef = useRef(null);
 
   const handleLogout = async () => {
     await LogOut();
@@ -18,8 +19,21 @@ const Navbar = () => {
   const handleClick = () => setClick((prev) => !prev);
   const closeMobileMenu = () => setClick(false);
 
+  // Close menu when clicking outside of it
   useEffect(() => {
-    document.body.style.overflow = click ? "hidden" : "auto";
+    const handleOutsideClick = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setClick(false);
+      }
+    };
+
+    if (click) {
+      document.addEventListener("mousedown", handleOutsideClick);
+    } else {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    }
+
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, [click]);
 
   return (
@@ -44,8 +58,8 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Logo (Centered on Mobile) */}
-        <div className="absolute left-1/2 transform -translate-x-1/2 lg:relative lg:left-0">
+        {/* Logo (Always Visible) */}
+        <div className="lg:flex lg:items-center">
           <NavLink to="/" className="flex items-center hover:opacity-80 transition duration-300">
             <img
               src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/HFlogo.png"
@@ -63,25 +77,23 @@ const Navbar = () => {
           <ul className="menu menu-horizontal font-roboto space-x-4">
             <li><NavLink to="/verify" className="hover:text-primary transition duration-300">Verify</NavLink></li>
             <li><NavLink to="/strains" className="hover:text-primary transition duration-300">Strains</NavLink></li>
-            <li>
-              <a
-                href="#contact"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-                }}
-                className="hover:text-primary transition duration-300"
-              >
-                Contact Us
-              </a>
-            </li>
             <li><NavLink to="/lab-results" className="hover:text-primary transition duration-300">Lab Results</NavLink></li>
             <li><NavLink to="/rewards" className="hover:text-primary transition duration-300">Rewards Shop</NavLink></li>
           </ul>
         </div>
 
-        {/* Login/Profile Button (Right Side) */}
-        <div className="navbar-end">
+        {/* Contact Us & Login/Profile (Right Side) */}
+        <div className="navbar-end flex items-center space-x-4">
+          <a
+            href="#contact"
+            onClick={(e) => {
+              e.preventDefault();
+              window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+            }}
+            className="hover:text-primary transition duration-300 hidden lg:block"
+          >
+            Contact Us
+          </a>
           {!userData ? (
             <NavLink to="/login" className="btn btn-primary px-4 py-2 rounded-md hover:bg-primary-focus transition duration-300">
               Login
@@ -94,13 +106,13 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Mobile Dropdown Menu */}
+      {/* Mobile Dropdown Menu (Closes on Click Outside) */}
       <div
         className={`fixed top-0 left-0 w-full h-screen bg-black bg-opacity-75 transition-transform duration-300 ease-in-out ${
           click ? "translate-x-0" : "-translate-x-full"
         } lg:hidden z-50`}
       >
-        <div className="bg-base-100 w-64 h-full shadow-lg p-4">
+        <div ref={menuRef} className="bg-base-100 w-64 h-full shadow-lg p-4 relative">
           {/* Close Button */}
           <button
             onClick={handleClick}
@@ -113,6 +125,8 @@ const Navbar = () => {
           <ul className="menu menu-compact p-2">
             <li><NavLink to="/verify" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Verify</NavLink></li>
             <li><NavLink to="/strains" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Strains</NavLink></li>
+            <li><NavLink to="/lab-results" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Lab Results</NavLink></li>
+            <li><NavLink to="/rewards" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Rewards Shop</NavLink></li>
             <li>
               <a
                 href="#contact"
@@ -126,9 +140,6 @@ const Navbar = () => {
                 Contact Us
               </a>
             </li>
-            <li><NavLink to="/lab-results" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Lab Results</NavLink></li>
-            <li><NavLink to="/rewards" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Rewards Shop</NavLink></li>
-
             {!userData ? (
               <li><NavLink to="/login" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Login</NavLink></li>
             ) : (
