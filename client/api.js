@@ -146,47 +146,52 @@ export const LogOut = async () => {
 };
 
 // ✅ Upload user avatar to storage
-export const uploadUserAvatar = async (userId, file) => {
-  try {
-    const filePath = `avatars/${userId}/${file.name}`;
+export async function uploadProfilePicture(userId, file, currentAvatarUrl) {
+  // Define the new file path
+  const filePath = `profile-pics/${userId}/${file.name}`;
 
-    const { data, error } = await supabase.storage
-      .from("avatars")
+  // If there's an existing profile picture, delete it
+  if (currentAvatarUrl != 'https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/profile-pics/AvatarTemplate.png') {
+      // Extract the file path from the URL (remove the base URL part)
+      const urlParts = new URL(currentAvatarUrl);
+      const pathToDelete = urlParts.pathname.replace('/storage/v1/object/public/profile-pics/', '');
+      console.log(pathToDelete)
+      const { error: deleteError } = await supabase.storage
+          .from('profile-pics')
+          .remove([pathToDelete]);
+
+      if (deleteError) {
+          console.error('Error deleting old profile picture:', deleteError);
+      }
+  }
+
+  // Upload the new profile picture (overwriting if necessary)
+  const { data, error: uploadError } = await supabase.storage
+      .from('profile-pics')
       .upload(filePath, file, { upsert: true });
 
-    if (error) {
-      console.error("Upload error:", error.message);
+  if (uploadError) {
+      console.error('Error uploading profile picture:', uploadError);
       return null;
-    }
-
-    // ✅ Retrieve public URL
-    const { data: publicUrlData } = supabase.storage.from("avatars").getPublicUrl(filePath);
-    return publicUrlData.publicUrl;
-  } catch (error) {
-    console.error("Avatar upload failed:", error.message);
-    return null;
   }
-};
 
-// ✅ Get user avatar
-export const getUserAvatar = async (userId) => {
-  try {
-    const { data, error } = await supabase.storage
-      .from("avatars")
-      .list(`avatars/${userId}`);
+  // Get the public URL of the new profile picture
+  const newAvatarUrl = supabase.storage.from('profile-pics').getPublicUrl(filePath).data.publicUrl;
 
-    if (error) {
-      console.error("Error fetching avatar:", error.message);
-      return "https://via.placeholder.com/150";
-    }
 
-    if (data.length === 0) {
-      return "https://via.placeholder.com/150";
-    }
+console.log(newAvatarUrl)
+  // Update the user's avatar_url in the users table
+  const { error: updateError } = await supabase
+      .from('users')
+      .update({ avatar_url: newAvatarUrl })
+      .eq('id', userId);
 
-    return supabase.storage.from("avatars").getPublicUrl(`avatars/${userId}/${data[0].name}`).publicUrl;
-  } catch (error) {
-    console.error("Avatar fetch failed:", error.message);
-    return "https://via.placeholder.com/150";
+  if (updateError) {
+      console.error('Error updating avatar URL in database:', updateError);
+      return null;
   }
-};
+
+  return newAvatarUrl;
+}
+
+

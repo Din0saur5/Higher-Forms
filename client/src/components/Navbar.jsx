@@ -19,6 +19,11 @@ const Navbar = () => {
   const handleClick = () => setClick((prev) => !prev);
   const closeMobileMenu = () => setClick(false);
 
+  const scroll2Top = (e) => {
+    e.preventDefault()
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   // Close menu when clicking outside of it
   useEffect(() => {
     const handleOutsideClick = (event) => {
@@ -79,21 +84,26 @@ const Navbar = () => {
             <li><NavLink to="/strains" className="hover:text-primary transition duration-300">Strains</NavLink></li>
             <li><NavLink to="/lab-results" className="hover:text-primary transition duration-300">Lab Results</NavLink></li>
             <li><NavLink to="/rewards" className="hover:text-primary transition duration-300">Rewards Shop</NavLink></li>
+            <li>
+            <a
+              href="#contact"
+              onClick={(e) => {
+                e.preventDefault();
+                window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+              
+              }}
+              className="hover:text-primary transition duration-300"
+            >
+              Contact Us
+            </a>
+          </li>
           </ul>
         </div>
 
-        {/* Contact Us & Login/Profile (Right Side) */}
+        {/* & Login/Profile (Right Side) */}
         <div className="navbar-end flex items-center space-x-4">
-          <a
-            href="#contact"
-            onClick={(e) => {
-              e.preventDefault();
-              window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-            }}
-            className="hover:text-primary transition duration-300 hidden lg:block"
-          >
-            Contact Us
-          </a>
+          
+          
           {!userData ? (
             <NavLink to="/login" className="btn btn-primary px-4 py-2 rounded-md hover:bg-primary-focus transition duration-300">
               Login

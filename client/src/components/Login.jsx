@@ -56,7 +56,7 @@ function Login({ setLogin }) {
   type="email"
   name="email"
   placeholder="email"
-  className="input input-bordered"
+  className="input input-bordered mb-4"
   required
   value={loginValue.email}
   onChange={handleChange}

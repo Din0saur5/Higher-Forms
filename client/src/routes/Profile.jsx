@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useUserContext } from "../components/UserContext";
 import { supabase } from "../../api";
 import { useNavigate } from "react-router-dom";
-
+import { uploadProfilePicture } from "../../api";
 const Profile = () => {
   const { userData, setUserData } = useUserContext();
   const navigate = useNavigate();
@@ -44,31 +44,8 @@ const Profile = () => {
     if (!file) return;
 
     setUploading(true);
-    const filePath = `avatars/${userData.id}/${file.name}`;
-
-    // Upload to Supabase Storage
-    const { error } = await supabase.storage
-      .from("avatars")
-      .upload(filePath, file, { upsert: true });
-
-    if (error) {
-      console.error("Upload error:", error.message);
-    } else {
-      // Get public URL
-      const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
-      if (data.publicUrl) {
-        setAvatarUrl(data.publicUrl);
-        await supabase
-          .from("users")
-          .update({ avatar_url: data.publicUrl })
-          .eq("id", userData.id);
-
-        setUserData((prevUserData) => ({
-          ...prevUserData,
-          avatar_url: data.publicUrl,
-        }));
-      }
-    }
+    const Newurl = await uploadProfilePicture(userData.id,file,userData.avatar_url)
+      setAvatarUrl(Newurl)
     setUploading(false);
   };
 
