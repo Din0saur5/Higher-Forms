@@ -39,7 +39,8 @@ const Navbar = () => {
   return (
     <>
       <nav className="navbar bg-base-100 px-4 py-3 fixed top-0 left-0 w-full z-50 shadow-md flex justify-between items-center">
-        {/* Hamburger Menu (Left Side) */}
+        
+        {/* Left Side: Hamburger Menu for Mobile */}
         <div className="lg:hidden flex items-center">
           <button
             onClick={handleClick}
@@ -58,21 +59,21 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Logo - Centered when Menu is Open */}
-        <div className={`absolute left-1/2 transform -translate-x-1/2 transition-all duration-300 lg:relative lg:left-0 ${click ? "z-50" : ""}`}>
+        {/* Center: Logo - Always Visible on Large Screens */}
+        <div className="flex items-center">
           <NavLink to="/" className="flex items-center hover:opacity-80 transition duration-300">
             <img
               src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/HFlogo.png"
               alt="Higher Forms Logo"
-              className={`h-10 w-auto md:h-12 transition-all duration-300 ${click ? "scale-110" : ""}`}
+              className="h-10 w-auto md:h-12"
             />
-            <span className="text-lg md:text-xl font-bold font-roboto ml-2 hidden md:inline">
-              Higher <br className="hidden lg:block" /> Forms
+            <span className="text-lg md:text-xl font-bold font-roboto ml-2">
+              Higher Forms
             </span>
           </NavLink>
         </div>
 
-        {/* Desktop Navigation Links (Hidden on Mobile) */}
+        {/* Desktop Navigation Links */}
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal font-roboto space-x-4">
             <li><NavLink to="/verify" className="hover:text-primary transition duration-300">Verify</NavLink></li>
@@ -82,7 +83,7 @@ const Navbar = () => {
           </ul>
         </div>
 
-        {/* Contact Us & Login/Profile (Right Side) */}
+        {/* Right Side: Contact Us & Login/Profile */}
         <div className="navbar-end flex items-center space-x-4">
           <a
             href="#contact"
@@ -110,10 +111,10 @@ const Navbar = () => {
       {click && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40"
-          onClick={closeMobileMenu} // Clicking outside menu closes it
+          onClick={closeMobileMenu}
         ></div>
       )}
-      
+
       <div
         className={`fixed top-0 left-0 w-64 h-full bg-base-100 shadow-lg p-4 transition-transform duration-300 ease-in-out ${
           click ? "translate-x-0 z-50" : "-translate-x-full"
