@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useUserContext } from "../components/UserContext";
 import { LogOut } from "../../api";
+import ProfilePop from "./ProfilePop";
 
 const Navbar = () => {
   const { userData, setUserData } = useUserContext();
@@ -110,9 +111,14 @@ const Navbar = () => {
               Login
             </NavLink>
           ) : (
-            <NavLink to="/profile" className="btn btn-primary px-4 py-2 rounded-md hover:bg-primary-focus transition duration-300">
+            <div className="dropdown dropdown-end">
+            <div tabIndex={0} role="button" className="btn btn-primary px-4 py-2 rounded-md hover:bg-primary-focus transition duration-300">
               Profile
-            </NavLink>
+            </div>
+            <div className="dropdown-content menu bg-base-100 rounded-box z-[1]  p-2 shadow" tabIndex={0}>
+            <ProfilePop/>
+            </div>
+            </div>
           )}
         </div>
       </nav>
