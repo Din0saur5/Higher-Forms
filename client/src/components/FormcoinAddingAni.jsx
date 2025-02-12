@@ -34,7 +34,7 @@ const WalletAnimation = () => {
         {/* Coins */}
         {coins.map((coin, index) => (
           <motion.div
-            key={index}
+          key={`${animate}-${index}`}
             className="absolute top-6 left-6 w-3 h-3 flex items-center justify-center font-bold text-yellow-400 bg-yellow-600 border-2 border-yellow-400 rounded-full opacity-0"
             initial={{ opacity: 0, scale: 0 }}
             animate={

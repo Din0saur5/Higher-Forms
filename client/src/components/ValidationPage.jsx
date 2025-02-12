@@ -5,13 +5,14 @@ import JSConfetti from 'js-confetti'
 import { motion } from "framer-motion";
 import { BsXOctagon } from "react-icons/bs";
 import { useUserContext } from "./UserContext";
-import WalletAnimation from "./FormcoinAddingAni";
+import { GoInfo } from "react-icons/go";
 
 function ValidationPage({ setValidationPage, clearProduct, product }) {
     const { userData, setUserData } = useUserContext(); 
     const [showToast, setShowToast] = useState(false);
     const [toastType, setToastType] = useState(null); // Tracks which alert to show
     const [animate, setAnimate] = useState(false);
+    const [coins, setCoins] = useState([]);
     const jsConfetti = new JSConfetti()
     const handleBack = () => {
         setValidationPage(false);
@@ -31,14 +32,15 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
     };
 
 
-    const coins = Array.from({ length: 25 }, (_, i) => ({
-        x: Math.random() * 500, // Slight rightward spread
-        y: -Math.random() * 1000 - 500, // Increased height
-        delay: Math.random() * 0.5, // Random delay for natural effect
-      }));
-
+    
     const handleRedeem = ()=> {
-        setAnimate(true)
+        setAnimate(false); 
+        setCoins(Array.from({ length: 25 }, (_, i) => ({
+            x: Math.random() * 500,
+            y: -Math.random() * 1000 - 500,
+            delay: Math.random() * 0.5,
+        })));
+        setTimeout(() => setAnimate(true), 50);
     }
 
     useEffect(() => {
@@ -88,6 +90,7 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
     }[toastType] || "text-neutral";
 
     return (
+       
         <div className={`relative  h-full sm:h-screen text-white ${borderColor} px-[10%] pt-0 pb-[10%] z-10  ${shadowColor}  `}>
             {/* Back Button */}
             <button
@@ -187,7 +190,9 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
                             
                             
                             userData? (
-                            <button className="btn btn-success mb-48">Redeem</button>
+                                <div className="tooltip " data-tip="Use Form Coins to redeem rewards in the Rewards shop!">
+                                <motion.button onClick={()=>handleRedeem()} className="btn btn-success mb-48">Redeem {`(+${product.points} points)`}</motion.button>
+                                </div>
                             ):
                             (
                             <div className="tooltip tooltip-bottom" data-tip="Signup or Login to Redeem Form Points for rewards">
@@ -221,20 +226,9 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
                             userData? (
                               
                             <div className="tooltip " data-tip="Use Form Coins to redeem rewards in the Rewards shop!">
+                            
                             <motion.button onClick={()=>handleRedeem()} className="btn btn-success mb-48">Redeem {`(+${product.points} points)`}</motion.button>
-                            </div>
-                          
-                     
-                            ):
-                            (
-                               
-                            <div className="tooltip" data-tip="Signup or Login to Redeem Form Coins for rewards">
-                                <button className="btn btn-disabled mb-48">Redeem</button>
-                            </div>
-                        
-                            ))
-                            }
-                                   {coins.map((coin, index) => (
+                            {coins.map((coin, index) => (
                                 <motion.div
                                   key={index}
                                   className="absolute top-6 left-6 w-3 h-3 flex items-center justify-center font-bold text-yellow-400 bg-yellow-600 border-2 border-yellow-400 rounded-full opacity-0"
@@ -257,9 +251,22 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
                                   }}
                                   onAnimationComplete={() => setAnimate(false)}
                                 >
-                                  $
+                                  
                                 </motion.div>
                               ))}
+                            </div>
+                          
+                     
+                            ):
+                            (
+                               
+                            <div className="tooltip" data-tip="Signup or Login to Redeem Form Coins for rewards">
+                                <button className="btn btn-disabled mb-48">Redeem</button>
+                            </div>
+                        
+                            ))
+                            }
+                                   
                         </div>
 
                     )) : (
@@ -276,6 +283,7 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
                     )}
             </div>
         </div>
+       
     );
 }
 
