@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect } from "react";
+// import { GoGear } from "react-icons/go";
 import { useUserContext } from "../components/UserContext";
 import { supabase } from "../../api";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { uploadProfilePicture } from "../../api";
 export default function ProfilePop() {
   const { userData, setUserData } = useUserContext();
@@ -59,7 +60,8 @@ export default function ProfilePop() {
         {/* Welcome Message (White Text) */}
         <h1 className="text-2xl font-bold text-white">
           Welcome, {userData?.display_name || "Guest"}!
-        </h1>
+        </h1> 
+        {/* <NavLink to={'/'} className="text-gray-300 absolute top-4 right-4 text-lg hover:text-primary transition duration-300 rounded-full"><GoGear /></NavLink> */}
         <p className="text-sm text-gray-400">Member since: {new Date(userData?.created_at).toLocaleDateString()}</p>
 
         {/* Profile Image Upload */}
@@ -93,7 +95,12 @@ export default function ProfilePop() {
           <p className="text-2xl font-semibold">{userData?.points || 0}</p>
         </div>
 
-        {/* Purchase History Section */}
+
+        {/* Rank */}
+            <div className="mt-4 text-gray-300 text-left w-full px-4">
+            <p className="text-lg"><strong>Rank:</strong> {userData?.Rank || "Unranked"}</p>
+            </div>
+        {/* Purchase History Section
         <div className="mt-6 w-full text-left">
           <h3 className="text-lg font-bold text-primary">Purchase & Rewards History</h3>
           {purchaseHistory.length > 0 ? (
@@ -111,7 +118,7 @@ export default function ProfilePop() {
           ) : (
             <p className="text-gray-500 text-sm mt-2">No purchases or redeemed rewards yet.</p>
           )}
-        </div>
+        </div> */}
 
         {/* Logout Button */}
         <button
