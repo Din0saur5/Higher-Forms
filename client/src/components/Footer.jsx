@@ -5,10 +5,10 @@ const Footer = () => {
     <>
       {/* Contact Section */}
       <section id="contact" className="py-16 bg-black text-white">
-        <div className="container mx-auto flex flex-col md:flex-row justify-between items-start gap-12">
+        <div className="container mx-auto flex flex-col md:flex-row justify-center items-center gap-12 px-4 md:px-8">
           
-          {/* Contact Info - Kept Separate but Aligned */}
-          <div className="flex-1 space-y-4">
+          {/* Contact Info and Social Media - Adjusted for Responsiveness */}
+          <div className="flex-1 space-y-4 text-center md:text-left flex flex-col items-center md:items-start w-full md:w-auto">
             <h3 className="text-2xl font-bold">HIGHER FORMS</h3>
 
             <p className="flex items-center text-sm">
@@ -32,15 +32,15 @@ const Footer = () => {
               </a>
             </p>
 
-            {/* Smaller Logo (Below Contact Info) */}
-            <div className="mt-4">
-              <img src="/HFCC.png" alt="Higher Forms Cannabis Logo" className="w-20 mx-auto md:mx-0" />
+            {/* Smaller Logo - Centered for Mobile */}
+            <div className="mt-4 flex justify-center md:justify-start w-full">
+              <img src="/HFCC.png" alt="Higher Forms Cannabis Logo" className="w-24 md:w-28" />
             </div>
           </div>
 
-          {/* Contact Form - Kept Separate but Aligned */}
-          <form className="flex-1 space-y-6 w-full max-w-lg">
-            {/* First Name & Last Name (Lined up with Contact Info) */}
+          {/* Contact Form - Adjusted Width for Small Screens */}
+          <form className="flex-1 space-y-6 w-full max-w-lg md:max-w-xl">
+            {/* First Name & Last Name */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="first-name" className="block text-sm font-bold">
@@ -50,7 +50,7 @@ const Footer = () => {
                   id="first-name"
                   type="text"
                   placeholder="Enter your first name"
-                  className="input input-bordered w-full text-lg p-3"
+                  className="input input-bordered w-full text-lg p-4"
                 />
               </div>
               <div>
@@ -61,12 +61,12 @@ const Footer = () => {
                   id="last-name"
                   type="text"
                   placeholder="Enter your last name"
-                  className="input input-bordered w-full text-lg p-3"
+                  className="input input-bordered w-full text-lg p-4"
                 />
               </div>
             </div>
 
-            {/* Email & Subject (Lined up with Social Media) */}
+            {/* Email & Subject */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
                 <label htmlFor="email" className="block text-sm font-bold">
@@ -76,7 +76,7 @@ const Footer = () => {
                   id="email"
                   type="email"
                   placeholder="Enter your email"
-                  className="input input-bordered w-full text-lg p-3"
+                  className="input input-bordered w-full text-lg p-4"
                 />
               </div>
               <div>
@@ -87,7 +87,7 @@ const Footer = () => {
                   id="subject"
                   type="text"
                   placeholder="Enter subject"
-                  className="input input-bordered w-full text-lg p-3"
+                  className="input input-bordered w-full text-lg p-4"
                 />
               </div>
             </div>
@@ -100,25 +100,25 @@ const Footer = () => {
               <textarea
                 id="message"
                 placeholder="Enter your message"
-                className="textarea textarea-bordered w-full text-lg p-3 h-32"
+                className="textarea textarea-bordered w-full text-lg p-4 h-32"
               ></textarea>
             </div>
 
-            <button type="submit" className="btn btn-primary w-full text-lg p-3">
+            <button type="submit" className="btn btn-primary w-full text-lg p-4">
               Submit
             </button>
           </form>
         </div>
       </section>
 
-      {/* Footer Section */}
+      {/* Footer Section - Centered for Mobile */}
       <footer className="bg-black text-white py-6">
-        <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
+        <div className="container mx-auto flex flex-col justify-center items-center gap-4 px-4">
           {/* Footer Logo */}
-          <img src="/HFlogo.png" alt="Higher Forms Logo" className="w-16 md:w-20" />
+          <img src="/HFlogo.png" alt="Higher Forms Logo" className="w-20" />
 
           {/* Footer Text */}
-          <p className="text-sm text-center md:text-right">
+          <p className="text-sm text-center">
             &copy; {new Date().getFullYear()} Higher Forms. All Rights Reserved.
           </p>
         </div>
