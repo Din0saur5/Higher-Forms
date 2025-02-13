@@ -11,10 +11,19 @@ import Strains from "./routes/Strains";
 import Log from "./routes/Log"; 
 import LabResults from "./routes/LabResults";
 import RewardShop from "./routes/RewardShop";
-import { UserProvider } from "./components/UserContext";
+import Checkout from "./routes/Checkout";
+import Confirmation from "./routes/Confirmation";
+import Cart from "./routes/Cart";
+import { UserProvider, useUserContext } from "./components/UserContext";
 import AgeVerification from "./components/AgeVerification";
 import Verify from "./routes/Verify";
 import WalletAnimation from "./components/FormcoinAddingAni";
+
+// Higher-Order Component (HOC) for authentication check
+const ProtectedRoute = ({ element }) => {
+  const { userData } = useUserContext();
+  return userData ? element : <Log />;  
+};
 
 const router = createBrowserRouter([
   {
@@ -28,9 +37,12 @@ const router = createBrowserRouter([
       { path: "/strains", element: <Strains /> },
       { path: "/login", element: <Log /> },
       { path: "/lab-results", element: <LabResults /> },
-      { path: "/rewards", element: <RewardShop /> },
-      {path: "/verify", element: <Verify />},
-      {path: '/coins', element: <WalletAnimation />}
+      { path: "/rewards", element: <ProtectedRoute element={<RewardShop />} /> }, 
+      { path: "/checkout", element: <ProtectedRoute element={<Checkout />} /> },
+      { path: "/confirmation", element: <ProtectedRoute element={<Confirmation />} /> },
+      { path: "/cart", element: <Cart /> },
+      { path: "/verify", element: <Verify /> },
+      { path: "/coins", element: <WalletAnimation /> }
     ],
   },
 ]);

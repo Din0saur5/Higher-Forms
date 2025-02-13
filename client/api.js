@@ -1,4 +1,3 @@
-// ✅ Create Supabase client and export it properly
 import { createClient } from "@supabase/supabase-js";
 
 export const supabase = createClient(
@@ -6,21 +5,20 @@ export const supabase = createClient(
   import.meta.env.VITE_ANON 
 );
 
-// ✅ Get currently logged-in user from auth
+// ✅ Get currently logged-in user, including avatar URL, form coin balance, and cart
 export const getLoggedInUser = async () => {
   const { data, error } = await supabase.auth.getUser();
-  if (error) {
-    console.error("Error fetching user:", error.message);
+  if (error || !data?.user) {
+    console.error("Error fetching user or session missing:", error?.message || "No session found");
     return null;
   }
-  
-  const user = data?.user;
-  if (!user) return null;
 
-  // ✅ Fetch user data from "users" table
+  const user = data.user;
+
+  // ✅ Fetch user data (Updated: Removed 'email' and used 'form_coins_total')
   const { data: userData, error: fetchError } = await supabase
     .from("users")
-    .select("*")
+    .select("id, display_name, avatar_url, form_coins_total")
     .eq("id", user.id)
     .single();
 
@@ -32,21 +30,11 @@ export const getLoggedInUser = async () => {
   return { ...user, ...userData };
 };
 
-// ✅ Change user email
-export const changeUserEmail = async (newEmail) => {
-  const { data, error } = await supabase.auth.updateUser({ email: newEmail });
-  if (error) {
-    console.error("Error changing email:", error.message);
-    return null;
-  }
-  return data;
-};
-
 // ✅ Get public user data from "users" table
 export const getPublicUserById = async (id) => {
   const { data, error } = await supabase
     .from("users")
-    .select("*")
+    .select("id, display_name, avatar_url")
     .eq("id", id)
     .single();
 
@@ -88,10 +76,10 @@ export const SignUp = async (email, password, displayName) => {
     const userId = authData.user?.id;
     if (!userId) throw new Error("User ID not found after signup.");
 
-    // ✅ Insert or update "users" table
+    // ✅ Insert or update "users" table with default form coins
     const { data, error } = await supabase
       .from("users")
-      .upsert([{ id: userId, display_name: displayName, points: 0 }], { onConflict: ["id"] });
+      .upsert([{ id: userId, display_name: displayName, form_coins_total: 100 }], { onConflict: ["id"] });
 
     if (error) {
       console.error("Error saving display name:", error.message);
@@ -121,16 +109,16 @@ export const LogIn = async (email, password) => {
     const userId = data.user?.id;
     if (!userId) throw new Error("User ID not found.");
 
-    // ✅ Fetch user details from "users" table
+    // ✅ Fetch user details (Updated: Removed 'email' and used 'form_coins_total')
     const { data: userData, error: fetchError } = await supabase
       .from("users")
-      .select("*")
+      .select("id, display_name, avatar_url, form_coins_total")
       .eq("id", userId)
       .single();
 
     if (fetchError) {
       console.error("Error fetching user data:", fetchError.message);
-      return { ...data.user, display_name: "", points: 0 };
+      return { ...data.user, display_name: "", form_coins_total: 0 };
     }
 
     return { ...data.user, ...userData };
@@ -145,53 +133,92 @@ export const LogOut = async () => {
   await supabase.auth.signOut();
 };
 
-// ✅ Upload user avatar to storage
-export async function uploadProfilePicture(userId, file, currentAvatarUrl) {
-  // Define the new file path
-  const filePath = `profile-pics/${userId}/${file.name}`;
+// ✅ Function to update Form Coin balance (Updated: 'form_coins' → 'form_coins_total')
+export const updateFormCoins = async (userId, newBalance) => {
+  const { data, error } = await supabase
+    .from("users")
+    .update({ form_coins_total: newBalance })
+    .eq("id", userId)
+    .select();
 
-  // If there's an existing profile picture, delete it
-  if (currentAvatarUrl != 'https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/profile-pics/AvatarTemplate.png') {
-      // Extract the file path from the URL (remove the base URL part)
-      const urlParts = new URL(currentAvatarUrl);
-      const pathToDelete = urlParts.pathname.replace('/storage/v1/object/public/profile-pics/', '');
-      console.log(pathToDelete)
-      const { error: deleteError } = await supabase.storage
-          .from('profile-pics')
-          .remove([pathToDelete]);
-
-      if (deleteError) {
-          console.error('Error deleting old profile picture:', deleteError);
-      }
+  if (error) {
+    console.error("Error updating form coins:", error.message);
+    return null;
   }
+  return data;
+};
 
-  // Upload the new profile picture (overwriting if necessary)
-  const { data, error: uploadError } = await supabase.storage
-      .from('profile-pics')
+// ✅ Function to update user cart
+export const updateCart = async (userId, cartItems) => {
+  const { error } = await supabase
+    .from("users")
+    .update({ cart: cartItems })
+    .eq("id", userId);
+
+  if (error) {
+    console.error("Error updating cart:", error.message);
+    return null;
+  }
+  return cartItems;
+};
+
+// ✅ Upload user avatar to storage (Fixed URL retrieval)
+export async function uploadProfilePicture(userId, file, currentAvatarUrl) {
+  try {
+    if (!file) {
+      console.error("No file selected.");
+      return null;
+    }
+
+    // ✅ Define new file path
+    const filePath = `profile-pics/${userId}/${file.name}`;
+
+    // ✅ Delete old profile picture if it exists
+    if (currentAvatarUrl && !currentAvatarUrl.includes("AvatarTemplate.png")) {
+      try {
+        const urlParts = new URL(currentAvatarUrl);
+        const pathToDelete = urlParts.pathname.split("/profile-pics/")[1];
+        if (pathToDelete) {
+          await supabase.storage.from("profile-pics").remove([pathToDelete]);
+        }
+      } catch (urlError) {
+        console.warn("Error parsing URL for deletion:", urlError);
+      }
+    }
+
+    // ✅ Upload new profile picture
+    const { data, error: uploadError } = await supabase.storage
+      .from("profile-pics")
       .upload(filePath, file, { upsert: true });
 
-  if (uploadError) {
-      console.error('Error uploading profile picture:', uploadError);
+    if (uploadError) {
+      console.error("Error uploading profile picture:", uploadError);
       return null;
-  }
+    }
 
-  // Get the public URL of the new profile picture
-  const newAvatarUrl = supabase.storage.from('profile-pics').getPublicUrl(filePath).data.publicUrl;
+    // ✅ Get public URL correctly
+    const { data: publicUrlData } = supabase.storage.from("profile-pics").getPublicUrl(filePath);
+    if (!publicUrlData) {
+      console.error("Error retrieving uploaded file URL.");
+      return null;
+    }
 
+    const newAvatarUrl = publicUrlData.publicUrl;
 
-console.log(newAvatarUrl)
-  // Update the user's avatar_url in the users table
-  const { error: updateError } = await supabase
-      .from('users')
+    // ✅ Update avatar URL in database
+    const { error: updateError } = await supabase
+      .from("users")
       .update({ avatar_url: newAvatarUrl })
-      .eq('id', userId);
+      .eq("id", userId);
 
-  if (updateError) {
-      console.error('Error updating avatar URL in database:', updateError);
+    if (updateError) {
+      console.error("Error updating avatar URL in database:", updateError);
       return null;
+    }
+
+    return newAvatarUrl;
+  } catch (error) {
+    console.error("Unexpected error uploading profile picture:", error);
+    return null;
   }
-
-  return newAvatarUrl;
 }
-
-

@@ -1,31 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useUserContext } from "../components/UserContext";
-import { LogOut } from "../../api";
 import ProfilePop from "./ProfilePop";
 
 const Navbar = () => {
-  const { userData, setUserData } = useUserContext();
+  const { userData, setUserData, formCoins, handleLogout } = useUserContext();
   const [click, setClick] = useState(false);
   const navigate = useNavigate();
   const menuRef = useRef(null);
 
-  const handleLogout = async () => {
-    await LogOut();
-    setUserData(null);
-    setClick(false); // Ensure menu closes on logout
-    navigate("/login");
-  };
-
   const handleClick = () => setClick((prev) => !prev);
   const closeMobileMenu = () => setClick(false);
 
-  const scroll2Top = (e) => {
-    e.preventDefault()
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
+  const scrollToBottom = (e) => {
+    e.preventDefault();
+    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+  };
 
-  // Close menu when clicking outside of it
+  // Close mobile menu when clicking outside of it
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -45,7 +37,6 @@ const Navbar = () => {
   return (
     <>
       <nav className="navbar bg-base-100 px-4 py-3 fixed top-0 left-0 w-full z-50 shadow-md flex justify-between items-center">
-        
         {/* Left Side: Hamburger Menu for Mobile */}
         <div className="lg:hidden flex items-center">
           <button
@@ -86,38 +77,43 @@ const Navbar = () => {
             <li><NavLink to="/strains" className="hover:text-primary transition duration-300">Strains</NavLink></li>
             <li><NavLink to="/lab-results" className="hover:text-primary transition duration-300">Lab Results</NavLink></li>
             <li><NavLink to="/rewards" className="hover:text-primary transition duration-300">Rewards Shop</NavLink></li>
+            <li><NavLink to="/cart" className="hover:text-primary transition duration-300">Cart</NavLink></li>
             <li>
-            <a
-              href="#contact"
-              onClick={(e) => {
-                e.preventDefault();
-                window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-              
-              }}
-              className="hover:text-primary transition duration-300"
-            >
-              Contact Us
-            </a>
-          </li>
+              <a
+                href="#contact"
+                onClick={scrollToBottom}
+                className="hover:text-primary transition duration-300"
+              >
+                Contact Us
+              </a>
+            </li>
           </ul>
         </div>
 
-        {/* & Login/Profile (Right Side) */}
+        {/* Right Side: Form Coins & Profile/Login */}
         <div className="navbar-end flex items-center space-x-4">
-          
-          
+          {userData && (
+            <span className="text-sm font-bold text-gray-700">💰 {formCoins} Coins</span>
+          )}
+
           {!userData ? (
             <NavLink to="/login" className="btn btn-primary px-4 py-2 rounded-md hover:bg-primary-focus transition duration-300">
               Login
             </NavLink>
           ) : (
             <div className="dropdown dropdown-end">
-            <div tabIndex={0} role="button" className="btn btn-primary px-4 py-2 rounded-md hover:bg-primary-focus transition duration-300">
-              Profile
-            </div>
-            <div className="dropdown-content menu bg-base-100 rounded-box z-[1]  p-2 shadow" tabIndex={0}>
-            <ProfilePop/>
-            </div>
+              <div tabIndex={0} role="button" className="btn btn-primary px-4 py-2 rounded-md hover:bg-primary-focus transition duration-300">
+                Profile
+              </div>
+              <div className="dropdown-content menu bg-base-100 rounded-box z-[1] p-2 shadow" tabIndex={0}>
+                <ProfilePop />
+                <button
+                  onClick={handleLogout}
+                  className="text-red-500 mt-2 text-sm hover:text-red-700 transition duration-300"
+                >
+                  Logout
+                </button>
+              </div>
             </div>
           )}
         </div>
@@ -151,6 +147,7 @@ const Navbar = () => {
           <li><NavLink to="/strains" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Strains</NavLink></li>
           <li><NavLink to="/lab-results" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Lab Results</NavLink></li>
           <li><NavLink to="/rewards" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Rewards Shop</NavLink></li>
+          <li><NavLink to="/cart" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Cart</NavLink></li>
           <li>
             <a
               href="#contact"

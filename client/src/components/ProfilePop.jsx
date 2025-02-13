@@ -43,17 +43,21 @@ export default function ProfilePop() {
 
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
-    if (!file) return;
-
+    if (!file || !userData) return;
+  
     setUploading(true);
-    const Newurl = await uploadProfilePicture(userData.id,file,userData.avatar_url)
-      setAvatarUrl(Newurl)
+    const newUrl = await uploadProfilePicture(userData.id, file, avatarUrl);
+  
+    if (newUrl) {
+      setAvatarUrl(newUrl);
+      setUserData({ ...userData, avatar_url: newUrl }); 
+    } else {
+      alert("Error uploading profile picture. Please try again.");
+    }
+  
     setUploading(false);
   };
-
-  if (!userData) {
-    return null;
-  }
+  
 
   return (
     <div className="bg-base-100 p-6 rounded-xl shadow-lg w-full max-w-md text-center border border-gray-700">
