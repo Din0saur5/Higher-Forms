@@ -157,7 +157,7 @@ const CodeVerification = ({ setValidationPage, setProduct, supabase }) => {
             )}
             <div className="bg-primary shadow-md shadow-gray-500 border border-gray-500 rounded-lg border- p-6 w-full max-w-md">
                 <h2 className="text-2xl font-semibold text-center mb-4">Verify Your Product</h2>
-                <p className="text-white text-center mb-6"> {/* Changed text to white */}
+                <p className="text-white text-center mb-6"> 
                     Enter the 6-character code found inside your product's box.
                 </p>
                 <form onSubmit={(e) => handleSubmit(e)}>
