@@ -56,7 +56,7 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Center: Logo - Always Visible on Large Screens */}
+        {/* Center: Logo */}
         <div className="flex items-center">
           <NavLink to="/" className="flex items-center hover:opacity-80 transition duration-300">
             <img
@@ -64,7 +64,7 @@ const Navbar = () => {
               alt="Higher Forms Logo"
               className="h-10 w-auto md:h-12"
             />
-            <span className="text-lg md:text-xl font-bold font-roboto ml-2">
+            <span className="text-lg md:text-xl font-bold font-roboto ml-2 text-white">
               Higher Forms
             </span>
           </NavLink>
@@ -72,17 +72,28 @@ const Navbar = () => {
 
         {/* Desktop Navigation Links */}
         <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal font-roboto space-x-4">
-            <li><NavLink to="/verify" className="hover:text-primary transition duration-300">Verify</NavLink></li>
-            <li><NavLink to="/strains" className="hover:text-primary transition duration-300">Strains</NavLink></li>
-            <li><NavLink to="/lab-results" className="hover:text-primary transition duration-300">Lab Results</NavLink></li>
-            <li><NavLink to="/rewards" className="hover:text-primary transition duration-300">Rewards Shop</NavLink></li>
-            <li><NavLink to="/cart" className="hover:text-primary transition duration-300">Cart</NavLink></li>
+          <ul className="menu menu-horizontal font-roboto space-x-6">
+            {[
+              { name: "Verify", path: "/verify" },
+              { name: "Strains", path: "/strains" },
+              { name: "Lab Results", path: "/lab-results" },
+              { name: "Rewards Shop", path: "/rewards" },
+              { name: "Cart", path: "/cart" }
+            ].map((item, index) => (
+              <li key={index}>
+                <NavLink
+                  to={item.path}
+                  className="text-gray-300 hover:text-white transition duration-300"
+                >
+                  {item.name}
+                </NavLink>
+              </li>
+            ))}
             <li>
               <a
                 href="#contact"
                 onClick={scrollToBottom}
-                className="hover:text-primary transition duration-300"
+                className="text-gray-300 hover:text-white transition duration-300"
               >
                 Contact Us
               </a>
@@ -93,23 +104,30 @@ const Navbar = () => {
         {/* Right Side: Form Coins & Profile/Login */}
         <div className="navbar-end flex items-center space-x-4">
           {userData && (
-            <span className="text-sm font-bold text-gray-700">💰 {formCoins} Coins</span>
+            <span className="text-sm font-bold text-gray-400">💰 {formCoins} Coins</span>
           )}
 
           {!userData ? (
-            <NavLink to="/login" className="btn btn-primary px-4 py-2 rounded-md hover:bg-primary-focus transition duration-300">
+            <NavLink
+              to="/login"
+              className="btn bg-primary text-white px-4 py-2 rounded-md hover:bg-opacity-80 transition duration-300"
+            >
               Login
             </NavLink>
           ) : (
             <div className="dropdown dropdown-end">
-              <div tabIndex={0} role="button" className="btn btn-primary px-4 py-2 rounded-md hover:bg-primary-focus transition duration-300">
+              <div
+                tabIndex={0}
+                role="button"
+                className="btn bg-primary text-white px-4 py-2 rounded-md hover:bg-opacity-80 transition duration-300"
+              >
                 Profile
               </div>
               <div className="dropdown-content menu bg-base-100 rounded-box z-[1] p-2 shadow" tabIndex={0}>
                 <ProfilePop />
                 <button
                   onClick={handleLogout}
-                  className="text-red-500 mt-2 text-sm hover:text-red-700 transition duration-300"
+                  className="text-red-400 mt-2 text-sm hover:text-red-600 transition duration-300"
                 >
                   Logout
                 </button>
@@ -119,7 +137,7 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Mobile Dropdown Menu (Closes on Click Outside) */}
+      {/* Mobile Dropdown Menu */}
       {click && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40"
@@ -136,18 +154,30 @@ const Navbar = () => {
         {/* Close Button */}
         <button
           onClick={handleClick}
-          className="absolute top-4 right-4 text-black focus:outline-none"
+          className="absolute top-4 right-4 text-white focus:outline-none"
         >
           ✕
         </button>
 
         {/* Mobile Menu Items */}
         <ul className="menu menu-compact p-2">
-          <li><NavLink to="/verify" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Verify</NavLink></li>
-          <li><NavLink to="/strains" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Strains</NavLink></li>
-          <li><NavLink to="/lab-results" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Lab Results</NavLink></li>
-          <li><NavLink to="/rewards" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Rewards Shop</NavLink></li>
-          <li><NavLink to="/cart" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Cart</NavLink></li>
+          {[
+            { name: "Verify", path: "/verify" },
+            { name: "Strains", path: "/strains" },
+            { name: "Lab Results", path: "/lab-results" },
+            { name: "Rewards Shop", path: "/rewards" },
+            { name: "Cart", path: "/cart" }
+          ].map((item, index) => (
+            <li key={index}>
+              <NavLink
+                to={item.path}
+                onClick={closeMobileMenu}
+                className="text-gray-300 hover:text-white transition duration-300"
+              >
+                {item.name}
+              </NavLink>
+            </li>
+          ))}
           <li>
             <a
               href="#contact"
@@ -156,18 +186,37 @@ const Navbar = () => {
                 window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
                 closeMobileMenu();
               }}
-              className="hover:text-primary transition duration-300"
+              className="text-gray-300 hover:text-white transition duration-300"
             >
               Contact Us
             </a>
           </li>
           {!userData ? (
-            <li><NavLink to="/login" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Login</NavLink></li>
+            <li>
+              <NavLink
+                to="/login"
+                onClick={closeMobileMenu}
+                className="text-gray-300 hover:text-white transition duration-300"
+              >
+                Login
+              </NavLink>
+            </li>
           ) : (
             <>
-              <li><NavLink to="/profile" onClick={closeMobileMenu} className="hover:text-primary transition duration-300">Profile</NavLink></li>
               <li>
-                <button onClick={handleLogout} className="hover:text-red-500 text-error transition duration-300">
+                <NavLink
+                  to="/profile"
+                  onClick={closeMobileMenu}
+                  className="text-gray-300 hover:text-white transition duration-300"
+                >
+                  Profile
+                </NavLink>
+              </li>
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className="text-red-400 hover:text-red-600 transition duration-300"
+                >
                   Logout
                 </button>
               </li>
