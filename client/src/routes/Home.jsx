@@ -76,7 +76,7 @@ const Home = () => {
        {/* Smoke Effect Banner Section with Cards */}
        <Parallax bgImage="/assets/smoke-effect.jpg" strength={300}>
         <section className="relative flex items-center justify-center w-full max-h-[640px] h-[640px] px-[5%]">
-          <video className="absolute inset-0 w-full h-full object-cover" autoPlay loop muted>
+          <video className="absolute inset-0 w-full h-full object-cover" autoPlay loop muted playsInline>
             <source src="/assets/smoke-effect.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
