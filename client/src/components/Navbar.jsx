@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useUserContext } from "../components/UserContext";
 import ProfilePop from "./ProfilePop";
+import { HiOutlineShoppingCart } from "react-icons/hi2";
 
 const Navbar = () => {
   const { userData, formCoins, handleLogout } = useUserContext();
@@ -68,7 +69,7 @@ const Navbar = () => {
               { name: "Strains", path: "/strains" },
               { name: "Lab Results", path: "/lab-results" },
               { name: "Rewards Shop", path: "/rewards" },
-              { name: "Cart", path: "/cart" }
+              
             ].map((item, index) => (
               <li key={index}>
                 <NavLink to={item.path} className="text-gray-300 hover:text-white transition duration-300">
@@ -86,7 +87,9 @@ const Navbar = () => {
 
         {/* Right Side: Profile/Login */}
         <div className="navbar-end flex items-center space-x-4">
-          {userData && <span className="text-sm font-bold text-gray-400">💰 {formCoins} Coins</span>}
+          {userData && (
+            <button className="text-sm font-bold btn rounded-full text-xl hover:shadow-sm hover:shadow-white text-gray-400"><HiOutlineShoppingCart /></button>
+          )}
 
           {!userData ? (
             <NavLink to="/login" className="btn bg-primary text-white px-4 py-2 rounded-md hover:bg-opacity-80 transition duration-300">
@@ -94,17 +97,18 @@ const Navbar = () => {
             </NavLink>
           ) : (
             <div className="dropdown dropdown-end">
-  <div
-    tabIndex={0}
-    role="button"
-    className="btn bg-primary text-white px-4 py-2 rounded-md hover:bg-opacity-80 transition duration-300"
-  >
-    Profile
-  </div>
-  <div className="dropdown-content menu bg-base-100 rounded-box z-[1] p-2 shadow" tabIndex={0}>
-    <ProfilePop /> 
-  </div>
-</div>
+              <div
+                tabIndex={0}
+                role="button"
+                className="btn bg-primary text-white px-4 py-2 rounded-md hover:bg-opacity-80 transition duration-300"
+              >
+                Profile
+              </div>
+              <div className="dropdown-content menu bg-base-100 rounded-box z-[1] p-2 shadow" tabIndex={0}>
+                <ProfilePop />
+                
+              </div>
+            </div>
           )}
         </div>
       </nav>
@@ -127,7 +131,7 @@ const Navbar = () => {
             { name: "Strains", path: "/strains" },
             { name: "Lab Results", path: "/lab-results" },
             { name: "Rewards Shop", path: "/rewards" },
-            { name: "Cart", path: "/cart" }
+            
           ].map((item, index) => (
             <li key={index}>
               <NavLink to={item.path} onClick={closeMobileMenu} className="text-gray-300 hover:text-white transition duration-300">
