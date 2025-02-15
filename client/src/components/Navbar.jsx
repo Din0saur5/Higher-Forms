@@ -94,16 +94,17 @@ const Navbar = () => {
             </NavLink>
           ) : (
             <div className="dropdown dropdown-end">
-              <div tabIndex={0} role="button" className="btn bg-primary text-white px-4 py-2 rounded-md hover:bg-opacity-80 transition duration-300">
-                Profile
-              </div>
-              <div className="dropdown-content menu bg-base-100 rounded-box z-[1] p-2 shadow" tabIndex={0}>
-                <ProfilePop />
-                <button onClick={handleLogout} className="text-red-400 mt-2 text-sm hover:text-red-600 transition duration-300">
-                  Logout
-                </button>
-              </div>
-            </div>
+  <div
+    tabIndex={0}
+    role="button"
+    className="btn bg-primary text-white px-4 py-2 rounded-md hover:bg-opacity-80 transition duration-300"
+  >
+    Profile
+  </div>
+  <div className="dropdown-content menu bg-base-100 rounded-box z-[1] p-2 shadow" tabIndex={0}>
+    <ProfilePop /> 
+  </div>
+</div>
           )}
         </div>
       </nav>
