@@ -1,5 +1,5 @@
 import { UserProvider } from "./UserContext"; // ✅ Correct import
-import { Outlet, useLoaderData, useNavigate } from "react-router-dom";
+import { Outlet, ScrollRestoration, useLoaderData, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 import Footer from "./Footer";
 import { useEffect, useState } from "react";
@@ -16,11 +16,14 @@ const AppLayout = () => {
   const [userData, setUserData] = useState(user);
 
   return (
-    <UserProvider> {/* ✅ Wrap the entire layout in UserProvider */}
+    <>
+    <ScrollRestoration/>
+    <UserProvider> {/* ✅ Wrap the entire layout in UserProvider */}   
       <Navbar />
       <Outlet />
       <Footer />
     </UserProvider>
+    </>
   );
 };
 

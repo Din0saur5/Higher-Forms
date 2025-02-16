@@ -2,9 +2,9 @@
 import React, { useState, useEffect } from "react";
 // import { GoGear } from "react-icons/go";
 import { useUserContext } from "../components/UserContext";
-import { supabase } from "../../api";
+
 import { NavLink, useNavigate } from "react-router-dom";
-import { uploadProfilePicture } from "../../api";
+import { LogOut, uploadProfilePicture } from "../../api";
 export default function ProfilePop() {
   const { userData, setUserData } = useUserContext();
   const navigate = useNavigate();
@@ -15,30 +15,14 @@ export default function ProfilePop() {
   useEffect(() => {
     if (!userData) {
       navigate("/login");
-    } else {
-      fetchPurchaseHistory();
-    }
+    } 
   }, [userData, navigate]);
 
-  const fetchPurchaseHistory = async () => {
-    if (!userData?.id) return;
-    const { data, error } = await supabase
-      .from("purchases")
-      .select("*")
-      .eq("user_id", userData.id)
-      .order("created_at", { ascending: false });
-
-    if (error) {
-      console.error("Error fetching purchase history:", error.message);
-    } else {
-      setPurchaseHistory(data || []);
-    }
-  };
-
+  
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    await LogOut()
     setUserData(null);
-    navigate("/login");
+    navigate("/");
   };
 
   const handleFileChange = async (event) => {
@@ -95,8 +79,8 @@ export default function ProfilePop() {
         
         {/* Reward Points */}
         <div className="mt-4 p-4 bg-gray-800 text-primary rounded-md w-full text-center border border-gray-700">
-          <h3 className="text-lg font-bold">Reward Points</h3>
-          <p className="text-2xl font-semibold">{userData?.points || 0}</p>
+          <h3 className="text-lg text-gray-500 font-bold">Your Form Coins:</h3>
+          <div className="flex flex-row items-end justify-center"> <p className="text-2xl text-white font-semibold">{userData?.form_coins_total || 0}</p> <img className="w-[5%] mb-1 ml-2" src="/assets/formCoin.png"/> </div>
         </div>
 
 

@@ -4,7 +4,7 @@ import { Parallax } from "react-parallax";
 
 const Home = () => {
   return (
-    <div className="home-container">
+    <div className="mt-24 min-h-screen home-container">
       {/* Hero Section */}
       <motion.section
         className="hero bg-black text-white flex justify-center items-center"
@@ -44,20 +44,20 @@ const Home = () => {
             quality and satisfaction in every product we create.
           </p>
         </div>
-        <div className="flex-1 bg-black flex items-center justify-center">
+        <div className="flex-1 bg-black  flex items-center justify-center">
           <img
-            src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/DFHero800.png"
-            alt="Mission"
-            className="h-auto w-2/3 md:w-1/2 object-contain "
+            src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/Hardware.png"
+            alt="hardware"
+            className="h-96 w-2/3  object-contain "
           />
         </div>
       </section>
 
       {/* Cartridge Technology Section */}
-      <section id="technology" className="py-16 bg-black text-white">
+      <section id="technology" className="py-4 pb-16 bg-black text-white">
         <div className="container mx-auto px-6">
           <div className="pl-6">
-            <h2 className="text-2xl font-bold uppercase tracking-widest mb-4">
+            <h2 className="text-2xl font-bold uppercase tracking-widest mt-8 mb-8">
               Cartridge Technology
             </h2>
             <p className="text-lg leading-relaxed">
@@ -78,7 +78,7 @@ const Home = () => {
           </video>
 
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center w-full h-full px-[5%]">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 w-full max-w-7xl">
+            <div className="grid lg:grid-rows-1 grid-cols-2 lg:grid-cols-4 gap-8 w-full max-w-7xl">
               {[
                 {
                   icon: (
@@ -89,7 +89,8 @@ const Home = () => {
                     />
                   ),
                   title: "Proprietary Ceramic Core",
-                  text: "All cartridges feature a proprietary ceramic core. The result of thousands of hours of R&D and testing. The porous core has a unique design of microscopic inlets. Smoothly absorbing oil for consistent vaporization, even heating, and flavor retention."
+                  text: "All cartridges feature a proprietary ceramic core. The result of thousands of hours of R&D and testing. The porous core has a unique design of microscopic inlets. Smoothly absorbing oil for consistent vaporization, even heating, and flavor retention.",
+                  smText: "Our proprietary ceramic core ensures smooth oil absorption and even heating for consistent vaporization and flavor retention."
                 },
                 {
                   icon: (
@@ -100,7 +101,8 @@ const Home = () => {
                     />
                   ),
                   title: "Heating Element",
-                  text: "By embedding the heating coil in the center of the ceramic core, hot wires are not directly exposed to your oils. Instead, heat is evenly transmitted throughout the core. No overheating, burnt flavors, or dry hits. The cartridges are never pre-coated with harmful substances such as glycols or glycerin."
+                  text: "By embedding the heating coil in the center of the ceramic core, hot wires are not directly exposed to your oils. Instead, heat is evenly transmitted throughout the core. No overheating, burnt flavors, or dry hits. The cartridges are never pre-coated with harmful substances such as glycols or glycerin.",
+                  smText: "The embedded heating coil evenly transmits heat throughout the ceramic core, preventing burnt flavors and dry hits."
                 },
                 {
                   icon: (
@@ -111,7 +113,8 @@ const Home = () => {
                     />
                   ),
                   title: "SmartPulse Power Control",
-                  text: "The longer the session, the hotter cartridges run degrading your oil. The solution? SmartPulse.™ An advanced algorithm designed to stabilize the temperature by sending short intermittent power-pulses to the cartridge. Overheating is avoided and your consumers get to enjoy your full flavor profile."
+                  text: "The longer the session, the hotter cartridges run degrading your oil. The solution? SmartPulse.™ An advanced algorithm designed to stabilize the temperature by sending short intermittent power-pulses to the cartridge. Overheating is avoided and your consumers get to enjoy your full flavor profile.",
+                  smText: "SmartPulse™ stabilizes temperature with intermittent power pulses, preventing overheating and preserving flavor."
                 },
                 {
                   icon: (
@@ -122,13 +125,15 @@ const Home = () => {
                     />
                   ),
                   title: "Consistent Temperature",
-                  text: "For best flavors you need a cartridge that consistently regulates temperature. Our cartridges are set at 1.4 ohms with an industry-leading variance of no more than 0.05 ohms. By keeping ohms consistent in our specifically formulated coil, our cartridges prevent heat spikes, maintaining a consistent temperature for flavor preservation."
+                  text: "For best flavors you need a cartridge that consistently regulates temperature. Our cartridges are set at 1.4 ohms with an industry-leading variance of no more than 0.05 ohms. By keeping ohms consistent in our specifically formulated coil, our cartridges prevent heat spikes, maintaining a consistent temperature for flavor preservation.",
+                  smText: "Our precisely engineered coil maintains a stable temperature, preventing heat spikes and preserving flavor."
                 }
               ].map((item, index) => (
-                <div key={index} className="bg-gray-100 p-6 rounded-xl shadow-lg flex flex-col items-center text-center border border-gray-300">
+                <div key={index} className="bg-gray-100 sm:p-6 p-4 rounded-xl shadow-lg flex flex-col items-center text-center border border-gray-300">
                   <div className="mb-2">{item.icon}</div>
                   <h3 className="text-lg font-bold text-black mb-2">{item.title}</h3>
-                  <p className="text-gray-700 text-sm">{item.text}</p>
+                  <p className="text-gray-700 max-md:hidden text-sm">{item.text}</p>
+                  <p className="text-gray-700 md:hidden text-xs">{item.smText}</p>
                 </div>
               ))}
             </div>

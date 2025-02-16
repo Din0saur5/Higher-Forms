@@ -4,9 +4,9 @@ import { motion } from "framer-motion";
 const Strains = () => {
   // 1g Cartridge data
   const cartridges = [
-    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/AcaiGel.png", link: "https://www.leafly.com/strains/acai-berry-gelato" },
-    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/BBerryJam.png", link: "https://www.leafly.com/strains/blueberry-jam" },
-    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/BlckChryPnch.png", link: "https://www.leafly.com/strains/black-cherry-punch" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/beryjam1.png", link: "https://www.leafly.com/strains/acai-berry-gelato" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/BBJam_3.png", link: "https://www.leafly.com/strains/blueberry-jam" },
+    { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/BBJam_3.png", link: "https://www.leafly.com/strains/black-cherry-punch" },
     { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/CnlpHze.png", link: "https://www.leafly.com/strains/cannalope-haze" },
     { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/GDddyPrpl.png", link: "https://www.leafly.com/strains/granddaddy-purple" },
     { img: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/1g/GrpGod.png", link: "https://www.leafly.com/strains/grape-god" },
@@ -35,7 +35,7 @@ const Strains = () => {
   ];
 
   return (
-    <div className="strains-container">
+    <div className="strains-container mt-24">
       {/* Hero Section */}
       <motion.section
         className="hero bg-black text-white py-16"
@@ -111,25 +111,23 @@ const Strains = () => {
 
       {/* 1g Product Grid */}
       <motion.section className="py-8 bg-base-200" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 1 }} viewport={{ once: true }}>
-        <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 gap-8 ">
           {cartridges.map((cartridge, index) => (
             <motion.a
               key={index}
               href={cartridge.link}
               target="_blank"
               rel="noopener noreferrer"
-              className="card bg-black text-white shadow-lg border border-gray-800 rounded-lg overflow-hidden transition transform hover:scale-105"
+              className="card bg-black text-white  rounded-lg overflow-hidden transition transform hover:scale-105 hover:shadow-lg hover:shadow-gray-400"
             >
-              <div className="relative w-full h-[200px] overflow-hidden">
+              <div className="relative w-full  ">
                 <img
                   src={cartridge.img}
                   alt={cartridge.title}
-                  className="absolute top-0 left-0 w-[200%] h-full object-cover object-left sm:object-left-center"
+                  className=""
                 />
               </div>
-              <div className="px-8 py-4 text-center">
-                <h3 className="text-lg font-bold">{cartridge.title}</h3>
-              </div>
+              
             </motion.a>
           ))}
         </div>

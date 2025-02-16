@@ -91,7 +91,7 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
 
     return (
        
-        <div className={`relative  h-full sm:h-screen text-white ${borderColor} px-[10%] pt-0 pb-[10%] z-10  ${shadowColor}  `}>
+        <div className={`relative mt-48  h-full sm:h-screen text-white ${borderColor} px-[10%] pt-0 pb-[10%] z-10  ${shadowColor}  `}>
             {/* Back Button */}
             <button
                 onClick={handleBack}
@@ -211,7 +211,7 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
                                 muted
                                 playsInline
                                 loop
-                                className={`max-w-[40%] max-sm:w-[100%] sm:w-3/4    `}
+                                className={`max-w-[40%] max-sm:w-[1000%] sm:w-3/4    `}
                             />
                             <h2 className={`text-2xl text-white ${NameColor} text-center mb-14 mt-4 `}>
                                 {product.product_name}

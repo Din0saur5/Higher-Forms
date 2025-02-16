@@ -25,7 +25,7 @@ const Checkout = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6">
+    <div className="container mt-24 min-h-screen mx-auto px-4 py-6">
       <h1 className="text-2xl font-bold mb-4">Checkout</h1>
 
       {cart.length === 0 ? (

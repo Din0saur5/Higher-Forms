@@ -21,7 +21,7 @@ const LabResults = () => {
   };
 
   return (
-    <div className="lab-results-container bg-black text-white font-roboto">
+    <div className="lab-results-container mt-24 bg-black text-white font-roboto">
       {/* Header Section */}
       <section className="text-center py-16">
         <h1 className="text-4xl font-bold uppercase tracking-wide text-gold">

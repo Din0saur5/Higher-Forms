@@ -3,11 +3,14 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { useUserContext } from "../components/UserContext";
 import ProfilePop from "./ProfilePop";
 import { HiOutlineShoppingCart } from "react-icons/hi2";
+import { getLoggedInUser, LogOut} from "../../api";
 
 const Navbar = () => {
-  const { userData, formCoins, handleLogout } = useUserContext();
+  const { userData, setUserData } = useUserContext();
   const [click, setClick] = useState(false);
   const menuRef = useRef(null);
+
+ 
 
   const handleClick = () => setClick((prev) => !prev);
   const closeMobileMenu = () => setClick(false);
@@ -27,6 +30,15 @@ const Navbar = () => {
 
     return () => document.removeEventListener("mousedown", handleOutsideClick);
   }, [click]);
+
+const handleFetchUpdate = async ()=>{
+    const user = await getLoggedInUser()
+    setUserData(user)
+    
+  }
+
+  
+
 
   return (
     <>
@@ -51,8 +63,8 @@ const Navbar = () => {
         </div>
 
         {/* Center: Logo */}
-        <div className="flex items-center">
-          <NavLink to="/" className="flex items-center hover:opacity-80 transition duration-300">
+        <div className="flex items-center pr-8">
+          <NavLink to="/" className="flex items-center hover:opacity-80 transition  duration-300">
             <img
               src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/logos/HF_gold_stacked.svg"
               alt="Higher Forms Logo"
@@ -72,13 +84,13 @@ const Navbar = () => {
               
             ].map((item, index) => (
               <li key={index}>
-                <NavLink to={item.path} className="text-gray-300 hover:text-white transition duration-300">
+                <NavLink to={item.path} className="text-gray-300 hover:text-white rounded transition duration-300">
                   {item.name}
                 </NavLink>
               </li>
             ))}
             <li>
-              <a href="#contact" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" }); }} className="text-gray-300 hover:text-white transition duration-300">
+              <a href="#contact" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" }); }} className="text-gray-300 hover:text-white rounded transition duration-300">
                 Contact Us
               </a>
             </li>
@@ -88,7 +100,10 @@ const Navbar = () => {
         {/* Right Side: Profile/Login */}
         <div className="navbar-end flex items-center space-x-4">
           {userData && (
-            <button className="text-sm font-bold btn rounded-full text-xl hover:shadow-sm hover:shadow-white text-gray-400"><HiOutlineShoppingCart /></button>
+            <div className="indicator">
+              <span className={`indicator-item badge rounded-xl badge-secondary ${userData?.cart?.length? (''):('hidden')}`}>{ userData?.cart?.length}</span>
+            <NavLink to={"/cart"} className="text-sm font-bold btn rounded-full text-xl hover:shadow-inner hover:shadow-gray-500 text-gray-400"><HiOutlineShoppingCart /></NavLink>
+              </div>
           )}
 
           {!userData ? (
@@ -100,9 +115,11 @@ const Navbar = () => {
               <div
                 tabIndex={0}
                 role="button"
-                className="btn bg-primary text-white px-4 py-2 rounded-md hover:bg-opacity-80 transition duration-300"
+                className=" avatar"
               >
-                Profile
+                <div onClick={()=> handleFetchUpdate()} className="w-8 border border-white rounded-full">
+                  <img src={userData.avatar_url}/>
+                </div>    
               </div>
               <div className="dropdown-content menu bg-base-100 rounded-box z-[1] p-2 shadow" tabIndex={0}>
                 <ProfilePop />
@@ -125,7 +142,7 @@ const Navbar = () => {
         </button>
 
         {/* Mobile Navigation */}
-        <ul className="menu menu-compact p-2">
+        <ul className="menu menu-compact p-2 py-16">
           {[
             { name: "Verify", path: "/verify" },
             { name: "Strains", path: "/strains" },
@@ -134,36 +151,23 @@ const Navbar = () => {
             
           ].map((item, index) => (
             <li key={index}>
-              <NavLink to={item.path} onClick={closeMobileMenu} className="text-gray-300 hover:text-white transition duration-300">
+              <NavLink to={item.path} onClick={closeMobileMenu} className="text-gray-300 text-xl hover:text-white transition duration-300 py-2 my-2">
                 {item.name}
               </NavLink>
             </li>
           ))}
           <li>
-            <a href="#contact" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" }); closeMobileMenu(); }} className="text-gray-300 hover:text-white transition duration-300">
+            <a href="#contact" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" }); closeMobileMenu(); }} className="text-xl py-2 my-2 text-gray-300 hover:text-white transition duration-300">
               Contact Us
             </a>
           </li>
-          {!userData ? (
+          {!userData && (
             <li>
               <NavLink to="/login" onClick={closeMobileMenu} className="text-gray-300 hover:text-white transition duration-300">
                 Login
               </NavLink>
             </li>
-          ) : (
-            <>
-              <li>
-                <NavLink to="/profile" onClick={closeMobileMenu} className="text-gray-300 hover:text-white transition duration-300">
-                  Profile
-                </NavLink>
-              </li>
-              <li>
-                <button onClick={handleLogout} className="text-red-400 hover:text-red-600 transition duration-300">
-                  Logout
-                </button>
-              </li>
-            </>
-          )}
+          ) }
         </ul>
       </div>
     </>

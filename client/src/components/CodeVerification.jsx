@@ -132,7 +132,7 @@ const CodeVerification = ({ setValidationPage, setProduct, supabase }) => {
     };
 
     return (
-        <div className="h-90 flex items-center justify-center bg-base p-4">
+        <div className="h-90 flex items-center justify-center  p-4">
             {showToast && (
                 <div
                     className={`toast toast-top toast-center fixed top-4 left-1/2 transform -translate-x-1/2 transition-opacity duration-500 ${toastClass}`}
@@ -155,7 +155,7 @@ const CodeVerification = ({ setValidationPage, setProduct, supabase }) => {
                     </div>
                 </div>
             )}
-            <div className="bg-primary shadow-md shadow-gray-500 border border-gray-500 rounded-lg border- p-6 w-full max-w-md">
+            <div className="bg-black shadow-lg shadow-gray-600 border border-gray-500 rounded-lg border- p-6 w-full max-w-md">
                 <h2 className="text-2xl font-semibold text-center mb-4">Verify Your Product</h2>
                 <p className="text-white text-center mb-6"> 
                     Enter the 6-character code found inside your product's box.
@@ -172,13 +172,13 @@ const CodeVerification = ({ setValidationPage, setProduct, supabase }) => {
                                 onChange={(e) => handleChange(e, index)}
                                 onKeyDown={(e) => handleKeyDown(e, index)}
                                 onPaste={index === 0 ? handlePaste : null}
-                                className="w-12 h-12 text-xl text-primary text-center border rounded-md focus:outline-none focus:ring-2 focus:ring-accent uppercase"
+                                className="w-12 h-12 text-xl text-white text-center border rounded-md focus:outline-none focus:ring-2 focus:ring-accent uppercase"
                             />
                         ))}
                     </div>
                     <button
                         type="submit"
-                        className="w-full py-2 bg-accent text-white font-semibold rounded-md hover:bg-success transition"
+                        className="w-full py-2 hover:bg-accent text-white font-semibold rounded-md bg-success transition"
                     >
                         Verify Product
                     </button>
