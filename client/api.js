@@ -233,7 +233,7 @@ export async function uploadProfilePicture(userId, file, currentAvatarUrl) {
 export const fetchProducts = async () => {
   const { data, error } = await supabase
     .from("products")
-    .select("*, product_variants(size, stock, price)");
+    .select("*, product_variants(size, stock, price, id)");
 
   if (error) {
     console.error("Error fetching products with variants:", error.message);

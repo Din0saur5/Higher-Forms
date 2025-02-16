@@ -18,7 +18,7 @@ const RewardShop = () => {
     setProducts(productsF)
     console.log(productsF)
   }
-//   Hey Matt so I have added addToCart() and removeFromCart() in api.js 
+//   Hey Matt so I have added addToCart(product_varient-id) and removeFromCart(product_varient-id) in api.js 
 // these functions add/remove a product id to the cart array in the user table
 
 //SUPER IMPORTANT: yes there is a products table but that is not used for inventory or check out or 
