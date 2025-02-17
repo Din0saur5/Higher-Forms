@@ -82,12 +82,9 @@ const Profile = () => {
       {/* Reward Points */}
       <div className="mt-4 p-4 bg-gray-800 text-primary rounded-md w-full text-center border border-gray-700">
           <h3 className="text-lg text-gray-500 font-bold">Your Form Coins:</h3>
-          <div className="flex flex-row items-end justify-center"> <p className="text-2xl text-white font-semibold">{userData?.form_coins_total || 0}</p> <img className="w-[5%] mb-1 ml-2" src="/assets/formCoin.png"/> </div>
+          <div className="flex flex-row items-end justify-center"> <p className="text-2xl text-white font-semibold">{userData?.form_coins_total || 0}</p> <img className="w-[6%] mb-1.5 ml-2" src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/formcoin.svg"/> </div>
         </div>
-       {/* Rank */}
-       <div className="mt-4 text-gray-300 text-left w-full px-4">
-            <p className="text-lg"><strong>Rank:</strong> {userData?.Rank || "Unranked"}</p>
-            </div>
+      
 
         {/* Logout Button */}
         <button

@@ -355,3 +355,7 @@ export const PatchUser = async (id, newUserObject) => {
 
 
 
+export const AddCoins = async (verified_id, userId) =>{
+
+  
+}

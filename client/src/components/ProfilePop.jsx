@@ -9,7 +9,7 @@ export default function ProfilePop() {
   const [avatarUrl, setAvatarUrl] = useState(userData?.avatar_url || "https://via.placeholder.com/150");
   const [uploading, setUploading] = useState(false);
   const [purchaseHistory, setPurchaseHistory] = useState([]);
-
+  
   useEffect(() => {
     if (!userData) {
       navigate("/login");
@@ -77,17 +77,13 @@ export default function ProfilePop() {
         <h3 className="text-lg text-gray-400 font-bold">Your Form Coins:</h3>
         <div className="flex flex-row items-end justify-center">
           <p className="text-2xl text-white font-semibold">{userData?.form_coins_total || 0}</p>
-          <img className="w-[5%] mb-1 ml-2" src="/assets/formCoin.png" alt="Form Coins"/>
+          <img className="w-[10%] mb-1.5 ml-2" src='https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/formcoin.svg' alt="Form Coins"/>
         </div>
       </div>
 
-      {/* Rank */}
-      <div className="mt-4 text-gray-300 text-left w-full px-4">
-        <p className="text-lg"><strong>Rank:</strong> {userData?.Rank || "Unranked"}</p>
-      </div>
 
       {/* Purchase History Section (Can Be Enabled Later) */}
-      {purchaseHistory.length > 0 ? (
+      {/* {purchaseHistory.length > 0 ? (
         <div className="mt-6 w-full text-left">
           <h3 className="text-lg font-bold text-primary">Purchase & Rewards History</h3>
           <ul className="mt-2 space-y-2">
@@ -104,7 +100,7 @@ export default function ProfilePop() {
         </div>
       ) : (
         <p className="text-gray-500 text-sm mt-2">No purchases or redeemed rewards yet.</p>
-      )}
+      )} */}
 
       {/* Logout Button */}
       <button
