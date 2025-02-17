@@ -1,4 +1,4 @@
-import { UserProvider } from "./UserContext"; // ✅ Correct import
+import { UserProvider } from "./UserContext"; 
 import { Outlet, ScrollRestoration, useLoaderData, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
 import Footer from "./Footer";
@@ -18,7 +18,7 @@ const AppLayout = () => {
   return (
     <>
     <ScrollRestoration/>
-    <UserProvider> {/* ✅ Wrap the entire layout in UserProvider */}   
+    <UserProvider> 
       <Navbar />
       <Outlet />
       <Footer />

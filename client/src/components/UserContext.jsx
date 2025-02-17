@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { getLoggedInUser, LogOut, updateFormCoins, updateCart } from "../../api"; // Ensure correct imports
+import { supabase } from "../../api"; // Ensure you have correct Supabase import
 
 const UserContext = createContext();
 
@@ -12,10 +13,20 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
+        // ✅ Ensure session is active
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+
+        if (sessionError || !sessionData.session) {
+          console.warn("No active session found. User not logged in.");
+          setUserData(null);
+          setLoading(false);
+          return;
+        }
+
         const user = await getLoggedInUser();
         if (user) {
           setUserData(user);
-          setFormCoins(user.form_coins || 0);
+          setFormCoins(user.form_coins_total || 0);
           setCart(user.cart || []);
         } else {
           setUserData(null);
@@ -29,18 +40,36 @@ export const UserProvider = ({ children }) => {
     };
 
     fetchUser();
+
+    // ✅ Listen for auth state changes (Fix missing session issue)
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN") {
+        fetchUser();
+      } else if (event === "SIGNED_OUT") {
+        setUserData(null);
+        setFormCoins(0);
+        setCart([]);
+      }
+    });
+
+    return () => {
+      authListener?.subscription?.unsubscribe();
+    };
   }, []);
 
-  // ✅ Update Form Coins
+  // ✅ Update Form Coins (Fix: Ensures userData state updates)
   const modifyFormCoins = async (amount) => {
     if (!userData) return;
-    
+
     const newBalance = Math.max(formCoins + amount, 0); // Prevents negative balance
     setFormCoins(newBalance);
 
     try {
       await updateFormCoins(userData.id, newBalance);
-      setUserData((prev) => ({ ...prev, form_coins: newBalance }));
+      setUserData((prev) => ({
+        ...prev,
+        form_coins_total: newBalance, // Fix: Updates `userData`
+      }));
     } catch (error) {
       console.error("Error updating form coins:", error);
     }
@@ -65,7 +94,7 @@ export const UserProvider = ({ children }) => {
   const removeFromCart = async (itemId) => {
     if (!userData) return;
 
-    const newCart = cart.filter(item => item.id !== itemId);
+    const newCart = cart.filter((item) => item.id !== itemId);
     setCart(newCart);
 
     try {
@@ -90,12 +119,21 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-  // ✅ Handle logout globally
+  // ✅ Handle logout globally (Fix: Clears session properly)
   const handleLogout = async () => {
-    await LogOut();
-    setUserData(null);
-    setCart([]);
-    setFormCoins(0);
+    try {
+      await LogOut();
+
+      // Clear session storage
+      localStorage.removeItem("supabase.auth.token");
+      sessionStorage.removeItem("supabase.auth.token");
+
+      setUserData(null);
+      setCart([]);
+      setFormCoins(0);
+    } catch (error) {
+      console.error("Logout failed:", error.message);
+    }
   };
 
   return (
@@ -110,7 +148,7 @@ export const UserProvider = ({ children }) => {
         cart,
         addToCart,
         removeFromCart,
-        clearCart
+        clearCart,
       }}
     >
       {loading ? (

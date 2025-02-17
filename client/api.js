@@ -1,21 +1,33 @@
 import { createClient } from "@supabase/supabase-js";
 
-export const supabase = createClient(
-  import.meta.env.VITE_URL, 
-  import.meta.env.VITE_ANON 
-);
+const SUPABASE_URL = import.meta.env.VITE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_ANON;
+
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  console.error("Supabase environment variables are missing.");
+}
+
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 
 // ✅ Get currently logged-in user, including avatar URL, form coin balance, and cart
 export const getLoggedInUser = async () => {
-  const { data, error } = await supabase.auth.getUser();
-  if (error || !data?.user) {
-    console.error("Error fetching user or session missing:", error?.message || "No session found");
+  // ✅ Ensure the session is retrieved
+  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+
+  if (sessionError || !sessionData.session) {
+    console.error("Error fetching session:", sessionError?.message || "No active session found.");
     return null;
   }
 
-  const user = data.user;
+  const user = sessionData.session.user; // ✅ Use session.user instead of calling getUser()
 
-  // ✅ Fetch user data (Updated: Removed 'email' and used 'form_coins_total')
+  if (!user) {
+    console.error("User session missing.");
+    return null;
+  }
+
+  // ✅ Fetch additional user data from "users" table
   const { data: userData, error: fetchError } = await supabase
     .from("users")
     .select("id, display_name, avatar_url, form_coins_total, cart")
@@ -24,7 +36,7 @@ export const getLoggedInUser = async () => {
 
   if (fetchError) {
     console.error("Error fetching user details:", fetchError.message);
-    return user; // Return basic auth user if table data is unavailable
+    return user; // Fallback to auth user if table data is unavailable
   }
 
   return { ...user, ...userData };
@@ -106,22 +118,29 @@ export const LogIn = async (email, password) => {
       throw new Error("Invalid email or password.");
     }
 
-    const userId = data.user?.id;
-    if (!userId) throw new Error("User ID not found.");
+    const user = data.user;
+    if (!user) throw new Error("User ID not found.");
 
-    // ✅ Fetch user details (Updated: Removed 'email' and used 'form_coins_total')
+    // ✅ Ensure session is stored properly
+    const { data: session, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !session?.session) {
+      console.error("Session retrieval failed:", sessionError?.message);
+      throw new Error("Failed to retrieve session.");
+    }
+
+    // ✅ Fetch user details from "users" table
     const { data: userData, error: fetchError } = await supabase
       .from("users")
       .select("id, display_name, avatar_url, form_coins_total, cart")
-      .eq("id", userId)
+      .eq("id", user.id)
       .single();
 
     if (fetchError) {
       console.error("Error fetching user data:", fetchError.message);
-      return { ...data.user, display_name: "", form_coins_total: 0 };
+      return { ...user, display_name: "", form_coins_total: 0 };
     }
 
-    return { ...data.user, ...userData };
+    return { ...user, ...userData };
   } catch (error) {
     console.error("Login failed:", error.message);
     throw error;
@@ -130,7 +149,17 @@ export const LogIn = async (email, password) => {
 
 // ✅ Logout function
 export const LogOut = async () => {
-  await supabase.auth.signOut();
+  try {
+    await supabase.auth.signOut();
+
+    // ✅ Clear local session cache
+    localStorage.removeItem("supabase.auth.token");
+    sessionStorage.removeItem("supabase.auth.token");
+
+    console.log("User successfully logged out.");
+  } catch (error) {
+    console.error("Logout failed:", error.message);
+  }
 };
 
 // ✅ Function to update Form Coin balance (Updated: 'form_coins' → 'form_coins_total')
