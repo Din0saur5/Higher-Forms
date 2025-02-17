@@ -65,7 +65,7 @@ const Cart = () => {
         <p className="text-center text-gray-500">Loading cart...</p>
       ) : cartItems.length === 0 ? (
         <p className="text-gray-600 text-center">
-          Your cart is empty. <span className="text-blue-600 cursor-pointer" onClick={() => navigate("/rewardshop")}>Go back to shop</span>.
+          Your cart is empty. <span className="text-blue-600 cursor-pointer" onClick={() => navigate("/rewards")}>Go back to shop</span>.
         </p>
       ) : (
         <>
