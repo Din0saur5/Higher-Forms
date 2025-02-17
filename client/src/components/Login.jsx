@@ -28,13 +28,13 @@ function Login({ setLogin }) {
     setIsLoading(true);
 
     try {
-      const userData = await LogIn(loginValue.email, loginValue.password);
+      const response = await LogIn(loginValue.email, loginValue.password);
 
-      if (!userData) {
-        setErrorMessage("Invalid email or password. Please try again.");
+      if (!response.success) { 
+        setErrorMessage(response.message || "Invalid email or password. Please try again.");
       } else {
-        setUserData(userData);
-        navigate("/profile"); // Redirect to profile after login
+        setUserData(response.user);
+        navigate("/profile"); // ✅ Redirect to profile only on success
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -53,26 +53,26 @@ function Login({ setLogin }) {
               <span className="label-text">Email</span>
             </label>
             <input
-  type="email"
-  name="email"
-  placeholder="email"
-  className="input input-bordered mb-4"
-  required
-  value={loginValue.email}
-  onChange={handleChange}
-  autoComplete="email"  
-/>
+              type="email"
+              name="email"
+              placeholder="Email"
+              className="input input-bordered mb-4"
+              required
+              value={loginValue.email}
+              onChange={handleChange}
+              autoComplete="email"
+            />
 
-<input
-  type="password"
-  name="password"
-  placeholder="password"
-  className="input input-bordered"
-  required
-  value={loginValue.password}
-  onChange={handleChange}
-  autoComplete="current-password" 
-/>
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              className="input input-bordered"
+              required
+              value={loginValue.password}
+              onChange={handleChange}
+              autoComplete="current-password"
+            />
             <label className="label">
               <a href="#" className="label-text-alt link link-hover">
                 Forgot password?

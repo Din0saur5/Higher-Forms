@@ -1,66 +1,81 @@
 import React, { useEffect, useState } from "react";
 import { useUserContext } from "../components/UserContext";
 import { useNavigate } from "react-router-dom";
-import { fetchProducts } from "../../api";
+import { fetchProducts, addToCart, fetchCartProds } from "../../api";
+import { FaCoins, FaExclamationTriangle } from "react-icons/fa";
+import { motion } from "framer-motion";
 
 const RewardShop = () => {
-  const { userData } = useUserContext();
+  const { userData, setUserData } = useUserContext();
   const navigate = useNavigate();
-  const [products, setProducts] = useState([])
+  const [products, setProducts] = useState([]);
+  const [selectedVariants, setSelectedVariants] = useState({});
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [cartTotal, setCartTotal] = useState(0);
+  const [cartError, setCartError] = useState(null);
 
-  useEffect(()=>{
-    handleFetchProducts()
-   
-  },[])
+  useEffect(() => {
+    handleFetchProducts();
+  }, []);
 
-  const handleFetchProducts = async ()=>{
-    const productsF = await fetchProducts()
-    setProducts(productsF)
-    console.log(productsF)
-  }
-//   Hey Matt so I have added addToCart(product_varient-id) and removeFromCart(product_varient-id) in api.js 
-// these functions add/remove a product id to the cart array in the user table
+  useEffect(() => {
+    updateCartTotal();
+  }, [userData.cart]); 
 
-//SUPER IMPORTANT: yes there is a products table but that is not used for inventory or check out or 
-//carts we use the id in product-varient table for specific products
-// 
-// to get this array you will have to call fn fetchCartProds(cart)
-// which will pull all the products in the users cart and have a quantity value that will handle repeats
-// the cart input is the array found in userData.cart
-// I have also created a fn called placeOrder(userId, email, name, address, cart) this requires the entry 
-// of a order form but the fn does all this:
-// Validates the cart: Ensures the cart is not empty.
-// Fetches product details: Calls fetchCartProds(cart) to get product data with quantities.
-// Generates product summary: Creates a list of product names with quantities for order records.
-// Calculates total price: Sums up the total cost of all cart items.
-// Fetches user balance: Retrieves the user's form_coin_total from the database.
-// Checks user balance: Ensures the user has enough Form Coins to complete the purchase.
-// Creates an order: Inserts a new entry into the orders table.
-// Links products to the order: Inserts each cart item into the order_items table with its quantity and price.
-// Reduces inventory: Updates the stock in product_variants based on the items purchased.
-// Deducts Form Coins: Subtracts the total price from the user's form_coin_total.
-// Clears the cart: Sets the user's cart to an empty array after a successful order.
-// Handles errors: Returns appropriate error messages if any step fails.
-// Returns success confirmation: Sends back a success response with the orderId if everything works.
-// // 
+  // Fetch products from Supabase
+  const handleFetchProducts = async () => {
+    const productsF = await fetchProducts();
+    setProducts(productsF);
+  };
 
+  // Fetch cart items and update total
+  const updateCartTotal = async () => {
+    if (!userData || !userData.cart || userData.cart.length === 0) {
+      setCartTotal(0);
+      setCartError(null);
+      return;
+    }
 
-  // // Checkout handler
-  // const handleCheckout = async () => {
-  //   const totalCost = cart.reduce((total, item) => total + item.price, 0);
+    const cartItems = await fetchCartProds(userData.cart);
 
-  //   if (formCoins < totalCost) {
-  //     alert("Not enough Form Coins to complete the checkout.");
-  //     return;
-  //   }
+    if (!cartItems || cartItems.length === 0) {
+      setCartTotal(0);
+      setCartError(null);
+      return;
+    }
 
-  //   // Deduct Form Coins and clear the cart
-  //   await modifyFormCoins(-totalCost);
-  //   await clearCart();
+    const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    setCartTotal(total);
 
-  //   // Navigate to Confirmation Page
-  //   navigate("/confirmation");
-  // };
+    if (total > userData.form_coins_total) {
+      setCartError("Not enough Form Coins to redeem all items in your cart.");
+    } else {
+      setCartError(null);
+    }
+  };
+
+  // Handle adding an item to the cart
+  const handleAddToCart = async (productId, variantId) => {
+    if (!userData) {
+      alert("Please log in to add items to the cart.");
+      return;
+    }
+
+    const response = await addToCart(userData.id, variantId);
+    if (response.success) {
+      // Update the cart state instantly
+      setUserData((prevUserData) => ({
+        ...prevUserData,
+        cart: [...prevUserData.cart, variantId],
+      }));
+
+      updateCartTotal(); 
+
+      //Success message
+      setSuccessMessage("Item added successfully to your cart!");
+      setTimeout(() => setSuccessMessage(null), 2000);
+    }
+  };
 
   return (
     <div className="reward-shop-container bg-black text-white font-roboto min-h-screen mt-24 p-6">
@@ -73,92 +88,110 @@ const RewardShop = () => {
         <hr className="mt-4 border-t border-gray-600 mx-auto w-3/4" />
       </div>
 
-      {/* If user is not logged in, show login/register message and buttons */}
+      {/* Success Message */}
+      {successMessage && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="fixed top-5 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg"
+        >
+          {successMessage}
+        </motion.div>
+      )}
+
+      {/* If user is not logged in, show login/register message */}
       {!userData ? (
         <div className="flex flex-col items-center text-center mt-10">
           <p className="text-xl font-semibold text-gray-300">
             Please log in or register to view and redeem rewards.
           </p>
-          <div className="flex space-x-4 mt-6">
-            <button
-              onClick={() => navigate("/login")}
-              className="btn btn-primary px-6 py-3 rounded-lg text-lg"
-            >
-              Log In
-            </button>
-            
-          </div>
+          <button
+            onClick={() => navigate("/login")}
+            className="btn btn-primary px-6 py-3 rounded-lg text-lg mt-6"
+          >
+            Log In
+          </button>
         </div>
       ) : (
         <>
           {/* User Form Coins Display */}
-          <div className="text-center mb-8">
-            <p className="text-xl font-semibold">
-              Your Balance: <span className="text-gold">{} Form Coins</span>
-            </p>
+          <div className="text-center mb-8 flex flex-col justify-center items-center gap-3 text-2xl font-semibold">
+            <div className="flex items-center gap-3">
+              <FaCoins className="text-yellow-400 text-3xl" />
+              <span className="bg-gray-800 px-4 py-2 rounded-lg shadow-md text-yellow-300">
+                Your Balance: <span className="font-bold">{userData.form_coins_total} Coins</span>
+              </span>
+            </div>
+
+            {/* Cart Total Display */}
+            <div className="bg-gray-700 px-6 py-3 rounded-lg shadow-md mt-3">
+              <p className="text-lg font-semibold text-white">
+                Cart Total: <span className="text-yellow-300">{cartTotal} Coins</span>
+              </p>
+            </div>
+
+            {/* Error Message when Cart Exceeds Coins */}
+            {cartError && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="bg-red-600 text-white px-6 py-3 rounded-lg shadow-md mt-3 flex items-center gap-2"
+              >
+                <FaExclamationTriangle />
+                <span>{cartError}</span>
+              </motion.div>
+            )}
           </div>
 
           {/* Product Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {products.map((product) => (
-              <div key={product.id} className="card bg-gray-800 p-4 rounded-lg shadow-lg">
-                <img src={product.image_url} alt={product.name} className="rounded-lg mb-4 object-cover w-full h-40" />
-                <h2 className="text-lg font-bold mb-2">{product.name}</h2>
-                <p className="text-sm text-gray-400 mb-4">Price: {product.price} Form Coins</p>
-                <button
-                  onClick={() => addToCart(product)}
-                  className="btn btn-primary w-full text-sm"
-                  disabled={userData.cart.some((item) => item.id === product.id) || userData.form_coins_total < product.price}
-                >
-                  {userData.cart.some((item) => item.id === product.id)
-                    ? "In Cart"
-                    : userData.form_coins_total >= product.price
-                    ? "Add to Cart"
-                    : "Insufficient Coins"}
-                </button>
-              </div>
-            ))}
-          </div>
+            {products.map((product) => {
+              const selectedVariant =
+                product.product_variants.find((v) => v.id === selectedVariants[product.id]) ||
+                product.product_variants[0];
 
-          {/* Cart Section */}
-          <div className="mt-12 bg-gray-900 p-6 rounded-lg">
-            <h2 className="text-2xl font-bold mb-4">Your Cart</h2>
+              return (
+                <div key={product.id} className="card bg-gray-800 p-4 rounded-lg shadow-lg">
+                  <img src={product.image_url} alt={product.name} className="rounded-lg mb-4 object-cover w-full h-40" />
+                  <h2 className="text-lg font-bold mb-2">{product.name}</h2>
 
-            {userData.cart.length === 0 ? (
-              <p className="text-gray-400">Your cart is empty.</p>
-            ) : (
-              <div className="space-y-4">
-                {userData.cart.map((item) => (
-                  <div key={item.id} className="flex justify-between items-center bg-gray-800 p-4 rounded-lg">
-                    <div>
-                      <p className="font-bold">{item.name}</p>
-                      <p className="text-sm text-gray-400">Price: {item.price} Form Coins</p>
-                    </div>
-                    <button
-                      onClick={() => removeFromCart(item.id)}
-                      className="btn btn-secondary text-sm"
+                  {/* Price Display */}
+                  <p className="text-lg font-bold text-yellow-400 mb-2">{selectedVariant.price} Coins</p>
+
+                  {/* Size Selection Dropdown */}
+                  {product.product_variants.length > 1 && (
+                    <select
+                      className="w-full mb-3 p-2 bg-gray-700 rounded text-white border border-gray-500"
+                      value={selectedVariants[product.id] || product.product_variants[0].id}
+                      onChange={(e) => setSelectedVariants({ ...selectedVariants, [product.id]: e.target.value })}
                     >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-                <p className="text-lg font-semibold mt-4">
-                  Total: {userData.cart.reduce((total, item) => total + item.price, 0)} Form Coins
-                </p>
+                      {product.product_variants.map((variant) => (
+                        <option key={variant.id} value={variant.id}>
+                          {variant.size} {variant.stock === 0 ? "(Out of Stock)" : ""}
+                        </option>
+                      ))}
+                    </select>
+                  )}
 
-                <button
-                  onClick={handleCheckout}
-                  className={`btn btn-primary mt-6 w-full ${
-                    userData.cart.reduce((total, item) => total + item.price, 0) > formCoins
-                      ? "bg-gray-500 cursor-not-allowed"
-                      : ""
-                  }`}
-                  disabled={userData.cart.reduce((total, item) => total + item.price, 0) > formCoins}
-                >
-                  Proceed to Checkout
-                </button>
-              </div>
-            )}
+                  {/* Add to Cart Button */}
+                  <button
+                    onClick={() => handleAddToCart(product.id, selectedVariant.id)}
+                    className={`btn w-full text-sm p-3 rounded-full transition-all ${
+                      selectedVariant.stock === 0
+                        ? "bg-gray-600 cursor-not-allowed"
+                        : "bg-green-500 hover:bg-green-600 text-white"
+                    }`}
+                    disabled={
+                      selectedVariant.stock === 0 || userData.form_coins_total < selectedVariant.price
+                    }
+                  >
+                    {selectedVariant.stock === 0 ? "Out of Stock" : "Add to Cart"}
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </>
       )}

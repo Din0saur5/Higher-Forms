@@ -7,7 +7,7 @@ function Verify() {
 
 
 
-  const [validationPage, setValidationPage] = useState(false); // Default to false
+  const [validationPage, setValidationPage] = useState(false); 
   const [product, setProduct] = useState(null);
 
   const handleSetProduct = (obj) => {
