@@ -1,135 +1,155 @@
 import React from "react";
+import { motion } from "framer-motion";
 import { LuMail } from "react-icons/lu";
 import { FaInstagram } from "react-icons/fa";
 
 const Footer = () => {
   return (
     <>
-      {/* Contact Section */}
-      <section id="contact" className="pt-4 pb-10 bg-black text-white">
-        <div className="container mx-auto flex flex-col md:flex-row justify-center gap-12 px-4 md:px-8">
+      {/* CONTACT SECTION */}
+      <motion.section
+        id="contact"
+        className="pt-10 pb-16 bg-black text-white font-roboto"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        <div className="container mx-auto flex flex-col md:flex-row justify-between items-start gap-12 px-6 md:px-12">
           
-          {/* Contact Info and Social Media - Adjusted for Responsiveness */}
-          <div className="flex-1 text-center md:text-left flex flex-col items-center md:items-start w-full md:w-auto">
-            <img src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/logos/HF_gold_horz.svg" className="h-12"/>
+          {/* CONTACT INFO & SOCIALS */}
+          <div className="flex-1 text-center md:text-left flex flex-col items-center md:items-start">
+            <motion.img
+              src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/logos/HF_gold_horz.svg"
+              className="h-12 mb-4"
+              alt="Higher Forms Logo"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1 }}
+            />
 
-            <p className="flex mt-10  text-xl">
-            <LuMail />
-              <span className="text-sm mx-2">sales@higher-forms.com</span>
+            <p className="flex items-center mt-4 text-lg">
+              <LuMail className="text-yellow-400 text-xl" />
+              <span className="ml-2 text-sm">sales@higher-forms.com</span>
             </p>
 
-            <p className="flex mt-4 items-center text-xl">
-            <FaInstagram /> <span className="mx-1"></span>
+            <p className="flex items-center mt-2 text-lg">
+              <FaInstagram className="text-yellow-400 text-xl" />
               <a
                 href="https://instagram.com/higherforms"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline text-sm"
-              >@higherforms
+                className="ml-2 underline text-sm hover:text-yellow-400 transition"
+              >
+                @higherforms
               </a>
             </p>
-
-
-           {/* Footer Section - Centered for Mobile */}
-      <footer className="bg-black text-white py-12 max-md:hidden">
-        <div className="container ml-24 flex flex-col justify-center items-center gap-4 px-4">
-          {/* Footer Logo */}
-          <img src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/logos/HF_white_sml.svg" alt="Higher Forms Logo" className="w-20" />
-
-          {/* Footer Text */}
-          <p className="text-sm text-center">
-            &copy; {new Date().getFullYear()} Higher Forms. All Rights Reserved.
-          </p>
-        </div>
-      </footer>
-         
           </div>
 
-          {/* Contact Form - Adjusted Width for Small Screens */}
-          <form className="flex-1  space-y-6 w-full max-w-lg md:max-w-xl">
-          <p className="bold text-xl" >Contact Us:</p>
-            {/* First Name & Last Name */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {/* CONTACT FORM */}
+          <form className="flex-1 w-full max-w-lg md:max-w-xl space-y-4">
+            <p className="text-xl font-bold text-yellow-400">Contact Us</p>
+
+            {/* FIRST & LAST NAME */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="first-name" className="block text-sm font-bold">
+                <label htmlFor="first-name" className="block text-sm font-bold mb-1">
                   First Name*
                 </label>
                 <input
                   id="first-name"
                   type="text"
-                  placeholder="Enter your first name"
-                  className="input input-bordered w-full text-lg p-4"
+                  placeholder="First name"
+                  className="input input-bordered w-full text-lg p-3 bg-gray-800 text-white border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
                 />
               </div>
               <div>
-                <label htmlFor="last-name" className="block text-sm font-bold">
+                <label htmlFor="last-name" className="block text-sm font-bold mb-1">
                   Last Name*
                 </label>
                 <input
                   id="last-name"
                   type="text"
-                  placeholder="Enter your last name"
-                  className="input input-bordered w-full text-lg p-4"
+                  placeholder="Last name"
+                  className="input input-bordered w-full text-lg p-3 bg-gray-800 text-white border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
                 />
               </div>
             </div>
 
-            {/* Email & Subject */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {/* EMAIL & SUBJECT */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-bold">
+                <label htmlFor="email" className="block text-sm font-bold mb-1">
                   Email*
                 </label>
                 <input
                   id="email"
                   type="email"
-                  placeholder="Enter your email"
-                  className="input input-bordered w-full text-lg p-4"
+                  placeholder="Email"
+                  className="input input-bordered w-full text-lg p-3 bg-gray-800 text-white border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
                 />
               </div>
               <div>
-                <label htmlFor="subject" className="block text-sm font-bold">
+                <label htmlFor="subject" className="block text-sm font-bold mb-1">
                   Subject*
                 </label>
                 <input
                   id="subject"
                   type="text"
-                  placeholder="Enter subject"
-                  className="input input-bordered w-full text-lg p-4"
+                  placeholder="Subject"
+                  className="input input-bordered w-full text-lg p-3 bg-gray-800 text-white border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
                 />
               </div>
             </div>
 
-            {/* Message */}
+            {/* MESSAGE */}
             <div>
-              <label htmlFor="message" className="block text-sm font-bold">
+              <label htmlFor="message" className="block text-sm font-bold mb-1">
                 Message*
               </label>
               <textarea
                 id="message"
                 placeholder="Enter your message"
-                className="textarea textarea-bordered w-full text-lg p-4 h-32"
+                className="textarea textarea-bordered w-full text-lg p-3 h-28 bg-gray-800 text-white border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
               ></textarea>
             </div>
 
-            <button type="submit" className="btn btn-primary w-full text-lg p-4">
+            {/* SUBMIT BUTTON (No Extra Space Above) */}
+            <motion.button
+              type="submit"
+              className="btn btn-primary w-full text-lg p-4 bg-yellow-400 text-black font-bold rounded-lg transition hover:bg-yellow-500"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
               Submit
-            </button>
+            </motion.button>
           </form>
         </div>
-      </section>
-      <footer className="bg-black text-white py-12 md:hidden">
-        <div className="container mx-auto flex flex-col justify-center items-center gap-4 px-4">
-          {/* Footer Logo */}
-          <img src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/logos/HF_white_sml.svg" alt="Higher Forms Logo" className="w-20" />
+      </motion.section>
 
-          {/* Footer Text */}
+      {/* FOOTER */}
+      <motion.footer
+        className="bg-black text-white py-10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+      >
+        <div className="container mx-auto flex flex-col justify-center items-center gap-4 px-6">
+          {/* FOOTER LOGO */}
+          <motion.img
+            src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/logos/HF_white_sml.svg"
+            alt="Higher Forms Logo"
+            className="w-20"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+          />
+
+          {/* COPYRIGHT TEXT */}
           <p className="text-sm text-center">
             &copy; {new Date().getFullYear()} Higher Forms. All Rights Reserved.
           </p>
         </div>
-      </footer>
-     
+      </motion.footer>
     </>
   );
 };
