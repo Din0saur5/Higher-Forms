@@ -19,7 +19,7 @@ const Confirmation = () => {
       </motion.div>
 
       <h1 className="text-4xl font-bold text-black mt-4">Thank You for Your Purchase!</h1>
-      <p className="text-lg text-gray-700 mt-2">Your order has been successfully processed.</p>
+      <p className="text-lg text-white-700 mt-2">Your order has been successfully processed.</p>
 
       <div className="mt-6 bg-gray-100 shadow-md rounded-lg p-6 w-full max-w-lg">
         <p className="text-lg font-semibold text-black">
