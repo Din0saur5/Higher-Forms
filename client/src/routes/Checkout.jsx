@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../components/UserContext";
 import { fetchCartProds, placeOrder } from "../../api"; 
-import { FaCoins, FaShoppingCart } from "react-icons/fa"; 
+import { FaShoppingCart } from "react-icons/fa"; 
 import { motion } from "framer-motion"; 
 
 const Checkout = () => {
@@ -12,6 +12,14 @@ const Checkout = () => {
   const [cartTotal, setCartTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [checkoutError, setCheckoutError] = useState(null);
+  const [shippingInfo, setShippingInfo] = useState({
+    address: "",
+    apt: "",
+    city: "",
+    state: "",
+    zipcode: "",
+    country: "United States",
+  });
 
   useEffect(() => {
     if (!userData) {
@@ -21,7 +29,6 @@ const Checkout = () => {
     fetchCart();
   }, [userData?.cart]);
 
-  // Fetch cart details and calculate total price
   const fetchCart = async () => {
     setLoading(true);
     if (!userData || !userData.cart || userData.cart.length === 0) {
@@ -45,10 +52,14 @@ const Checkout = () => {
     setLoading(false);
   };
 
-  // Handle order confirmation
   const handleConfirmPurchase = async () => {
     if (formCoins < cartTotal) {
       setCheckoutError("You do not have enough Form Coins to complete this purchase.");
+      return;
+    }
+
+    if (!shippingInfo.address || !shippingInfo.city || !shippingInfo.state || !shippingInfo.zipcode) {
+      setCheckoutError("Please fill in all required shipping details.");
       return;
     }
 
@@ -57,17 +68,17 @@ const Checkout = () => {
     const response = await placeOrder(
       userData.id,
       userData.email,
-      userData.display_name,
-      "Default Address",
+      shippingInfo.fullName,
+      `${shippingInfo.address}, ${shippingInfo.apt ? shippingInfo.apt + ", " : ""}${shippingInfo.city}, ${shippingInfo.state} ${shippingInfo.zipcode}, ${shippingInfo.country}`,
       userData.cart
     );
+    
 
     if (!response.success) {
       setCheckoutError(response.message);
       return;
     }
 
-    // Deduct Form Coins and clear cart
     await modifyFormCoins(-cartTotal);
     await clearCart();
 
@@ -77,7 +88,6 @@ const Checkout = () => {
       form_coins_total: prev.form_coins_total - cartTotal,
     }));
 
-    // Navigate to confirmation page
     navigate("/confirmation");
   };
 
@@ -97,6 +107,71 @@ const Checkout = () => {
         </p>
       ) : (
         <>
+          {/* Shipping Address Form */}
+          {/* Shipping Address Form */}
+<div className="bg-white shadow-md rounded-lg p-6 mb-6">
+  <h2 className="text-xl font-bold mb-4 text-black">Shipping Address</h2>
+
+  {/* Full Name Field */}
+  <input
+    type="text"
+    placeholder="Full Name"
+    value={shippingInfo.fullName}
+    onChange={(e) => setShippingInfo({ ...shippingInfo, fullName: e.target.value })}
+    className="w-full p-3 bg-gray-100 text-black rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 mb-4"
+    required
+  />
+
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <input
+      type="text"
+      placeholder="Address"
+      value={shippingInfo.address}
+      onChange={(e) => setShippingInfo({ ...shippingInfo, address: e.target.value })}
+      className="w-full p-3 bg-gray-100 text-black rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
+      required
+    />
+    <input
+      type="text"
+      placeholder="Apt / Unit / Suite (optional)"
+      value={shippingInfo.apt}
+      onChange={(e) => setShippingInfo({ ...shippingInfo, apt: e.target.value })}
+      className="w-full p-3 bg-gray-100 text-black rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
+    />
+    <input
+      type="text"
+      placeholder="City"
+      value={shippingInfo.city}
+      onChange={(e) => setShippingInfo({ ...shippingInfo, city: e.target.value })}
+      className="w-full p-3 bg-gray-100 text-black rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
+      required
+    />
+    <input
+      type="text"
+      placeholder="State"
+      value={shippingInfo.state}
+      onChange={(e) => setShippingInfo({ ...shippingInfo, state: e.target.value })}
+      className="w-full p-3 bg-gray-100 text-black rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
+      required
+    />
+    <input
+      type="text"
+      placeholder="Zipcode"
+      value={shippingInfo.zipcode}
+      onChange={(e) => setShippingInfo({ ...shippingInfo, zipcode: e.target.value })}
+      className="w-full p-3 bg-gray-100 text-black rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
+      required
+    />
+    <input
+      type="text"
+      value="United States"
+      disabled
+      className="w-full p-3 bg-gray-200 text-gray-600 rounded-lg border border-gray-300 cursor-not-allowed"
+    />
+  </div>
+</div>
+
+
           {/* Order Summary */}
           <div className="bg-white shadow-md rounded-lg p-6">
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-black">
@@ -106,9 +181,7 @@ const Checkout = () => {
             {cartItems.map((item) => (
               <div key={item.id} className="flex justify-between items-center border-b py-2">
                 <div>
-                  <p className="font-semibold text-black">
-                    {item.products.name} (x{item.quantity})
-                  </p>
+                  <p className="font-semibold text-black">{item.products.name} (x{item.quantity})</p>
                   <p className="text-black">{item.price * item.quantity} Form Coins</p>
                 </div>
               </div>
@@ -119,20 +192,14 @@ const Checkout = () => {
                 Total: <span className="text-yellow-500">{cartTotal} Form Coins</span>
               </p>
               <p className="text-lg text-black">
-                Available Balance:{" "}
-                <span className="text-green-600 font-bold">{formCoins} Form Coins</span>
+                Available Balance: <span className="text-green-600 font-bold">{formCoins} Form Coins</span>
               </p>
             </div>
           </div>
 
           {/* Error Message */}
           {checkoutError && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="bg-red-600 text-white px-6 py-3 rounded-lg shadow-md mt-3 flex items-center justify-center"
-            >
+            <motion.div className="bg-red-600 text-white px-6 py-3 rounded-lg shadow-md mt-3 flex items-center justify-center">
               {checkoutError}
             </motion.div>
           )}

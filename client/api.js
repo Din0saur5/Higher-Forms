@@ -177,9 +177,16 @@ export const placeOrder = async (userId, email, name, address, cart) => {
   const cartProducts = await fetchCartProds(cart);
   if (cartProducts.length === 0) return { success: false, message: "Invalid cart data." };
 
-  const productSummary = cartProducts.map((p) => `${p.products.name} (x${p.quantity})`);
+  const productSummary = cartProducts.map((p) => ({
+    name: p.products.name,
+    quantity: p.quantity,
+    size: p.size,
+    price: p.price,
+  }));
+
   const totalPrice = cartProducts.reduce((sum, p) => sum + p.price * p.quantity, 0);
 
+  // Fetch user Form Coins
   const { data: user, error: userError } = await supabase
     .from("users")
     .select("form_coins_total")
@@ -195,6 +202,7 @@ export const placeOrder = async (userId, email, name, address, cart) => {
     return { success: false, message: "Insufficient Form Coins." };
   }
 
+  // Insert order into Supabase
   const { data: order, error: orderError } = await supabase
     .from("orders")
     .insert([
@@ -202,9 +210,10 @@ export const placeOrder = async (userId, email, name, address, cart) => {
         user_id: userId,
         email,
         name,
-        address,
-        product_summary: productSummary,
+        address: JSON.stringify(address),  // Store as JSON object
+        product_summary: JSON.stringify(productSummary), // Store summary as JSON
         total_price: totalPrice,
+        status: "pending", // Default status
       },
     ])
     .select()
@@ -217,6 +226,7 @@ export const placeOrder = async (userId, email, name, address, cart) => {
 
   const orderId = order.id;
 
+  // Insert items into order_items table
   for (const item of cartProducts) {
     await supabase
       .from("order_items")
@@ -230,12 +240,14 @@ export const placeOrder = async (userId, email, name, address, cart) => {
         },
       ]);
 
+    // Update stock for the product variant
     await supabase
       .from("product_variants")
       .update({ stock: item.stock - item.quantity })
       .eq("id", item.id);
   }
 
+  // Deduct Form Coins and clear the cart
   const { error: balanceError } = await supabase
     .from("users")
     .update({ form_coins_total: user.form_coins_total - totalPrice, cart: [] })
