@@ -116,11 +116,11 @@ export const removeFromCart = async (userId, productVariantId) => {
   }
 
   let cart = user?.cart || [];
-  cart = cart.filter((item) => item !== productVariantId);
+  const updatedCart = cart.filter((item) => item !== productVariantId);
 
   const { error: updateError } = await supabase
     .from("users")
-    .update({ cart })
+    .update({ cart: updatedCart })
     .eq("id", userId);
 
   if (updateError) {
@@ -128,8 +128,9 @@ export const removeFromCart = async (userId, productVariantId) => {
     return { success: false, message: "Failed to update cart." };
   }
 
-  return { success: true, message: "Item removed from cart.", cart };
+  return { success: true, message: "Item removed from cart.", cart: updatedCart };
 };
+
 
 // Fetch full product details of cart items
 export const fetchCartProds = async (cart) => {
