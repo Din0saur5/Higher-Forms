@@ -5,10 +5,11 @@ import JSConfetti from 'js-confetti'
 import { motion } from "framer-motion";
 import { BsXOctagon } from "react-icons/bs";
 import { useUserContext } from "./UserContext";
-import { updateFormCoins, PatchUser } from "../../api"; // Import API functions
+import { updateFormCoins, PatchUser, AddCoins } from "../../api"; // Import API functions
 
 function ValidationPage({ setValidationPage, clearProduct, product }) {
     const { userData, setUserData } = useUserContext(); 
+    const [productRedeemed, setProductRedeemed] = useState(product.been_redeemed)
     const [showToast, setShowToast] = useState(false);
     const [toastType, setToastType] = useState(null);
     const [animate, setAnimate] = useState(false);
@@ -33,24 +34,10 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
     };
 
     const handleRedeem = async () => {
-        if (!product || product.been_redeemed || !userData) return;
-
-        const newBalance = Math.max(userData.form_coins_total + product.points, 0); // Prevent negative balance
+       
 
         try {
-            // ✅ 1. Update coins in the database
-            await updateFormCoins(userData.id, newBalance);
-
-            // ✅ 2. Mark the product as redeemed in the database
-            const { error } = await PatchUser(userData.id, { form_coins_total: newBalance });
-
-            if (error) {
-                console.error("Error updating redemption:", error.message);
-                return;
-            }
-
-            // ✅ 3. Update local state
-            setUserData((prev) => ({ ...prev, form_coins_total: newBalance }));
+           const coins = await AddCoins(product.product_id, userData.id)
 
             setAnimate(false);
             setCoins(Array.from({ length: 25 }, (_, i) => ({
@@ -59,6 +46,7 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
                 delay: Math.random() * 0.5,
             })));
             setTimeout(() => setAnimate(true), 50);
+            setTimeout(()=>setProductRedeemed(true), 3000)
         } catch (error) {
             console.error("Error redeeming coins:", error);
         }
@@ -127,15 +115,38 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
                                     <span className="font-semibold">{product.product_name}</span><br /><br />
                                     If you were the one who previously verified this product, there’s no need to worry. However, if you’re seeing this message and you haven’t verified this product before, please contact HIGHER FORMS support immediately. This could indicate a counterfeit product.
                                 </p>
-                                {product.been_redeemed ? (
+                                {productRedeemed ? (
                                     <div className="tooltip tooltip-bottom" data-tip="Form Coins Have already been redeemed">
                                         <button className="btn btn-disabled mb-48">Redeem</button>
                                     </div>
                                 ) : userData ? (
                                     <div className="tooltip" data-tip="Use Form Coins to redeem rewards in the Rewards shop!">
-                                        <motion.button onClick={handleRedeem} className="btn btn-success mb-48">
+                                        <motion.button onClick={handleRedeem()} className="btn btn-success mb-48">
                                             Redeem {`(+${product.points} points)`}
                                         </motion.button>
+                                        {coins.map((coin, index) => (
+    <motion.div
+        key={index}
+        className="absolute w-5 h-5 flex items-center justify-center font-bold text-yellow-400 bg-yellow-600 border-2 border-yellow-400 rounded-full"
+        initial={{ opacity: 0, scale: 0 }}
+        animate={
+            animate
+                ? {
+                    opacity: [0, 1, 1, 0],
+                    x: [0, coin.x],
+                    y: [0, coin.y], // Coins move upward
+                    rotate: [0, 1080],
+                    scale: [1, 1.2, 1],
+                }
+                : {}
+        }
+        transition={{
+            duration: 3,
+            delay: coin.delay,
+            ease: "easeInOut",
+        }}
+    />
+))}
                                     </div>
                                 ) : (
                                     <div className="tooltip tooltip-bottom" data-tip="Signup or Login to Redeem Form Points for rewards">
@@ -148,15 +159,38 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
                         <div className="flex flex-col items-center justify-center max-sm:mt-24">
                             <video src={product.graphic} autoPlay muted playsInline loop className="max-w-[40%] max-sm:w-[1000%] sm:w-3/4" />
                             <h2 className={`text-2xl text-white text-center mb-14 mt-4`}>{product.product_name}</h2>
-                            {product.been_redeemed ? (
+                            {productRedeemed ? (
                                 <div className="tooltip" data-tip="Form Coins Have already been redeemed">
                                     <button className="btn btn-disabled mb-48">Redeem</button>
                                 </div>
                             ) : userData ? (
                                 <div className="tooltip" data-tip="Use Form Coins to redeem rewards in the Rewards shop!">
-                                    <motion.button onClick={handleRedeem} className="btn btn-success mb-48">
+                                    <motion.button onClick={()=>handleRedeem()} className="btn btn-success mb-48">
                                         Redeem {`(+${product.points} points)`}
                                     </motion.button>
+                                    {coins.map((coin, index) => (
+    <motion.div
+        key={index}
+        className="absolute w-5 h-5 flex items-center justify-center font-bold text-yellow-400 bg-yellow-600 border-2 border-yellow-400 rounded-full"
+        initial={{ opacity: 0, scale: 0 }}
+        animate={
+            animate
+                ? {
+                    opacity: [0, 1, 1, 0],
+                    x: [0, coin.x],
+                    y: [0, coin.y], // Coins move upward
+                    rotate: [0, 1080],
+                    scale: [1, 1.2, 1],
+                }
+                : {}
+        }
+        transition={{
+            duration: 3,
+            delay: coin.delay,
+            ease: "easeInOut",
+        }}
+    />
+))}
                                 </div>
                             ) : (
                                 <div className="tooltip" data-tip="Signup or Login to Redeem Form Coins for rewards">

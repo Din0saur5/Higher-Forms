@@ -81,7 +81,11 @@ export default function ProfilePop() {
         </div>
       </div>
 
-
+       {/* Rank */}
+       <div className="mt-4 text-gray-300 text-left w-full px-4">
+        <p className="text-lg"><strong>Rank #:</strong> {`${userData.rank}`|| "Unranked"}</p>
+      </div>
+      
       {/* Purchase History Section (Can Be Enabled Later) */}
       {/* {purchaseHistory.length > 0 ? (
         <div className="mt-6 w-full text-left">

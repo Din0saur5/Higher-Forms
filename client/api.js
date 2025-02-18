@@ -46,7 +46,7 @@ export const getLoggedInUser = async () => {
 
   const { data: userData, error: fetchError } = await supabase
     .from("users")
-    .select("id, display_name, avatar_url, form_coins_total, cart")
+    .select("id, display_name, avatar_url, form_coins_total, cart, rank")
     .eq("id", user.id)
     .single();
 
@@ -352,10 +352,36 @@ export const PatchUser = async (id, newUserObject) => {
 
 
 
+export const AddCoins = async (product_id, userId) =>{
+  console.log('workind')
+  const { data, error } = await supabase
+  .rpc('redeem_product', { 
+    input_product_id: product_id, 
+    input_user_id: userId 
+  });
 
-
-
-export const AddCoins = async (verified_id, userId) =>{
-
-  
+if (error) {
+  console.error("Error redeeming product:", error);
+} else {
+  console.log("Updated form_coins_total:", data);
+  return data
 }
+
+}
+
+export const fetchStrains = async () => { 
+  const { data, error } = await supabase
+    .from("strains")
+    .select("*")
+    .order("id", { ascending: true });
+
+  if (error) {
+    console.error("Error fetching strains:", error);
+    return { v1Cartridges: [], duoStrains: [] }; // Return empty arrays if error
+  }
+
+  return {
+    v1Cartridges: data.filter((strain) => strain.category === "v1"),
+    duoStrains: data.filter((strain) => strain.category === "duos"),
+  };
+};
