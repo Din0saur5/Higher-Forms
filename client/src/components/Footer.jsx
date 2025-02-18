@@ -14,10 +14,9 @@ const Footer = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
       >
-        <div className="container mx-auto flex flex-col md:flex-row justify-between items-start gap-12 px-6 md:px-12">
-          
-          {/* CONTACT INFO & SOCIALS */}
-          <div className="flex-1 text-center md:text-left flex flex-col items-center md:items-start">
+        <div className="container mx-auto flex flex-col md:flex-row justify-between items-center md:items-start gap-12 px-6 md:px-12">
+          {/* LEFT SECTION - Social Media & Contact Info (1/3 of the width) */}
+          <div className="flex-1 md:w-1/3 flex flex-col items-center md:items-start text-center md:text-left">
             <motion.img
               src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/logos/HF_gold_horz.svg"
               className="h-12 mb-4"
@@ -27,12 +26,12 @@ const Footer = () => {
               transition={{ duration: 1 }}
             />
 
-            <p className="flex items-center mt-4 text-lg">
+            <p className="flex items-center mt-4 text-lg justify-center md:justify-start">
               <LuMail className="text-yellow-400 text-xl" />
               <span className="ml-2 text-sm">sales@higher-forms.com</span>
             </p>
 
-            <p className="flex items-center mt-2 text-lg">
+            <p className="flex items-center mt-2 text-lg justify-center md:justify-start">
               <FaInstagram className="text-yellow-400 text-xl" />
               <a
                 href="https://instagram.com/higherforms"
@@ -45,8 +44,8 @@ const Footer = () => {
             </p>
           </div>
 
-          {/* CONTACT FORM */}
-          <form className="flex-1 w-full max-w-lg md:max-w-xl space-y-4">
+          {/* RIGHT SECTION - Contact Form (2/3 of the width) */}
+          <form className="flex-1 w-full md:w-2/3 max-w-lg md:max-w-xl space-y-4">
             <p className="text-xl font-bold text-yellow-400">Contact Us</p>
 
             {/* FIRST & LAST NAME */}
@@ -113,7 +112,7 @@ const Footer = () => {
               ></textarea>
             </div>
 
-            {/* SUBMIT BUTTON (No Extra Space Above) */}
+            {/* SUBMIT BUTTON */}
             <motion.button
               type="submit"
               className="btn btn-primary w-full text-lg p-4 bg-yellow-400 text-black font-bold rounded-lg transition hover:bg-yellow-500"
