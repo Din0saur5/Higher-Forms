@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { motion } from "framer-motion"; 
+import { motion } from "framer-motion";
 
 const LabResults = () => {
   const [fullScreenImage, setFullScreenImage] = useState(null);
@@ -40,7 +40,7 @@ const LabResults = () => {
       </motion.section>
 
       {/* Content Section */}
-      <section className="flex flex-col md:flex-row items-center justify-center gap-12 py-16 px-6 md:px-16">
+      <section className="flex flex-col md:flex-row items-start justify-center gap-12 py-16 px-6 md:px-16">
         {/* Left Text Section */}
         <motion.div
           className="md:w-1/2 text-center md:text-left"
