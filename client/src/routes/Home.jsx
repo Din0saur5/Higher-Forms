@@ -6,26 +6,25 @@ const Home = () => {
   return (
     <div className="mt-24 min-h-screen home-container">
       {/* Hero Section */}
-      <motion.section
-        className="hero bg-black text-white flex justify-center items-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1 }}
-      >
-        <div className="text-center">
-          <img
-            src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/Hero1500.png"
-            alt="Higher Forms Banner"
-            className="max-w-full h-auto object-cover mx-auto"
-          />
-        </div>
-      </motion.section>
+<motion.section
+  className="hero bg-black flex justify-center items-center px-4 pt-20 pb-10 md:pb-20"
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  transition={{ duration: 1 }}
+>
+  <div className="relative w-full max-w-7xl mx-auto">
+    <div className="w-full flex justify-center">
+      <img
+        src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/Hero1500.png"
+        alt="Higher Forms Banner"
+        className="w-auto max-w-full md:max-w-5xl h-auto object-contain mx-auto"
+      />
+    </div>
+  </div>
+</motion.section>
 
       {/* Mission Section */}
-      <section
-        id="mission"
-        className="flex flex-col md:flex-row items-stretch w-full"
-      >
+      <section id="mission" className="flex flex-col md:flex-row items-stretch w-full">
         <div className="flex-1 bg-gray-100 p-8 md:p-12">
           <h2 className="text-sm font-bold uppercase text-gray-600 tracking-widest mb-4">
             Mission
@@ -36,36 +35,32 @@ const Home = () => {
             "Not Mixed or adulterated with any other substances or material"
           </p>
           <p className="text-base text-gray-800 leading-relaxed">
-            At Higher Forms, this definition of purity is at the core of
-            everything we do. Our mission is to deliver a truly pure experience
-            by offering premium Category 3 Distillate housed in cutting-edge
-            ceramic cartridges. These cartridges ensure smooth, large clouds
-            and bold, strain-specific flavors, setting a new standard for
-            quality and satisfaction in every product we create.
+            At Higher Forms, this definition of purity is at the core of everything we do. 
+            Our mission is to deliver a truly pure experience by offering premium 
+            Category 3 Distillate housed in cutting-edge ceramic cartridges. These cartridges 
+            ensure smooth, large clouds and bold, strain-specific flavors, setting a new standard 
+            for quality and satisfaction in every product we create.
           </p>
         </div>
-        <div className="flex-1 bg-black  flex items-center justify-center">
+        <div className="flex-1 bg-black flex items-center justify-center p-6">
           <img
             src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/Hardware.png"
-            alt="hardware"
-            className="h-96 w-2/3  object-contain "
+            alt="Hardware"
+            className="h-96 w-2/3 object-contain"
           />
         </div>
       </section>
 
       {/* Cartridge Technology Section */}
-      <section id="technology" className="py-4 pb-16 bg-black text-white">
+      <section id="technology" className="py-12 bg-black text-white text-center">
         <div className="container mx-auto px-6">
-          <div className="pl-6">
-            <h2 className="text-2xl font-bold uppercase tracking-widest mt-8 mb-8">
-              Cartridge Technology
-            </h2>
-            <p className="text-lg leading-relaxed">
-              Higher Forms uses cartridges equipped with No-Burn technology™
-              that delivers unprecedented terpene flavors without sacrificing on
-              the big hit.
-            </p>
-          </div>
+          <h2 className="text-3xl font-bold uppercase tracking-wide mb-6">
+            Cartridge Technology
+          </h2>
+          <p className="text-lg max-w-2xl mx-auto leading-relaxed">
+            Higher Forms uses cartridges equipped with No-Burn technology™ that delivers 
+            unprecedented terpene flavors without sacrificing on the big hit.
+          </p>
         </div>
       </section>
 
@@ -81,59 +76,34 @@ const Home = () => {
             <div className="grid lg:grid-rows-1 grid-cols-2 lg:grid-cols-4 gap-8 w-full max-w-7xl">
               {[
                 {
-                  icon: (
-                    <img
-                      src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/icons/core.svg"
-                      alt="Ceramic Core"
-                      className="h-12 w-12"
-                    />
-                  ),
+                  icon: "core.svg",
                   title: "Proprietary Ceramic Core",
-                  text: "All cartridges feature a proprietary ceramic core. The result of thousands of hours of R&D and testing. The porous core has a unique design of microscopic inlets. Smoothly absorbing oil for consistent vaporization, even heating, and flavor retention.",
-                  smText: "Our proprietary ceramic core ensures smooth oil absorption and even heating for consistent vaporization and flavor retention."
+                  text: "Our proprietary ceramic core ensures smooth oil absorption and even heating for consistent vaporization and flavor retention."
                 },
                 {
-                  icon: (
-                    <img
-                      src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/icons/heat.svg"
-                      alt="Heating Element"
-                      className="h-12 w-12"
-                    />
-                  ),
+                  icon: "heat.svg",
                   title: "Heating Element",
-                  text: "By embedding the heating coil in the center of the ceramic core, hot wires are not directly exposed to your oils. Instead, heat is evenly transmitted throughout the core. No overheating, burnt flavors, or dry hits. The cartridges are never pre-coated with harmful substances such as glycols or glycerin.",
-                  smText: "The embedded heating coil evenly transmits heat throughout the ceramic core, preventing burnt flavors and dry hits."
+                  text: "The embedded heating coil evenly transmits heat throughout the ceramic core, preventing burnt flavors and dry hits."
                 },
                 {
-                  icon: (
-                    <img
-                      src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/icons/pulse.svg"
-                      alt="SmartPulse Power Control"
-                      className="h-12 w-12"
-                    />
-                  ),
+                  icon: "pulse.svg",
                   title: "SmartPulse Power Control",
-                  text: "The longer the session, the hotter cartridges run degrading your oil. The solution? SmartPulse.™ An advanced algorithm designed to stabilize the temperature by sending short intermittent power-pulses to the cartridge. Overheating is avoided and your consumers get to enjoy your full flavor profile.",
-                  smText: "SmartPulse™ stabilizes temperature with intermittent power pulses, preventing overheating and preserving flavor."
+                  text: "SmartPulse™ stabilizes temperature with intermittent power pulses, preventing overheating and preserving flavor."
                 },
                 {
-                  icon: (
-                    <img
-                      src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/icons/temp.svg"
-                      alt="Consistent Temperature"
-                      className="h-12 w-12"
-                    />
-                  ),
+                  icon: "temp.svg",
                   title: "Consistent Temperature",
-                  text: "For best flavors you need a cartridge that consistently regulates temperature. Our cartridges are set at 1.4 ohms with an industry-leading variance of no more than 0.05 ohms. By keeping ohms consistent in our specifically formulated coil, our cartridges prevent heat spikes, maintaining a consistent temperature for flavor preservation.",
-                  smText: "Our precisely engineered coil maintains a stable temperature, preventing heat spikes and preserving flavor."
+                  text: "Our precisely engineered coil maintains a stable temperature, preventing heat spikes and preserving flavor."
                 }
               ].map((item, index) => (
-                <div key={index} className="bg-gray-100 sm:p-6 p-4 rounded-xl shadow-lg flex flex-col items-center text-center border border-gray-300">
-                  <div className="mb-2">{item.icon}</div>
+                <div key={index} className="bg-gray-100 p-6 rounded-xl shadow-lg flex flex-col items-center text-center border border-gray-300">
+                  <img
+                    src={`https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/icons/${item.icon}`}
+                    alt={item.title}
+                    className="h-12 w-12 mb-2"
+                  />
                   <h3 className="text-lg font-bold text-black mb-2">{item.title}</h3>
-                  <p className="text-gray-700 max-md:hidden text-sm">{item.text}</p>
-                  <p className="text-gray-700 md:hidden text-xs">{item.smText}</p>
+                  <p className="text-gray-700 text-sm">{item.text}</p>
                 </div>
               ))}
             </div>
