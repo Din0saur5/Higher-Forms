@@ -313,6 +313,23 @@ export const uploadProfilePicture = async (userId, file) => {
   return { success: true, message: "Profile picture uploaded successfully!", avatarUrl: data.publicUrl };
 };
 
+export const handleFileChange = async (event) => {
+  const file = event.target.files[0];
+  if (!file || !userData) return;
+
+  setUploading(true);
+  const newUrl = await uploadProfilePicture(userData.id, file);
+
+  if (newUrl.success) {
+    setAvatarUrl(newUrl.avatarUrl);
+    setUserData({ ...userData, avatar_url: newUrl.avatarUrl }); 
+  } else {
+    alert("Error uploading profile picture. Please try again.");
+  }
+
+  setUploading(false);
+};
+
 // User Sign Up Function
 export const SignUp = async (email, password, displayName) => {
   try {

@@ -25,19 +25,33 @@ export default function ProfilePop() {
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (!file || !userData) return;
-
+  
     setUploading(true);
-    const newUrl = await uploadProfilePicture(userData.id, file, avatarUrl);
-
-    if (newUrl) {
-      setAvatarUrl(newUrl);
-      setUserData({ ...userData, avatar_url: newUrl });
-    } else {
-      alert("Error uploading profile picture. Please try again.");
+    
+    try {
+      // Upload the new profile picture to Supabase
+      const newUrl = await uploadProfilePicture(userData.id, file);
+  
+      if (newUrl.success) {
+        // Immediately update local state with the new avatar URL
+        setAvatarUrl(newUrl.avatarUrl);
+  
+        // Update the global user data context with the new avatar URL
+        setUserData((prevState) => ({
+          ...prevState,
+          avatar_url: newUrl.avatarUrl
+        }));
+      } else {
+        alert("Error uploading profile picture. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error uploading profile picture:", error);
+      alert("Unexpected error. Please try again.");
     }
-
+  
     setUploading(false);
   };
+  
 
   return (
     <motion.div
