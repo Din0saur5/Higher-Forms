@@ -6,22 +6,22 @@ const Home = () => {
   return (
     <div className="mt-24 min-h-screen home-container">
       {/* Hero Section */}
-<motion.section
-  className="hero bg-black flex justify-center items-center px-4 pt-20 pb-10 md:pb-20"
-  initial={{ opacity: 0 }}
-  animate={{ opacity: 1 }}
-  transition={{ duration: 1 }}
->
-  <div className="relative w-full max-w-7xl mx-auto">
-    <div className="w-full flex justify-center">
-      <img
-        src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/Hero1500.png"
-        alt="Higher Forms Banner"
-        className="w-auto max-w-full md:max-w-5xl h-auto object-contain mx-auto"
-      />
-    </div>
-  </div>
-</motion.section>
+      <motion.section
+        className="hero bg-black flex justify-center items-center px-4 pt-20 pb-10 md:pb-20"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+      >
+        <div className="relative w-full max-w-7xl mx-auto">
+          <div className="w-full flex justify-center">
+            <img
+              src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/Hero1500.png"
+              alt="Higher Forms Banner"
+              className="w-auto max-w-full md:max-w-5xl h-auto object-contain mx-auto"
+            />
+          </div>
+        </div>
+      </motion.section>
 
       {/* Mission Section */}
       <section id="mission" className="flex flex-col md:flex-row items-stretch w-full">
@@ -43,10 +43,20 @@ const Home = () => {
           </p>
         </div>
         <div className="flex-1 bg-black flex items-center justify-center p-6">
-          <img
+          <motion.img
             src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/Hardware.png"
             alt="Hardware"
             className="h-96 w-2/3 object-contain"
+            initial={{ opacity: 0, scale: 0.7 }}  // Start at a smaller scale
+            whileInView={{
+              opacity: 1,
+              scale: 1,  
+              transition: { 
+                duration: 1.5, 
+                ease: "easeOut"  // Smooth easing for the transition
+              }
+            }}
+            viewport={{ once: true }}  // Trigger the animation only once
           />
         </div>
       </section>
