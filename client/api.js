@@ -407,7 +407,7 @@ export const fetchStrains = async () => {
 
   if (error) {
     console.error("Error fetching strains:", error);
-    return { v1Cartridges: [], duoStrains: [] }; // Return empty arrays if error
+    return { v1Cartridges: [], duoStrains: [] };
   }
 
   return {
@@ -425,5 +425,26 @@ export const resetPassword = async (email) => {
     return { success: true };
   } catch (error) {
     return { success: false, message: error.message };
+  }
+};
+
+// Fetch historical points for a user
+export const getHistoricalPoints = async (userId) => {
+  try {
+    const { data, error } = await supabase
+      .from("historical_points")
+      .select("points, date")
+      .eq("user_id", userId)
+      .order("date", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching historical points:", error.message);
+      return { success: false, message: error.message };
+    }
+
+    return { success: true, data }; 
+  } catch (error) {
+    console.error("Unexpected error fetching historical points:", error);
+    return { success: false, message: "Failed to fetch historical points." };
   }
 };

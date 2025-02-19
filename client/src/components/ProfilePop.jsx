@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useUserContext } from "../components/UserContext";
 import { NavLink, useNavigate } from "react-router-dom";
-import { LogOut, uploadProfilePicture } from "../../api";
+import { LogOut, uploadProfilePicture, getHistoricalPoints } from "../../api"; // Import the getHistoricalPoints function
 import { motion } from "framer-motion";
 
 export default function ProfilePop() {
@@ -9,12 +9,29 @@ export default function ProfilePop() {
   const navigate = useNavigate();
   const [avatarUrl, setAvatarUrl] = useState(userData?.avatar_url || "https://via.placeholder.com/150");
   const [uploading, setUploading] = useState(false);
+  const [historicalPoints, setHistoricalPoints] = useState([]);
 
   useEffect(() => {
     if (!userData) {
       navigate("/login");
     }
   }, [userData, navigate]);
+
+  useEffect(() => {
+    // Fetch historical points data for the logged-in user
+    const fetchHistoricalPoints = async () => {
+      try {
+        const points = await getHistoricalPoints(userData?.id);
+        setHistoricalPoints(points); // Store the historical points in state
+      } catch (error) {
+        console.error("Error fetching historical points:", error);
+      }
+    };
+
+    if (userData?.id) {
+      fetchHistoricalPoints();
+    }
+  }, [userData]);
 
   const handleLogout = async () => {
     await LogOut();
@@ -25,17 +42,17 @@ export default function ProfilePop() {
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (!file || !userData) return;
-  
+
     setUploading(true);
-    
+
     try {
       // Upload the new profile picture to Supabase
       const newUrl = await uploadProfilePicture(userData.id, file);
-  
+
       if (newUrl.success) {
         // Immediately update local state with the new avatar URL
         setAvatarUrl(newUrl.avatarUrl);
-  
+
         // Update the global user data context with the new avatar URL
         setUserData((prevState) => ({
           ...prevState,
@@ -48,10 +65,9 @@ export default function ProfilePop() {
       console.error("Error uploading profile picture:", error);
       alert("Unexpected error. Please try again.");
     }
-  
+
     setUploading(false);
   };
-  
 
   return (
     <motion.div
@@ -100,7 +116,6 @@ export default function ProfilePop() {
         <h3 className="text-lg font-bold text-gray-400">Your Form Coins:</h3>
         <div className="flex items-center justify-center mt-1">
           <p className="text-2xl font-semibold">{userData?.form_coins_total || 0}</p>
-          {/* Change the static image to the GIF */}
           <img
             className="w-8 h-8 ml-2"
             src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/formcoin/coinAnim.gif"
@@ -108,6 +123,20 @@ export default function ProfilePop() {
           />
         </div>
       </motion.div>
+
+      {/* Historical Points Section */}
+      {historicalPoints.length > 0 && (
+        <div className="mt-6 p-4 bg-gray-800 text-yellow-400 rounded-md w-full text-center border border-gray-700">
+          <h3 className="text-lg font-bold text-gray-400">Historical Points:</h3>
+          <div className="space-y-2 mt-2">
+            {historicalPoints.map((entry, index) => (
+              <p key={index} className="text-gray-300 text-sm">
+                {new Date(entry.date).toLocaleDateString()} - {entry.points} points
+              </p>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Rank Section */}
       <div className="mt-4 text-gray-300 text-left">

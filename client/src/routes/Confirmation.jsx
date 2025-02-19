@@ -1,9 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FaCheckCircle } from "react-icons/fa"; 
+import { FaCheckCircle } from "react-icons/fa";
 
-const Confirmation = () => {
+const Confirmation = ({ order }) => {
   const navigate = useNavigate();
 
   return (
@@ -28,6 +28,13 @@ const Confirmation = () => {
         <p className="text-gray-600 text-sm mt-2">
           If you have any issues, please contact our support team.
         </p>
+
+        {/* Display the tracking number */}
+        {order?.tracking_number && (
+          <p className="text-lg font-semibold text-black mt-4">
+            Tracking Number: {order.tracking_number}
+          </p>
+        )}
       </div>
 
       {/* Navigation Button */}

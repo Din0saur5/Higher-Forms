@@ -9,7 +9,7 @@ import { updateFormCoins, PatchUser, AddCoins } from "../../api"; // Import API 
 
 function ValidationPage({ setValidationPage, clearProduct, product }) {
     const { userData, setUserData } = useUserContext(); 
-    const [productRedeemed, setProductRedeemed] = useState(product.been_redeemed)
+    const [productRedeemed, setProductRedeemed] = useState(product.been_redeemed);
     const [showToast, setShowToast] = useState(false);
     const [toastType, setToastType] = useState(null);
     const [animate, setAnimate] = useState(false);
@@ -34,10 +34,8 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
     };
 
     const handleRedeem = async () => {
-       
-
         try {
-           const coins = await AddCoins(product.product_id, userData.id)
+            const coins = await AddCoins(product.product_id, userData.id)
 
             setAnimate(false);
             setCoins(Array.from({ length: 25 }, (_, i) => ({
@@ -46,7 +44,7 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
                 delay: Math.random() * 0.5,
             })));
             setTimeout(() => setAnimate(true), 50);
-            setTimeout(()=>setProductRedeemed(true), 3000)
+            setTimeout(() => setProductRedeemed(true), 3000);
         } catch (error) {
             console.error("Error redeeming coins:", error);
         }
@@ -113,6 +111,8 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
                                 <p>
                                     This code has already been used <span className="font-semibold">{product.been_verified}</span> time{product.been_verified > 1 ? "s" : ""} to verify a <br /><br />
                                     <span className="font-semibold">{product.product_name}</span><br /><br />
+                                    <span className="font-semibold">Batch ID:</span> {product.batch_id}<br />
+                                    <span className="font-semibold">Batch Date:</span> {product.batch_date}<br />
                                     If you were the one who previously verified this product, there’s no need to worry. However, if you’re seeing this message and you haven’t verified this product before, please contact HIGHER FORMS support immediately. This could indicate a counterfeit product.
                                 </p>
                                 {productRedeemed ? (
@@ -125,28 +125,28 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
                                             Redeem {`(+${product.points} points)`}
                                         </motion.button>
                                         {coins.map((coin, index) => (
-    <motion.div
-        key={index}
-        className="absolute w-5 h-5 flex items-center justify-center font-bold text-yellow-400 bg-yellow-600 border-2 border-yellow-400 rounded-full"
-        initial={{ opacity: 0, scale: 0 }}
-        animate={
-            animate
-                ? {
-                    opacity: [0, 1, 1, 0],
-                    x: [0, coin.x],
-                    y: [0, coin.y], // Coins move upward
-                    rotate: [0, 1080],
-                    scale: [1, 1.2, 1],
-                }
-                : {}
-        }
-        transition={{
-            duration: 3,
-            delay: coin.delay,
-            ease: "easeInOut",
-        }}
-    />
-))}
+                                            <motion.div
+                                                key={index}
+                                                className="absolute w-5 h-5 flex items-center justify-center font-bold text-yellow-400 bg-yellow-600 border-2 border-yellow-400 rounded-full"
+                                                initial={{ opacity: 0, scale: 0 }}
+                                                animate={
+                                                    animate
+                                                        ? {
+                                                            opacity: [0, 1, 1, 0],
+                                                            x: [0, coin.x],
+                                                            y: [0, coin.y], // Coins move upward
+                                                            rotate: [0, 1080],
+                                                            scale: [1, 1.2, 1],
+                                                        }
+                                                        : {}
+                                                }
+                                                transition={{
+                                                    duration: 3,
+                                                    delay: coin.delay,
+                                                    ease: "easeInOut",
+                                                }}
+                                            />
+                                        ))}
                                     </div>
                                 ) : (
                                     <div className="tooltip tooltip-bottom" data-tip="Signup or Login to Redeem Form Points for rewards">
@@ -169,28 +169,28 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
                                         Redeem {`(+${product.points} points)`}
                                     </motion.button>
                                     {coins.map((coin, index) => (
-    <motion.div
-        key={index}
-        className="absolute w-5 h-5 flex items-center justify-center font-bold text-yellow-400 bg-yellow-600 border-2 border-yellow-400 rounded-full"
-        initial={{ opacity: 0, scale: 0 }}
-        animate={
-            animate
-                ? {
-                    opacity: [0, 1, 1, 0],
-                    x: [0, coin.x],
-                    y: [0, coin.y], 
-                    rotate: [0, 1080],
-                    scale: [1, 1.2, 1],
-                }
-                : {}
-        }
-        transition={{
-            duration: 3,
-            delay: coin.delay,
-            ease: "easeInOut",
-        }}
-    />
-))}
+                                        <motion.div
+                                            key={index}
+                                            className="absolute w-5 h-5 flex items-center justify-center font-bold text-yellow-400 bg-yellow-600 border-2 border-yellow-400 rounded-full"
+                                            initial={{ opacity: 0, scale: 0 }}
+                                            animate={
+                                                animate
+                                                    ? {
+                                                        opacity: [0, 1, 1, 0],
+                                                        x: [0, coin.x],
+                                                        y: [0, coin.y], 
+                                                        rotate: [0, 1080],
+                                                        scale: [1, 1.2, 1],
+                                                    }
+                                                    : {}
+                                            }
+                                            transition={{
+                                                duration: 3,
+                                                delay: coin.delay,
+                                                ease: "easeInOut",
+                                            }}
+                                        />
+                                    ))}
                                 </div>
                             ) : (
                                 <div className="tooltip" data-tip="Signup or Login to Redeem Form Coins for rewards">
