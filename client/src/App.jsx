@@ -2,13 +2,13 @@ import * as React from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Home from "./routes/Home";
-import Profile from "./routes/Profile"; 
+import Profile from "./routes/Profile";
 import ErrorPage from "./routes/ErrorPage";
 import AppLayout from "./components/AppLayout";
 import "./App.css";
 import { getLoggedInUser } from "../api";
 import Strains from "./routes/Strains";
-import Log from "./routes/Log"; 
+import Log from "./routes/Log";
 import LabResults from "./routes/LabResults";
 import RewardShop from "./routes/RewardShop";
 import Checkout from "./routes/Checkout";
@@ -18,13 +18,15 @@ import { UserProvider, useUserContext } from "./components/UserContext";
 import AgeVerification from "./components/AgeVerification";
 import Verify from "./routes/Verify";
 import WalletAnimation from "./components/FormcoinAddingAni";
+import ResetPassword from "./components/resetpassword";
 
 // Higher-Order Component (HOC) for authentication check
 const ProtectedRoute = ({ element }) => {
   const { userData } = useUserContext();
-  return userData ? element : <Log />;  
+  return userData ? element : <Log />;  // Redirect to Login if not authenticated
 };
 
+// Configure the router and routes
 const router = createBrowserRouter([
   {
     path: "/",
@@ -33,20 +35,22 @@ const router = createBrowserRouter([
     loader: async () => getLoggedInUser(),
     children: [
       { path: "/", element: <Home /> },
-      { path: "/profile", element: <Profile /> }, 
+      { path: "/profile", element: <ProtectedRoute element={<Profile />} /> }, 
       { path: "/strains", element: <Strains /> },
       { path: "/login", element: <Log /> },
       { path: "/lab-results", element: <LabResults /> },
-      { path: "/rewards", element: <ProtectedRoute element={<RewardShop />} /> }, 
+      { path: "/rewards", element: <ProtectedRoute element={<RewardShop />} /> },
       { path: "/checkout", element: <ProtectedRoute element={<Checkout />} /> },
       { path: "/confirmation", element: <ProtectedRoute element={<Confirmation />} /> },
       { path: "/cart", element: <Cart /> },
       { path: "/verify", element: <Verify /> },
-      { path: "/coins", element: <WalletAnimation /> }
+      { path: "/coins", element: <WalletAnimation /> },
+      { path: "/reset-password", element: <ResetPassword /> }// Added reset password route
     ],
   },
 ]);
 
+// Main App component
 const App = () => {
   const [ageConfirmed, setAgeConfirmed] = React.useState(
     localStorage.getItem("ageVerified") === "true"
@@ -55,9 +59,9 @@ const App = () => {
   return (
     <UserProvider>
       {!ageConfirmed ? (
-        <AgeVerification onConfirm={() => setAgeConfirmed(true)} />
+        <AgeVerification onConfirm={() => setAgeConfirmed(true)} />  // Ensure age verification is handled
       ) : (
-        <RouterProvider router={router} />
+        <RouterProvider router={router} /> 
       )}
     </UserProvider>
   );

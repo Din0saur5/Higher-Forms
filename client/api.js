@@ -415,3 +415,15 @@ export const fetchStrains = async () => {
     duoStrains: data.filter((strain) => strain.category === "duos"),
   };
 };
+
+export const resetPassword = async (email) => {
+  try {
+    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    if (error) {
+      return { success: false, message: error.message };
+    }
+    return { success: true };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+};

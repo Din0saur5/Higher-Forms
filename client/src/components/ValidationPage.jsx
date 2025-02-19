@@ -178,7 +178,7 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
                 ? {
                     opacity: [0, 1, 1, 0],
                     x: [0, coin.x],
-                    y: [0, coin.y], // Coins move upward
+                    y: [0, coin.y], 
                     rotate: [0, 1080],
                     scale: [1, 1.2, 1],
                 }
