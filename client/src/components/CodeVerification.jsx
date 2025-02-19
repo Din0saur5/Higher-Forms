@@ -3,11 +3,11 @@ import React, { useState, useRef } from "react";
 const CodeVerification = ({ setValidationPage, setProduct, supabase }) => {
     const SUPABASE_URL = import.meta.env.VITE_URL;
     const SUPABASE_KEY = import.meta.env.VITE_ANON;
-    console.log(typeof setProduct);
 
     const [code, setCode] = useState("");
     const [showToast, setShowToast] = useState(false);
     const [toastClass, setToastClass] = useState("opacity-0");
+    const [isLoading, setIsLoading] = useState(false); 
     const inputRefs = [];
 
     const handleChange = (e, index) => {
@@ -49,6 +49,7 @@ const CodeVerification = ({ setValidationPage, setProduct, supabase }) => {
     };
 
     const fetchProduct = async (code) => {
+        setIsLoading(true); // Start loading
         const formattedCode = code.trim().toLowerCase();
         const fetchProductUrl = `${SUPABASE_URL}/rest/v1/product_validations?select=*&product_id=eq.${encodeURIComponent(formattedCode)}`;
 
@@ -101,6 +102,8 @@ const CodeVerification = ({ setValidationPage, setProduct, supabase }) => {
             }
         } catch (error) {
             console.error("Unexpected error:", error.message);
+        } finally {
+            setIsLoading(false); 
         }
 
         setValidationPage(true);
@@ -180,7 +183,7 @@ const CodeVerification = ({ setValidationPage, setProduct, supabase }) => {
                         type="submit"
                         className="w-full py-2 hover:bg-accent text-white font-semibold rounded-md bg-success transition"
                     >
-                        Verify Product
+                        {isLoading ? "Verifying..." : "Verify Product"} 
                     </button>
                 </form>
             </div>
