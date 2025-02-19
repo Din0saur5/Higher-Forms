@@ -100,9 +100,10 @@ export default function ProfilePop() {
         <h3 className="text-lg font-bold text-gray-400">Your Form Coins:</h3>
         <div className="flex items-center justify-center mt-1">
           <p className="text-2xl font-semibold">{userData?.form_coins_total || 0}</p>
+          {/* Change the static image to the GIF */}
           <img
-            className="w-6 h-6 ml-2"
-            src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/formcoin.svg"
+            className="w-8 h-8 ml-2"
+            src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/formcoin/coinAnim.gif"
             alt="Form Coin"
           />
         </div>

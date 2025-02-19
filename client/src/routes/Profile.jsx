@@ -106,7 +106,7 @@ const Profile = () => {
             <p className="text-2xl font-semibold">{userData?.form_coins_total || 0}</p>
             <img
               className="w-6 h-6 ml-2"
-              src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/formcoin.svg"
+              src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/formcoin/coinAnim.gif"
               alt="Form Coin"
             />
           </div>
