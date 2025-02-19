@@ -57,40 +57,44 @@ const Checkout = () => {
       setCheckoutError("You do not have enough Form Coins to complete this purchase.");
       return;
     }
-
+  
     if (!shippingInfo.address || !shippingInfo.city || !shippingInfo.state || !shippingInfo.zipcode) {
       setCheckoutError("Please fill in all required shipping details.");
       return;
     }
-
+  
     setCheckoutError(null);
-
+  
+    const batchId = "your-generated-batch-id";  // Generate or fetch your batch ID
+    const batchDate = new Date().toISOString();  // Use the current date for batch date
+  
     const response = await placeOrder(
       userData.id,
       userData.email,
       shippingInfo.fullName,
       `${shippingInfo.address}, ${shippingInfo.apt ? shippingInfo.apt + ", " : ""}${shippingInfo.city}, ${shippingInfo.state} ${shippingInfo.zipcode}, ${shippingInfo.country}`,
-      userData.cart
+      userData.cart,
+      batchId,  // Add batchId
+      batchDate  // Add batchDate
     );
-    
-
+  
     if (!response.success) {
       setCheckoutError(response.message);
       return;
     }
-
+  
     await modifyFormCoins(-cartTotal);
     await clearCart();
-
+  
     setUserData((prev) => ({
       ...prev,
       cart: [],
       form_coins_total: prev.form_coins_total - cartTotal,
     }));
-
+  
     navigate("/confirmation");
   };
-
+  
   return (
     <div className="container mt-24 min-h-screen mx-auto px-4 py-6">
       <h1 className="text-3xl font-bold mb-6 text-center text-black">Checkout</h1>
