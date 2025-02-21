@@ -77,13 +77,13 @@ const Home = () => {
       {/* Smoke Effect Banner Section with Cards */}
       <Parallax bgImage="/assets/smoke-effect.jpg" strength={300}>
         <section className="relative flex items-center justify-center w-full max-h-[640px] h-[640px] px-[5%]">
-          <video className="absolute inset-0 w-full h-full object-cover" autoPlay loop muted>
+          <video className="absolute inset-0 w-full h-[110%] md:h-full object-cover" autoPlay loop muted>
             <source src="/assets/smoke-effect.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
 
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center w-full h-full px-[5%]">
-            <div className="grid lg:grid-rows-1 grid-cols-2 lg:grid-cols-4 gap-8 w-full max-w-7xl">
+            <div className="grid lg:grid-rows-1 grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 w-full max-w-7xl">
               {[
                 {
                   icon: "core.svg",
@@ -106,7 +106,7 @@ const Home = () => {
                   text: "Our precisely engineered coil maintains a stable temperature, preventing heat spikes and preserving flavor."
                 }
               ].map((item, index) => (
-                <div key={index} className="bg-gray-100 p-6 rounded-xl shadow-lg flex flex-col items-center text-center border border-gray-300">
+                <div key={index} className="bg-gray-100 p-2 md:p-6 rounded-xl shadow-lg flex flex-col items-center text-center border border-gray-300">
                   <img
                     src={`https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/icons/${item.icon}`}
                     alt={item.title}
