@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useUserContext } from "../components/UserContext";
+import { useUserContext } from "./UserContext";
 import { NavLink, useNavigate } from "react-router-dom";
 import { LogOut, uploadProfilePicture, getHistoricalPoints } from "../../api"; // Import the getHistoricalPoints function
 import { motion } from "framer-motion";

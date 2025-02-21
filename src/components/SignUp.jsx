@@ -5,7 +5,7 @@ import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { SignUp } from "../../api";
-import { useUserContext } from "../components/UserContext";
+import { useUserContext } from "./UserContext";
 
 //Form Validation 
 const validationSchema = Yup.object({
