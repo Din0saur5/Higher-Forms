@@ -9,7 +9,7 @@ import { updateFormCoins, PatchUser, AddCoins } from "../../api"; // Import API 
 
 function ValidationPage({ setValidationPage, clearProduct, product }) {
     const { userData, setUserData } = useUserContext(); 
-    const [productRedeemed, setProductRedeemed] = useState(product.been_redeemed);
+    const [productRedeemed, setProductRedeemed] = useState(product?.been_redeemed || null);
     const [showToast, setShowToast] = useState(false);
     const [toastType, setToastType] = useState(null);
     const [animate, setAnimate] = useState(false);
@@ -90,25 +90,25 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
     }[toastType] || "text-neutral";
 
     return (
-        <div className={`relative mt-48  sm:h-screen text-white ${borderColor} px-[10%] pt-0 pb-[10%] z-10 ${shadowColor}`}>
+        <div className={` mt-48 text-white ${borderColor} px-[10%] pt-0 pb-[20%] z-10 ${shadowColor}`}>
             {/* Back Button */}
-            <button onClick={handleBack} className="absolute top-4 left-6 sm:left-12 text-3xl hover:scale-150 transition-all">
+            <button onClick={handleBack} className="absolute top-24  left-12 text-3xl hover:scale-150 transition-all">
                 <IoArrowBackCircleOutline />
             </button>
 
             {/* Info Button */}
-            <button onClick={handleReplayToast} className={`absolute top-4 sm:right-12 right-6 text-3xl hover:scale-110 transition-all ${textColor}`}>
+            <button onClick={handleReplayToast} className={`absolute top-24 right-12  text-3xl hover:scale-110 transition-all ${textColor}`}>
                 <SlInfo />
             </button>
 
             {/* Product Display */}
-            <div className="flex flex-col items-center justify-center h-100">
+            <div className="flex flex-col items-center justify-center h-full">
                 {product ? (
                     product.been_verified > 0 ? (
-                        <div className="flex card m-40 sm:m-[10%] sm:mb-0 h-1/2 border-2 border-warning">
-                            <div className="card-body max-sm:w-[80vw] items-center text-center">
-                                <IoWarningOutline className="text-5xl text-warning" />
-                                <p>
+                        <div className="flex m-40 p-0 border-2 border-warning">
+                            <div className="flex flex-col content-center max-sm:w-[80vw] items-center text-center">
+                                <IoWarningOutline className="text-5xl pb-2 text-warning" />
+                                <p className="px-4">
                                     This code has already been used <span className="font-semibold">{product.been_verified}</span> time{product.been_verified > 1 ? "s" : ""} to verify a <br /><br />
                                     <span className="font-semibold">{product.product_name}</span><br /><br />
                                     <span className="font-semibold">Batch ID:</span> {product.batch_id}<br />
@@ -117,7 +117,7 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
                                 </p>
                                 {productRedeemed ? (
                                     <div className="tooltip tooltip-bottom" data-tip="Form Coins Have already been redeemed">
-                                        <button className="btn btn-disabled mb-48">Redeem</button>
+                                        <button className="btn btn-disabled ">Redeem</button>
                                     </div>
                                 ) : userData ? (
                                     <div className="tooltip" data-tip="Use Form Coins to redeem rewards in the Rewards shop!">
@@ -150,24 +150,24 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
                                     </div>
                                 ) : (
                                     <div className="tooltip tooltip-bottom" data-tip="Signup or Login to Redeem Form Points for rewards">
-                                        <button className="btn btn-disabled mb-48">Redeem</button>
+                                        <button className="btn btn-disabled ">Redeem</button>
                                     </div>
                                 )}
                             </div>
                         </div>
                     ) : (
-                        <div className="flex flex-col items-center justify-center max-sm:mt-24">
-                            <video src={product.graphic} autoPlay muted playsInline loop className="max-w-[40%] max-sm:w-[1000%] sm:w-3/4" />
+                        <div className="flex flex-col items-center justify-center mt-24 sm:mt-48">
+                            <video src={product.graphic} autoPlay muted playsInline loop className="sm:max-h-[500px] max-h-[250px]" />
                             <h2 className={`text-2xl text-white text-center mb-2 mt-4`}>{product.product_name}</h2>
                             <p className="font-semibold text-white">Batch ID: <span >{product.batch_id} </span> </p> 
                             <p className="font-semibold ml-2 text-white">Batch Date:</p> {product.batch_date}<br />
                             {productRedeemed ? (
                                 <div className="tooltip" data-tip="Form Coins Have already been redeemed">
-                                    <button className="btn btn-disabled mb-48">Redeem</button>
+                                    <button className="btn btn-disabled mt-10 ">Redeem</button>
                                 </div>
                             ) : userData ? (
                                 <div className="tooltip" data-tip="Use Form Coins to redeem rewards in the Rewards shop!">
-                                    <motion.button onClick={()=>handleRedeem()} className="btn btn-success mb-48">
+                                    <motion.button onClick={()=>handleRedeem()} className="btn btn-success mt-10">
                                         Redeem {`(+${product.points} points)`}
                                     </motion.button>
                                     {coins.map((coin, index) => (
@@ -196,7 +196,7 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
                                 </div>
                             ) : (
                                 <div className="tooltip" data-tip="Signup or Login to Redeem Form Coins for rewards">
-                                    <button className="btn btn-disabled mb-48">Redeem</button>
+                                    <button className="btn btn-disabled mt-10">Redeem</button>
                                 </div>
                             )}
                         </div>
