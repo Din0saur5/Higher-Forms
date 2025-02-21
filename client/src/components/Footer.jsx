@@ -115,7 +115,7 @@ const Footer = () => {
             {/* SUBMIT BUTTON */}
             <motion.button
               type="submit"
-              className="btn btn-primary w-full text-lg p-4 bg-yellow-400 text-black font-bold rounded-lg transition hover:bg-yellow-500"
+              className="btn btn-primary w-full content-center text-lg p-4 bg-yellow-400 text-black font-bold align-center rounded-lg transition hover:bg-yellow-500"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >

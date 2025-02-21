@@ -44,7 +44,6 @@ const router = createBrowserRouter([
       { path: "/confirmation", element: <ProtectedRoute element={<Confirmation />} /> },
       { path: "/cart", element: <Cart /> },
       { path: "/verify", element: <Verify /> },
-      { path: "/coins", element: <WalletAnimation /> },
       { path: "/reset-password", element: <ResetPassword /> }// Added reset password route
     ],
   },

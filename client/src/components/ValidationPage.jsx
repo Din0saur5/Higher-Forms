@@ -90,7 +90,7 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
     }[toastType] || "text-neutral";
 
     return (
-        <div className={`relative mt-48 h-full sm:h-screen text-white ${borderColor} px-[10%] pt-0 pb-[10%] z-10 ${shadowColor}`}>
+        <div className={`relative mt-48  sm:h-screen text-white ${borderColor} px-[10%] pt-0 pb-[10%] z-10 ${shadowColor}`}>
             {/* Back Button */}
             <button onClick={handleBack} className="absolute top-4 left-6 sm:left-12 text-3xl hover:scale-150 transition-all">
                 <IoArrowBackCircleOutline />
@@ -158,7 +158,9 @@ function ValidationPage({ setValidationPage, clearProduct, product }) {
                     ) : (
                         <div className="flex flex-col items-center justify-center max-sm:mt-24">
                             <video src={product.graphic} autoPlay muted playsInline loop className="max-w-[40%] max-sm:w-[1000%] sm:w-3/4" />
-                            <h2 className={`text-2xl text-white text-center mb-14 mt-4`}>{product.product_name}</h2>
+                            <h2 className={`text-2xl text-white text-center mb-2 mt-4`}>{product.product_name}</h2>
+                            <p className="font-semibold text-white">Batch ID: <span >{product.batch_id} </span> </p> 
+                            <p className="font-semibold ml-2 text-white">Batch Date:</p> {product.batch_date}<br />
                             {productRedeemed ? (
                                 <div className="tooltip" data-tip="Form Coins Have already been redeemed">
                                     <button className="btn btn-disabled mb-48">Redeem</button>
