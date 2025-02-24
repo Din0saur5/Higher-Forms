@@ -125,28 +125,46 @@ export const UserProvider = ({ children }) => {
   };
 
   // ✅ Remove item from cart
-  const handleRemoveFromCart = async (variantId) => {
-    if (!userData) return;
-
-    const newCart = cart.filter((item) => item !== variantId);
-    setCart(newCart);
-    updateCartTotal(newCart);
-
+  const handleRemoveFromCart = async (userId, productVariantId) => {
+    if (!userId || !productVariantId) {
+      console.error("Invalid parameters for handleRemoveFromCart.");
+      return { success: false, message: "Invalid parameters." };
+    }
+  
     try {
-      const response = await removeFromCart(userData.id, variantId);
-      if (response.success) {
-        setUserData((prev) => ({
-          ...prev,
-          cart: newCart,
-        }));
-      } else {
-        console.error("Error removing from cart:", response.message);
+      // Fetch current cart
+      const { data: user, error: fetchError } = await supabase
+        .from("users")
+        .select("cart")
+        .eq("id", userId)
+        .single();
+  
+      if (fetchError) {
+        console.error("Error fetching cart:", fetchError.message);
+        return { success: false, message: "Failed to fetch cart." };
       }
+  
+      let cart = user?.cart || [];
+      const updatedCart = cart.filter((item) => item !== productVariantId); // ✅ Remove the item
+  
+      // Update the cart in Supabase
+      const { error: updateError } = await supabase
+        .from("users")
+        .update({ cart: updatedCart })
+        .eq("id", userId);
+  
+      if (updateError) {
+        console.error("Error updating cart:", updateError.message);
+        return { success: false, message: "Failed to update cart." };
+      }
+  
+      return { success: true, message: "Item removed from cart.", cart: updatedCart };
     } catch (error) {
-      console.error("Error removing from cart:", error);
+      console.error("Unexpected error removing from cart:", error);
+      return { success: false, message: "An error occurred while removing the item." };
     }
   };
-
+    
   // ✅ Clear cart after checkout
   const clearCart = async () => {
     if (!userData) return;

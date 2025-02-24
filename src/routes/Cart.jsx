@@ -70,18 +70,21 @@ const Cart = () => {
       cart: prev.cart.filter((item) => item !== variantId),
     }));
   
-    // Call the API to remove from Supabase
-    const response = await handleRemoveFromCart(userData.id, variantId);
+    try {
+      const response = await handleRemoveFromCart(userData.id, variantId);
   
-    if (response.success) {
-      // Only refetch the cart if API confirms deletion
+      if (!response || !response.success) {
+        console.error("Failed to remove item from cart:", response?.message || "Unknown error");
+        return;
+      }
+  
+      // Only update if API confirms deletion
       setUserData((prev) => ({ ...prev, cart: response.cart }));
-    } else {
-      console.error("Failed to remove item from cart:", response.message);
+    } catch (error) {
+      console.error("Error removing item from cart:", error);
     }
   };
   
-
   return (
     <div className="container mt-24 min-h-screen mx-auto px-4 py-6">
       <h1 className="text-3xl font-bold mb-6 text-center text-black">Your Cart</h1>
