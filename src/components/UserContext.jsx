@@ -1,5 +1,12 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getLoggedInUser, LogOut, updateFormCoins, addToCart, removeFromCart, fetchCartProds } from "../../api";
+import { 
+  getLoggedInUser, 
+  LogOut, 
+  updateFormCoins, 
+  addToCart, 
+  removeFromCart, 
+  fetchCartProds 
+} from "../../api";
 import { supabase } from "../../api";
 
 const UserContext = createContext();
@@ -12,61 +19,71 @@ export const UserProvider = ({ children }) => {
   const [cartTotal, setCartTotal] = useState(0);
 
   useEffect(() => {
+    let isMounted = true;  // ✅ Prevents state updates on unmounted components
+
     const fetchUser = async () => {
       setLoading(true);
       try {
         const user = await getLoggedInUser();
-        if (user) {
-          setUserData(user);
-          setFormCoins(user.form_coins_total || 0);
-          setCart(user.cart || []);
-          updateCartTotal(user.cart || []);
-        } else {
-          setUserData(null);
-          setCart([]);
-          setCartTotal(0);
-          setFormCoins(0);
+        if (isMounted) {
+          if (user) {
+            setUserData(user);
+            setFormCoins(user.form_coins_total || 0);
+            setCart(user.cart || []);
+            updateCartTotal(user.cart || []);
+          } else {
+            resetUserState();
+          }
         }
       } catch (error) {
         console.error("Error fetching user:", error);
-        setUserData(null);
+        if (isMounted) resetUserState();
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
 
     fetchUser();
 
-    // Listen for Supabase Auth changes
+    // ✅ Listen for Supabase Auth changes
     const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
         fetchUser();
       } else if (event === "SIGNED_OUT") {
-        setUserData(null);
-        setCart([]);
-        setCartTotal(0);
-        setFormCoins(0);
+        resetUserState();
       }
     });
 
     return () => {
+      isMounted = false;
       authListener?.subscription?.unsubscribe();
     };
   }, []);
 
-  // Update cart total dynamically
+  // ✅ Helper function to reset user state
+  const resetUserState = () => {
+    setUserData(null);
+    setCart([]);
+    setCartTotal(0);
+    setFormCoins(0);
+  };
+
+  // ✅ Update cart total dynamically
   const updateCartTotal = async (cartItems) => {
     if (!cartItems || cartItems.length === 0) {
       setCartTotal(0);
       return;
     }
-
-    const cartDetails = await fetchCartProds(cartItems);
-    const total = cartDetails.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    setCartTotal(total);
+    try {
+      const cartDetails = await fetchCartProds(cartItems);
+      const total = cartDetails.reduce((sum, item) => sum + item.price * item.quantity, 0);
+      setCartTotal(total);
+    } catch (error) {
+      console.error("Error updating cart total:", error);
+    }
   };
 
-  // Modify Form Coins
+  // ✅ Modify Form Coins
   const modifyFormCoins = async (amount) => {
     if (!userData) return;
 
@@ -99,13 +116,15 @@ export const UserProvider = ({ children }) => {
           ...prev,
           cart: newCart,
         }));
+      } else {
+        console.error("Error adding to cart:", response.message);
       }
     } catch (error) {
       console.error("Error adding to cart:", error);
     }
   };
 
-  // Remove item from cart (Fix: Reference `removeFromCart` correctly)
+  // ✅ Remove item from cart
   const handleRemoveFromCart = async (variantId) => {
     if (!userData) return;
 
@@ -120,13 +139,15 @@ export const UserProvider = ({ children }) => {
           ...prev,
           cart: newCart,
         }));
+      } else {
+        console.error("Error removing from cart:", response.message);
       }
     } catch (error) {
       console.error("Error removing from cart:", error);
     }
   };
 
-  // Clear cart after checkout
+  // ✅ Clear cart after checkout
   const clearCart = async () => {
     if (!userData) return;
 
@@ -150,11 +171,7 @@ export const UserProvider = ({ children }) => {
       await LogOut();
       localStorage.removeItem("supabase.auth.token");
       sessionStorage.removeItem("supabase.auth.token");
-
-      setUserData(null);
-      setCart([]);
-      setCartTotal(0);
-      setFormCoins(0);
+      resetUserState();
     } catch (error) {
       console.error("Logout failed:", error.message);
     }

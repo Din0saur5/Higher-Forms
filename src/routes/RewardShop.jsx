@@ -19,8 +19,10 @@ const RewardShop = () => {
   }, []);
 
   useEffect(() => {
-    updateCartTotal();
-  }, [userData.cart]); 
+    if (userData && Array.isArray(userData.cart)) {
+      updateCartTotal();
+    }
+  }, [userData]); 
 
   // Fetch products from Supabase
   const handleFetchProducts = async () => {
@@ -30,53 +32,60 @@ const RewardShop = () => {
 
   // Fetch cart items and update total
   const updateCartTotal = async () => {
-    if (!userData || !userData.cart || userData.cart.length === 0) {
+    if (!userData || !Array.isArray(userData.cart) || userData.cart.length === 0) {
       setCartTotal(0);
       setCartError(null);
       return;
     }
-
-    const cartItems = await fetchCartProds(userData.cart);
-
-    if (!cartItems || cartItems.length === 0) {
+  
+    try {
+      const cartItems = await fetchCartProds(userData.cart);
+      if (!cartItems || cartItems.length === 0) {
+        setCartTotal(0);
+        setCartError(null);
+        return;
+      }
+  
+      const total = cartItems.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+      setCartTotal(total);
+  
+      if (total > (userData.form_coins_total || 0)) {
+        setCartError("Not enough Form Coins to redeem all items in your cart.");
+      } else {
+        setCartError(null);
+      }
+    } catch (error) {
+      console.error("Error updating cart total:", error);
       setCartTotal(0);
-      setCartError(null);
-      return;
-    }
-
-    const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    setCartTotal(total);
-
-    if (total > userData.form_coins_total) {
-      setCartError("Not enough Form Coins to redeem all items in your cart.");
-    } else {
-      setCartError(null);
     }
   };
-
+  
   // Handle adding an item to the cart
   const handleAddToCart = async (productId, variantId) => {
     if (!userData) {
       alert("Please log in to add items to the cart.");
       return;
     }
-
-    const response = await addToCart(userData.id, variantId);
-    if (response.success) {
-      // Update the cart state instantly
-      setUserData((prevUserData) => ({
-        ...prevUserData,
-        cart: [...prevUserData.cart, variantId],
-      }));
-
-      updateCartTotal(); 
-
-      //Success message
-      setSuccessMessage("Item added successfully to your cart!");
-      setTimeout(() => setSuccessMessage(null), 2000);
+  
+    try {
+      const response = await addToCart(userData.id, variantId);
+      if (response.success) {
+        setUserData((prevUserData) => ({
+          ...prevUserData,
+          cart: [...(prevUserData.cart || []), variantId], // Ensure `cart` is always an array
+        }));
+  
+        await updateCartTotal(); // Wait for the cart to be updated
+        setSuccessMessage("Item added successfully to your cart!");
+        setTimeout(() => setSuccessMessage(null), 2000);
+      } else {
+        console.error("Error adding to cart:", response.message);
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
     }
   };
-
+  
   return (
     <div className="reward-shop-container bg-black text-white font-roboto min-h-screen mt-24 p-6">
       {/* Header */}

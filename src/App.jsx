@@ -1,12 +1,13 @@
-import * as React from "react";
+import React, { Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { UserProvider } from "./components/UserContext";
+import AgeVerification from "./components/AgeVerification";
+import "./App.css";
 import Home from "./routes/Home";
 import Profile from "./routes/Profile";
 import ErrorPage from "./routes/ErrorPage";
 import AppLayout from "./components/AppLayout";
-import "./App.css";
-import { getLoggedInUser } from "../api";
 import Strains from "./routes/Strains";
 import Log from "./routes/Log";
 import LabResults from "./routes/LabResults";
@@ -14,28 +15,29 @@ import RewardShop from "./routes/RewardShop";
 import Checkout from "./routes/Checkout";
 import Confirmation from "./routes/Confirmation";
 import Cart from "./routes/Cart";
-import { UserProvider, useUserContext } from "./components/UserContext";
-import AgeVerification from "./components/AgeVerification";
 import Verify from "./routes/Verify";
-import WalletAnimation from "./components/FormcoinAddingAni";
 import ResetPassword from "./components/resetpassword";
+import { useUserContext } from "./components/UserContext"; 
 
-// Higher-Order Component (HOC) for authentication check
+
 const ProtectedRoute = ({ element }) => {
-  const { userData } = useUserContext();
-  return userData ? element : <Log />;  // Redirect to Login if not authenticated
+  const { userData, loading } = useUserContext();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  return userData ? element : <Log />;
 };
 
-// Configure the router and routes
 const router = createBrowserRouter([
   {
     path: "/",
     element: <AppLayout />,
     errorElement: <ErrorPage />,
-    loader: async () => getLoggedInUser(),
     children: [
       { path: "/", element: <Home /> },
-      { path: "/profile", element: <ProtectedRoute element={<Profile />} /> }, 
+      { path: "/profile", element: <ProtectedRoute element={<Profile />} /> },
       { path: "/strains", element: <Strains /> },
       { path: "/login", element: <Log /> },
       { path: "/lab-results", element: <LabResults /> },
@@ -44,12 +46,11 @@ const router = createBrowserRouter([
       { path: "/confirmation", element: <ProtectedRoute element={<Confirmation />} /> },
       { path: "/cart", element: <Cart /> },
       { path: "/verify", element: <Verify /> },
-      { path: "/reset-password", element: <ResetPassword /> }// Added reset password route
+      { path: "/reset-password", element: <ResetPassword /> }
     ],
   },
 ]);
 
-// Main App component
 const App = () => {
   const [ageConfirmed, setAgeConfirmed] = React.useState(
     localStorage.getItem("ageVerified") === "true"
@@ -57,11 +58,13 @@ const App = () => {
 
   return (
     <UserProvider>
-      {!ageConfirmed ? (
-        <AgeVerification onConfirm={() => setAgeConfirmed(true)} />  // Ensure age verification is handled
-      ) : (
-        <RouterProvider router={router} /> 
-      )}
+      <Suspense fallback={<div>Loading...</div>}>
+        {!ageConfirmed ? (
+          <AgeVerification onConfirm={() => setAgeConfirmed(true)} />
+        ) : (
+          <RouterProvider router={router} />
+        )}
+      </Suspense>
     </UserProvider>
   );
 };

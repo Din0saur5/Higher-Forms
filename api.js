@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
-const SUPABASE_URL = import.meta.env.VITE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_ANON;
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   console.error("Supabase environment variables are missing.");
@@ -34,29 +34,30 @@ export const getLoggedInUser = async () => {
   const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
 
   if (sessionError || !sessionData.session) {
-    console.error("Error fetching session:", sessionError?.message || "No active session found.");
-    return null;
+      console.error("Error fetching session:", sessionError?.message || "No active session found.");
+      return null;
   }
 
   const user = sessionData.session.user;
   if (!user) {
-    console.error("User session missing.");
-    return null;
+      console.error("User session missing.");
+      return null;
   }
 
   const { data: userData, error: fetchError } = await supabase
-    .from("users")
-    .select("id, display_name, avatar_url, form_coins_total, cart, rank")
-    .eq("id", user.id)
-    .single();
+      .from("users")
+      .select("id, display_name, avatar_url, form_coins_total, cart, rank")
+      .eq("id", user.id)
+      .single();
 
   if (fetchError) {
-    console.error("Error fetching user details:", fetchError.message);
-    return user;
+      console.error("Error fetching user details:", fetchError.message);
+      return user;
   }
 
-  return { ...user, ...userData };
+  return { ...user, ...userData, cart: Array.isArray(userData?.cart) ? userData.cart : [] };
 };
+
 
 // Fetch all products with their variants
 export const fetchProducts = async () => {
@@ -74,32 +75,31 @@ export const fetchProducts = async () => {
 
 // Add item to cart using `product_variants.id`
 export const addToCart = async (userId, productVariantId) => {
-  const { data: user, error: fetchError } = await supabase
-    .from("users")
-    .select("cart")
-    .eq("id", userId)
-    .single();
+    const { data: user, error: fetchError } = await supabase
+        .from("users")
+        .select("cart")
+        .eq("id", userId)
+        .single();
 
-  if (fetchError) {
-    console.error("Error fetching cart:", fetchError.message);
-    return { success: false, message: "Failed to fetch cart." };
-  }
+    if (fetchError) {
+        console.error("Error fetching cart:", fetchError.message);
+        return { success: false, message: "Failed to fetch cart." };
+    }
 
-  let cart = user?.cart || [];
+    let cart = Array.isArray(user?.cart) ? user.cart : []; // ✅ Ensure cart is an array
+    cart.push(productVariantId);
 
-  cart.push(productVariantId);
+    const { error: updateError } = await supabase
+        .from("users")
+        .update({ cart })
+        .eq("id", userId);
 
-  const { error: updateError } = await supabase
-    .from("users")
-    .update({ cart })
-    .eq("id", userId);
+    if (updateError) {
+        console.error("Error updating cart:", updateError.message);
+        return { success: false, message: "Failed to update cart." };
+    }
 
-  if (updateError) {
-    console.error("Error updating cart:", updateError.message);
-    return { success: false, message: "Failed to update cart." };
-  }
-
-  return { success: true, message: "Item added to cart!", cart };
+    return { success: true, message: "Item added to cart!", cart };
 };
 
 // Remove item from cart
@@ -134,28 +134,34 @@ export const removeFromCart = async (userId, productVariantId) => {
 
 // Fetch full product details of cart items
 export const fetchCartProds = async (cart) => {
-  if (!cart || cart.length === 0) return [];
-
-  const productCount = cart.reduce((acc, variantId) => {
-    acc[variantId] = (acc[variantId] || 0) + 1;
-    return acc;
-  }, {});
-
-  const { data: products, error } = await supabase
-    .from("product_variants")
-    .select("id, product_id, size, stock, price, products(name, image_url)")
-    .in("id", Object.keys(productCount));
-
-  if (error) {
-    console.error("Error fetching cart products:", error.message);
+  if (!Array.isArray(cart) || cart.length === 0) {
+    console.error("Cart is empty or not an array.");
     return [];
   }
 
-  return products.map((product) => ({
-    ...product,
-    quantity: productCount[product.id] || 1,
-  }));
+  try {
+    const { data: products, error } = await supabase
+      .from("product_variants")
+      .select("id, product_id, size, stock, price, products(name, image_url)")
+      .in("id", cart);
+
+    if (error) {
+      console.error("Error fetching cart products:", error.message);
+      return [];
+    }
+
+    // ✅ Fix: Ensure valid `price` & `quantity`
+    return products.map((item) => ({
+      ...item,
+      price: item.price ?? 0,  // Ensure `price` is a number
+      quantity: 1,  // Default quantity
+    }));
+  } catch (error) {
+    console.error("Unexpected error fetching cart products:", error);
+    return [];
+  }
 };
+
 // Update user's Form Coins balance
 export const updateFormCoins = async (userId, newBalance) => {
   const { error } = await supabase
@@ -264,16 +270,10 @@ export const placeOrder = async (userId, email, name, address, cart) => {
 
 // Fix missing LogOut function
 export const LogOut = async () => {
-  try {
-    await supabase.auth.signOut();
-
-    localStorage.removeItem("supabase.auth.token");
-    sessionStorage.removeItem("supabase.auth.token");
-
-    console.log("User successfully logged out.");
-  } catch (error) {
-    console.error("Logout failed:", error.message);
-  }
+  await supabase.auth.signOut();
+  localStorage.removeItem("supabase.auth.token");
+  sessionStorage.removeItem("supabase.auth.token");
+  console.log("User logged out.");
 };
 
 // Upload Profile Picture to Supabase Storage
@@ -349,8 +349,8 @@ export const SignUp = async (email, password, displayName) => {
 
     // Insert new user into "users" table
     const { error: dbError } = await supabase
-      .from("users")
-      .insert([{ id: userId, display_name: displayName, form_coins_total: 100, cart: [] }]);
+    .from("users")
+    .insert([{ id: userId, display_name: displayName, form_coins_total: 100, cart: [] }]);
 
     if (dbError) {
       console.error("Error saving user details:", dbError.message);

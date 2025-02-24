@@ -23,25 +23,40 @@ const Cart = () => {
   // Fetch cart details and calculate total price
   const fetchCart = async () => {
     setLoading(true);
-    if (!userData || !userData.cart || userData.cart.length === 0) {
+    if (!userData || !Array.isArray(userData.cart) || userData.cart.length === 0) {
       setCartItems([]);
       setCartTotal(0);
       setLoading(false);
       return;
     }
-
-    const cartData = await fetchCartProds(userData.cart);
-    if (cartData.length === 0) {
+  
+    try {
+      const cartData = await fetchCartProds(userData.cart);
+      console.log("Fetched Cart Data:", cartData);
+  
+      if (!cartData || cartData.length === 0) {
+        setCartItems([]);
+        setCartTotal(0);
+        setLoading(false);
+        return;
+      }
+  
+      // ✅ Fix: Ensure valid price & quantity values
+      const total = cartData.reduce((sum, item) => {
+        const itemPrice = item.price ?? 0; // Ensure price is a number
+        const itemQuantity = item.quantity ?? 1; // Default to 1 if missing
+        return sum + itemPrice * itemQuantity;
+      }, 0);
+  
+      setCartItems(cartData);
+      setCartTotal(total);
+    } catch (error) {
+      console.error("Error fetching cart:", error);
       setCartItems([]);
       setCartTotal(0);
+    } finally {
       setLoading(false);
-      return;
     }
-
-    const total = cartData.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    setCartItems(cartData);
-    setCartTotal(total);
-    setLoading(false);
   };
 
   // Handle item removal
@@ -116,11 +131,12 @@ const Cart = () => {
                 Total: <span className="text-yellow-500">{cartTotal} Coins</span>
               </p>
               <p className="text-lg text-black">
-                Your balance after purchase:{" "}
-                <span className={`${formCoins - cartTotal < 0 ? "text-red-600" : "text-green-600"} font-bold`}>
-                  {formCoins - cartTotal} Coins
-                </span>
-              </p>
+  Your balance after purchase:{" "}
+  <span className={`${(formCoins || 0) - (cartTotal || 0) < 0 ? "text-red-600" : "text-green-600"} font-bold`}>
+    {(formCoins || 0) - (cartTotal || 0)} Coins
+  </span>
+</p>
+
             </div>
           </div>
 
