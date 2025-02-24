@@ -158,13 +158,19 @@ export const UserProvider = ({ children }) => {
         return { success: false, message: "Failed to update cart." };
       }
   
+      // ✅ Update the global `UserContext` state
+      setUserData((prev) => ({
+        ...prev,
+        cart: updatedCart,
+      }));
+  
       return { success: true, message: "Item removed from cart.", cart: updatedCart };
     } catch (error) {
       console.error("Unexpected error removing from cart:", error);
       return { success: false, message: "An error occurred while removing the item." };
     }
   };
-    
+  
   // ✅ Clear cart after checkout
   const clearCart = async () => {
     if (!userData) return;

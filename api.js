@@ -55,9 +55,19 @@ export const getLoggedInUser = async () => {
       return user;
   }
 
-  return { ...user, ...userData, cart: Array.isArray(userData?.cart) ? userData.cart : [] };
-};
+  // ✅ Reset the cart if it's incorrectly formatted
+  let validCart = [];
+  if (Array.isArray(userData?.cart)) {
+    validCart = userData.cart.filter(item => typeof item === "string"); // Keep only UUIDs
+  }
 
+  if (validCart.length !== userData?.cart?.length) {
+    console.warn("⚠️ Invalid cart detected. Resetting to a clean array.");
+    await supabase.from("users").update({ cart: validCart }).eq("id", user.id);
+  }
+
+  return { ...user, ...userData, cart: validCart };
+};
 
 // Fetch all products with their variants
 export const fetchProducts = async () => {
@@ -74,32 +84,35 @@ export const fetchProducts = async () => {
 };
 
 // Add item to cart using `product_variants.id`
+// Add item to cart using `product_variants.id`
 export const addToCart = async (userId, productVariantId) => {
-    const { data: user, error: fetchError } = await supabase
-        .from("users")
-        .select("cart")
-        .eq("id", userId)
-        .single();
+  const { data: user, error: fetchError } = await supabase
+    .from("users")
+    .select("cart")
+    .eq("id", userId)
+    .single();
 
-    if (fetchError) {
-        console.error("Error fetching cart:", fetchError.message);
-        return { success: false, message: "Failed to fetch cart." };
-    }
+  if (fetchError) {
+    console.error("Error fetching cart:", fetchError.message);
+    return { success: false, message: "Failed to fetch cart." };
+  }
 
-    let cart = Array.isArray(user?.cart) ? user.cart : []; // ✅ Ensure cart is an array
-    cart.push(productVariantId);
+  let cart = Array.isArray(user?.cart) ? user.cart : [];
+  
+  // ✅ Only store productVariantId (not object)
+  cart.push(productVariantId);
 
-    const { error: updateError } = await supabase
-        .from("users")
-        .update({ cart })
-        .eq("id", userId);
+  const { error: updateError } = await supabase
+    .from("users")
+    .update({ cart })
+    .eq("id", userId);
 
-    if (updateError) {
-        console.error("Error updating cart:", updateError.message);
-        return { success: false, message: "Failed to update cart." };
-    }
+  if (updateError) {
+    console.error("Error updating cart:", updateError.message);
+    return { success: false, message: "Failed to update cart." };
+  }
 
-    return { success: true, message: "Item added to cart!", cart };
+  return { success: true, message: "Item added to cart!", cart };
 };
 
 // Remove item from cart
@@ -116,11 +129,23 @@ export const removeFromCart = async (userId, productVariantId) => {
   }
 
   let cart = user?.cart || [];
-  const updatedCart = cart.filter((item) => item !== productVariantId);
+
+  // Find the item in the cart
+  const itemIndex = cart.findIndex(item => item.product_id === productVariantId);
+
+  if (itemIndex !== -1) {
+    if (cart[itemIndex].quantity > 1) {
+      // Decrease quantity instead of removing it
+      cart[itemIndex].quantity -= 1;
+    } else {
+      // Remove item completely if quantity is 1
+      cart.splice(itemIndex, 1);
+    }
+  }
 
   const { error: updateError } = await supabase
     .from("users")
-    .update({ cart: updatedCart })
+    .update({ cart })
     .eq("id", userId);
 
   if (updateError) {
@@ -128,9 +153,8 @@ export const removeFromCart = async (userId, productVariantId) => {
     return { success: false, message: "Failed to update cart." };
   }
 
-  return { success: true, message: "Item removed from cart.", cart: updatedCart };
+  return { success: true, message: "Item removed from cart.", cart };
 };
-
 
 // Fetch full product details of cart items
 export const fetchCartProds = async (cart) => {
@@ -139,22 +163,28 @@ export const fetchCartProds = async (cart) => {
     return [];
   }
 
+  // 🚨 Ensure all items are valid UUIDs
+  const validCart = cart.filter(id => typeof id === "string" && id.length === 36);
+  if (validCart.length === 0) {
+    console.error("Cart contains invalid or empty product IDs.");
+    return [];
+  }
+
   try {
     const { data: products, error } = await supabase
       .from("product_variants")
       .select("id, product_id, size, stock, price, products(name, image_url)")
-      .in("id", cart);
+      .in("id", validCart);
 
     if (error) {
       console.error("Error fetching cart products:", error.message);
       return [];
     }
 
-    // ✅ Fix: Ensure valid `price` & `quantity`
     return products.map((item) => ({
       ...item,
-      price: item.price ?? 0,  // Ensure `price` is a number
-      quantity: 1,  // Default quantity
+      price: item.price ?? 0,
+      quantity: 1, // Default quantity
     }));
   } catch (error) {
     console.error("Unexpected error fetching cart products:", error);

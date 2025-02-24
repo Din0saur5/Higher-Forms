@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../components/UserContext";
 import { fetchCartProds } from "../../api";
 import { FaCoins, FaTrash, FaShoppingCart } from "react-icons/fa";
-import { motion } from "framer-motion"; 
+import { motion } from "framer-motion";
 
 const Cart = () => {
   const { userData, setUserData, formCoins, modifyFormCoins, clearCart, handleRemoveFromCart } = useUserContext();
@@ -29,26 +29,37 @@ const Cart = () => {
       setLoading(false);
       return;
     }
-  
+
     try {
       const cartData = await fetchCartProds(userData.cart);
       console.log("Fetched Cart Data:", cartData);
-  
+
       if (!cartData || cartData.length === 0) {
         setCartItems([]);
         setCartTotal(0);
         setLoading(false);
         return;
       }
-  
-      // ✅ Fix: Ensure valid price & quantity values
-      const total = cartData.reduce((sum, item) => {
-        const itemPrice = item.price ?? 0; // Ensure price is a number
-        const itemQuantity = item.quantity ?? 1; // Default to 1 if missing
+
+      // ✅ Group items by `id` and sum their quantity
+      const groupedCart = cartData.reduce((acc, item) => {
+        const existingItem = acc.find((cartItem) => cartItem.id === item.id);
+        if (existingItem) {
+          existingItem.quantity += 1; // Increase quantity if item already exists
+        } else {
+          acc.push({ ...item, quantity: 1 }); // Set initial quantity to 1
+        }
+        return acc;
+      }, []);
+
+      // ✅ Ensure valid price & quantity values
+      const total = groupedCart.reduce((sum, item) => {
+        const itemPrice = item.price ?? 0;
+        const itemQuantity = item.quantity ?? 1;
         return sum + itemPrice * itemQuantity;
       }, 0);
-  
-      setCartItems(cartData);
+
+      setCartItems(groupedCart);
       setCartTotal(total);
     } catch (error) {
       console.error("Error fetching cart:", error);
@@ -59,15 +70,20 @@ const Cart = () => {
     }
   };
 
-  // Handle item removal
+  // ✅ Handle item removal
   const handleRemoveItem = async (variantId) => {
     if (!userData) return;
   
-    // Optimistically update the UI first
+    // ✅ Ensure valid UUID before proceeding
+    if (typeof variantId !== "string" || variantId.length !== 36) {
+      console.error("Invalid product variant ID:", variantId);
+      return;
+    }
+  
     setCartItems((prev) => prev.filter((item) => item.id !== variantId));
     setUserData((prev) => ({
       ...prev,
-      cart: prev.cart.filter((item) => item !== variantId),
+      cart: prev.cart.filter((id) => id !== variantId),
     }));
   
     try {
@@ -78,7 +94,6 @@ const Cart = () => {
         return;
       }
   
-      // Only update if API confirms deletion
       setUserData((prev) => ({ ...prev, cart: response.cart }));
     } catch (error) {
       console.error("Error removing item from cart:", error);
@@ -93,7 +108,10 @@ const Cart = () => {
         <p className="text-center text-gray-500">Loading cart...</p>
       ) : cartItems.length === 0 ? (
         <p className="text-gray-600 text-center">
-          Your cart is empty. <span className="text-blue-600 cursor-pointer" onClick={() => navigate("/rewards")}>Go back to shop</span>.
+          Your cart is empty.{" "}
+          <span className="text-blue-600 cursor-pointer" onClick={() => navigate("/rewards")}>
+            Go back to shop
+          </span>
         </p>
       ) : (
         <>
@@ -114,10 +132,14 @@ const Cart = () => {
                 <div>
                   <p className="font-semibold text-black">{item.products.name}</p>
                   <p className="text-gray-500">
-                    Price: <span className="font-bold text-lg text-yellow-500">{item.price} Coins</span>
+                    Price:{" "}
+                    <span className="font-bold text-lg text-yellow-500">
+                      {item.price} Coins
+                    </span>
                   </p>
                   <p className="text-gray-600">
-                    Quantity: <span className="font-bold text-lg">{item.quantity}</span>
+                    Quantity:{" "}
+                    <span className="font-bold text-lg">{item.quantity}</span>
                   </p>
                 </div>
                 <button
@@ -134,19 +156,24 @@ const Cart = () => {
                 Total: <span className="text-yellow-500">{cartTotal} Coins</span>
               </p>
               <p className="text-lg text-black">
-  Your balance after purchase:{" "}
-  <span className={`${(formCoins || 0) - (cartTotal || 0) < 0 ? "text-red-600" : "text-green-600"} font-bold`}>
-    {(formCoins || 0) - (cartTotal || 0)} Coins
-  </span>
-</p>
-
+                Your balance after purchase:{" "}
+                <span
+                  className={`${
+                    (formCoins || 0) - (cartTotal || 0) < 0
+                      ? "text-red-600"
+                      : "text-green-600"
+                  } font-bold`}
+                >
+                  {(formCoins || 0) - (cartTotal || 0)} Coins
+                </span>
+              </p>
             </div>
           </div>
 
           {/* Action Buttons */}
           <div className="mt-6 flex gap-4">
             <button
-              onClick={() => navigate("/rewards")} 
+              onClick={() => navigate("/rewards")}
               className="w-1/2 py-2 bg-gray-400 hover:bg-gray-500 text-white font-bold rounded-lg transition"
             >
               Continue Shopping
