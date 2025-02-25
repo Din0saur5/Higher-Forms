@@ -113,11 +113,20 @@ const Cart = () => {
                   </p>
                 </div>
                 <button
-  onClick={() => handleRemoveFromCart(item.id)} 
+  onClick={async () => {
+    if (!userData) return;
+    const response = await handleRemoveFromCart(userData.id, item.id);
+    if (response.success) {
+      setCartItems((prev) => prev.filter((cartItem) => cartItem.id !== item.id)); // ✅ Update UI
+    } else {
+      console.error("Failed to remove item:", response.message);
+    }
+  }}
   className="text-red-500 hover:text-red-700 text-sm font-bold flex items-center gap-1"
 >
   <FaTrash /> Remove
 </button>
+
               </motion.div>
             ))}
 

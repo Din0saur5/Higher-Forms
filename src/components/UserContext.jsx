@@ -134,30 +134,49 @@ export const UserProvider = ({ children }) => {
   };
 
   // Remove item from cart
-  const handleRemoveFromCart = async (productVariantId) => {
-    if (!userData || !productVariantId) {
+  const handleRemoveFromCart = async (userId, productVariantId) => {
+    if (!userId || !productVariantId) {
       console.error("Invalid parameters for handleRemoveFromCart.");
       return { success: false, message: "Invalid parameters." };
     }
   
     try {
-      // Optimistically update UI first
-      const updatedCart = cart.filter((item) => item !== productVariantId);
-      setCart(updatedCart);
-      updateCartTotal(updatedCart);
+      // ✅ Fetch current cart from Supabase
+      const { data: user, error: fetchError } = await supabase
+        .from("users")
+        .select("cart")
+        .eq("id", userId)
+        .single();
   
-      // Update Supabase database
-      const response = await removeFromCart(userData.id, productVariantId);
-      if (response.success) {
-        setUserData((prev) => ({
-          ...prev,
-          cart: updatedCart,
-        }));
-      } else {
-        console.error("Error removing item from cart:", response.message);
+      if (fetchError) {
+        console.error("Error fetching cart:", fetchError.message);
+        return { success: false, message: "Failed to fetch cart." };
       }
+  
+      let cart = user?.cart || [];
+      const updatedCart = cart.filter((id) => id !== productVariantId); 
+  
+      // ✅ Update Supabase
+      const { error: updateError } = await supabase
+        .from("users")
+        .update({ cart: updatedCart })
+        .eq("id", userId);
+  
+      if (updateError) {
+        console.error("Error updating cart in Supabase:", updateError.message);
+        return { success: false, message: "Failed to update cart." };
+      }
+  
+      // ✅ Update global UserContext state
+      setUserData((prev) => ({
+        ...prev,
+        cart: updatedCart,
+      }));
+  
+      return { success: true, message: "Item removed from cart.", cart: updatedCart };
     } catch (error) {
       console.error("Unexpected error removing from cart:", error);
+      return { success: false, message: "An error occurred while removing the item." };
     }
   };
   
