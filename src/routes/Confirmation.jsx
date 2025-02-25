@@ -23,7 +23,7 @@ const Confirmation = ({ order }) => {
 
       <div className="mt-6 bg-gray-100 shadow-md rounded-lg p-6 w-full max-w-lg">
         <p className="text-lg font-semibold text-black">
-          Your rewards will be available in your account shortly.
+          Your rewards will be sent to your address as soon as possible!
         </p>
         <p className="text-gray-600 text-sm mt-2">
           If you have any issues, please contact our support team.

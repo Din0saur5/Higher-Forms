@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../components/UserContext";
-import { fetchCartProds } from "../../api";
+import { fetchCartProds, removeFromCart } from "../../api";
 import { FaCoins, FaTrash, FaShoppingCart } from "react-icons/fa";
 import { motion } from "framer-motion";
 
 const Cart = () => {
-  const { userData, setUserData, formCoins, modifyFormCoins, clearCart, handleRemoveFromCart } = useUserContext();
+  const { userData, setUserData } = useUserContext();
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
   const [cartTotal, setCartTotal] = useState(0);
@@ -20,12 +20,7 @@ const Cart = () => {
   
     const fetchCart = async () => {
       setLoading(true);
-      if (!userData || !Array.isArray(userData.cart) || userData.cart.length === 0) {
-        setCartItems([]);
-        setCartTotal(0);
-        setLoading(false);
-        return;
-      }
+      
   
       try {
         const cartData = await fetchCartProds(userData.cart);
@@ -38,19 +33,28 @@ const Cart = () => {
           return;
         }
   
-        const groupedCart = cartData.reduce((acc, item) => {
-          const existingItem = acc.find((cartItem) => cartItem.id === item.id);
-          if (existingItem) {
-            existingItem.quantity += 1;
-          } else {
-            acc.push({ ...item, quantity: 1 });
+        
+        
+
+        const calculateCartTotal = (cart) => {
+          if (!Array.isArray(cart) || cart.length === 0) {
+            console.warn("Cart is empty or invalid.");
+            return 0;
           }
-          return acc;
-        }, []);
+
+          const total = cart.reduce((sum, item) => {
+            const itemTotal = (item.price || 0) * (item.quantity || 1);
+            return sum + itemTotal;
+          }, 0);
+
+          return total;
+        };
+
+        const total = await calculateCartTotal(cartData) 
+        console.log(total)
+        
   
-        const total = groupedCart.reduce((sum, item) => sum + (item.price ?? 0) * (item.quantity ?? 1), 0);
-  
-        setCartItems(groupedCart);
+        setCartItems(cartData);
         setCartTotal(total);
       } catch (error) {
         console.error("Error fetching cart:", error);
@@ -95,7 +99,7 @@ const Cart = () => {
     className="flex justify-between items-center border-b py-3"
   >
     <div>
-      <p className="font-semibold text-black">{item.products.name}</p>
+      <p className="font-semibold text-black">{item.productName}</p>
       <p className="text-gray-500">
         Price:{" "}
         <span className="font-bold text-lg text-yellow-500">
@@ -110,25 +114,41 @@ const Cart = () => {
     
     {/* ✅ Remove Item Button */}
     <button
-      onClick={async () => {
-        if (!userData) return;
-        
-        // ✅ Attempt to remove from Supabase first
-        const response = await handleRemoveFromCart(userData.id, item.id);
-        
+     onClick={async () => {
+      if (!userData) return;
+    
+      try {
+        // ✅ Optimistically update UI (optional)
+        setCartItems((prev) =>
+          prev.map((cartItem) =>
+            cartItem.id === item.id
+              ? { ...cartItem, quantity: cartItem.quantity - 1 }
+              : cartItem
+          ).filter((cartItem) => cartItem.quantity > 0)
+        );
+    
+        // ✅ Call backend to remove or decrease quantity
+        const response = await removeFromCart(userData.id, item.id); 
+    
         if (response.success) {
-          // ✅ Update cart UI immediately after removal
-          setCartItems((prev) => prev.filter((cartItem) => cartItem.id !== item.id));
-          
-          // ✅ Also update `userData.cart` to keep it in sync
+          console.log("✅ Successfully removed/updated item in cart.");
+    
+          // ✅ Update userData context with backend response
           setUserData((prev) => ({
             ...prev,
-            cart: prev.cart.filter((cartItem) => cartItem !== item.id),
+            cart: response.cart, // Use the updated cart from backend
           }));
         } else {
-          console.error("Failed to remove item:", response.message);
+          console.error("❌ Failed to remove item:", response.message);
+    
+          // 🔄 Revert optimistic update if the backend fails
+          setCartItems((prev) => [...prev]); // Reload cart or fetch again
         }
-      }}
+      } catch (error) {
+        console.error("🔥 Unexpected error removing item:", error);
+      }
+    }}
+    
       className="text-red-500 hover:text-red-700 text-sm font-bold flex items-center gap-1"
     >
       <FaTrash /> Remove
@@ -144,12 +164,12 @@ const Cart = () => {
                 Your balance after purchase:{" "}
                 <span
                   className={`${
-                    (formCoins || 0) - (cartTotal || 0) < 0
+                    (userData.form_coins_total|| 0) - (cartTotal || 0) < 0
                       ? "text-red-600"
                       : "text-green-600"
                   } font-bold`}
                 >
-                  {(formCoins || 0) - (cartTotal || 0)} Coins
+                  {(userData.form_coins_total|| 0) - (cartTotal || 0)} Coins
                 </span>
               </p>
             </div>
@@ -166,7 +186,7 @@ const Cart = () => {
 
             <button
               onClick={() => navigate("/checkout")}
-              className="w-1/2 py-2 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg transition"
+              className={`w-1/2 py-2 ${userData.form_coins_total>cartTotal?  ('bg-green-600 hover:bg-green-700'):('btn-disabled bg-gray-500')}  text-white font-bold rounded-lg transition`}
             >
               Proceed to Checkout
             </button>

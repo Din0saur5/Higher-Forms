@@ -1,22 +1,15 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { 
-  getLoggedInUser, 
-  LogOut, 
-  updateFormCoins, 
-  addToCart, 
-  removeFromCart, 
-  fetchCartProds 
+  getLoggedInUser,
+  supabase
 } from "../../api";
-import { supabase } from "../../api";
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [cart, setCart] = useState([]);
-  const [formCoins, setFormCoins] = useState(0);
-  const [cartTotal, setCartTotal] = useState(0);
+
 
   useEffect(() => {
     let isMounted = true;
@@ -35,29 +28,14 @@ export const UserProvider = ({ children }) => {
         console.log("Raw Cart Data Before Processing:", user.cart);
     
         // Ensure cart is always an array
-        let validCart = Array.isArray(user.cart) ? user.cart : [];
+      
     
         // Ensure each cart item has an ID and quantity
-        validCart = validCart
-          .map(item => {
-            if (typeof item === "object" && item.id) {
-              return { productId: item.id, quantity: item.quantity ?? 1 }; // Keep quantity
-            }
-            return null;
-          })
-          .filter(item => item !== null); // Remove invalid entries
-    
-        console.log("Valid Cart After Processing:", validCart);
-    
-        if (validCart.length === 0 && user.cart && user.cart.length > 0) { 
-          console.warn("⚠️ Cart contains only invalid items. Resetting.");
-          await supabase.from("users").update({ cart: [] }).eq("id", user.id);
-        }
+      
     
         setUserData(user);
-        setFormCoins(user.form_coins_total || 0);
-        setCart(validCart);
-        updateCartTotal(validCart);
+        
+        console.log(user.cart)
       } catch (error) {
         console.error("Error fetching user:", error);
         resetUserState();
@@ -88,33 +66,10 @@ export const UserProvider = ({ children }) => {
   // Helper function to reset user state
   const resetUserState = () => {
     setUserData(null);
-    setCart([]);
-    setCartTotal(0);
-    setFormCoins(0);
+   
   };
 
   // Update cart total dynamically
-  const updateCartTotal = async (cartItems) => {
-    if (!cartItems || cartItems.length === 0) {
-      setCartTotal(0);
-      return;
-    }
-    console.log("Checking cart before fetching products:", cartItems);
-  
-    try {
-      const cartDetails = await fetchCartProds(cartItems.map(item => item.productId));
-      console.log("Fetched Cart Details:", cartDetails);
-  
-      const total = cartDetails.reduce((sum, item) => {
-        const cartItem = cartItems.find(ci => ci.productId === item.id);
-        return sum + (item.price * (cartItem?.quantity || 1)); 
-      }, 0);
-  
-      setCartTotal(total);
-    } catch (error) {
-      console.error("Error updating cart total:", error);
-    }
-  };
   
   
   // Modify Form Coins
@@ -122,7 +77,7 @@ export const UserProvider = ({ children }) => {
     if (!userData) return;
 
     const newBalance = Math.max(formCoins + amount, 0);
-    setFormCoins(newBalance);
+  
 
     try {
       await updateFormCoins(userData.id, newBalance);
@@ -140,8 +95,7 @@ export const UserProvider = ({ children }) => {
     if (!userData) return;
 
     const newCart = [...cart, variantId].filter(id => typeof id === "string" && id.length === 36);
-    setCart(newCart);
-    updateCartTotal(newCart);
+
 
     try {
       const response = await addToCart(userData.id, variantId);
@@ -204,9 +158,6 @@ export const UserProvider = ({ children }) => {
   const clearCart = async () => {
     if (!userData) return;
 
-    setCart([]);
-    setCartTotal(0);
-
     try {
       await supabase.from("users").update({ cart: [] }).eq("id", userData.id);
       setUserData((prev) => ({
@@ -235,16 +186,7 @@ export const UserProvider = ({ children }) => {
       value={{
         userData,
         setUserData,
-        loading,
-        handleLogout,
-        formCoins,
-        modifyFormCoins,
-        cart,
-        cartTotal,
-        handleAddToCart, 
-        handleRemoveFromCart, 
-        clearCart,
-        updateCartTotal,
+        
       }}
     >
       {loading ? (

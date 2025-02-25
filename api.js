@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const SUPABASE_URL = import.meta.env.VITE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_ANON;
 
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   console.error("Supabase environment variables are missing.");
@@ -57,15 +57,9 @@ export const getLoggedInUser = async () => {
   }
 
   // Ensure cart is properly formatted
-  let validCart = [];
-  if (Array.isArray(userData?.cart)) {
-    validCart = userData.cart.map(item => ({
-      productId: item.productId, 
-      quantity: item.quantity ?? 1, 
-    }));
-  }
+  
 
-  return { ...user, ...userData, cart: validCart };
+  return { ...user, ...userData };
 };
 
 // Fetch all products with their variants
@@ -136,21 +130,21 @@ export const removeFromCart = async (userId, productVariantId) => {
     return { success: false, message: "Failed to fetch cart." };
   }
 
-  let cart = user?.cart || [];
+  let cart = Array.isArray(user?.cart) ? user.cart : [];
 
-  // Find the item in the cart
-  const itemIndex = cart.findIndex(item => item.product_id === productVariantId);
+  // Find and remove one occurrence of the item
+  const itemIndex = cart.findIndex(item => item === productVariantId);
 
-  if (itemIndex !== -1) {
-    if (cart[itemIndex].quantity > 1) {
-      // Decrease quantity instead of removing it
-      cart[itemIndex].quantity -= 1;
-    } else {
-      // Remove item completely if quantity is 1
-      cart.splice(itemIndex, 1);
-    }
+  if (itemIndex === -1) {
+    console.warn("⚠️ Item not found in cart:", productVariantId);
+    return { success: false, message: "Item not found in cart." };
   }
 
+  // Remove one instance
+  cart.splice(itemIndex, 1);
+  console.log(`🗑️ Removed one instance of item ${productVariantId} from cart.`);
+
+  // Update cart in Supabase
   const { error: updateError } = await supabase
     .from("users")
     .update({ cart })
@@ -164,31 +158,31 @@ export const removeFromCart = async (userId, productVariantId) => {
   return { success: true, message: "Item removed from cart.", cart };
 };
 
+
 // Fetch full product details of cart items
 export const fetchCartProds = async (cart) => {
-  if (!Array.isArray(cart)) {
-    console.error("⚠️ Cart is not an array:", cart);
-    return [];
-  }
-
-  if (cart.length === 0) {
-    console.error("⚠️ Cart is empty.");
+  if (!Array.isArray(cart) || cart.length === 0) {
+    console.error("⚠️ Cart is empty or invalid:", cart);
     return [];
   }
 
   console.log("Fetching products for cart:", cart);
 
-  const validCart = cart.filter(id => typeof id === "string" && id.length === 36);
-  if (validCart.length === 0) {
-    console.error("Cart contains invalid or empty product IDs.");
-    return [];
-  }
+  // Step 1: Count quantities
+  const quantityMap = cart.reduce((acc, productId) => {
+    acc[productId] = (acc[productId] || 0) + 1;
+    return acc;
+  }, {});
+
+  // Step 2: Get unique product IDs
+  const uniqueProductIds = Object.keys(quantityMap);
 
   try {
+    // Step 3: Fetch product details from Supabase
     const { data: products, error } = await supabase
       .from("product_variants")
       .select("id, product_id, size, stock, price, products(name, image_url)")
-      .in("id", validCart);
+      .in("id", uniqueProductIds);
 
     if (error) {
       console.error("Error fetching cart products:", error.message);
@@ -197,11 +191,21 @@ export const fetchCartProds = async (cart) => {
 
     console.log("Fetched Product Data:", products);
 
-    return products.map((item) => ({
-      ...item,
-      price: item.price ?? 0,
-      quantity: 1,
+    // Step 4: Combine product details with quantities
+    const finalCart = products.map((product) => ({
+      id: product.id,
+      product_id: product.product_id,
+      size: product.size,
+      stock: product.stock,
+      price: product.price ?? 0,
+      productName: product.products?.name || "Unknown",
+      image_url: product.products?.image_url || "",
+      quantity: quantityMap[product.id] || 1, // Add quantity from cart
     }));
+
+    console.log("Final Cart with Product Details:", finalCart);
+
+    return finalCart;
   } catch (error) {
     console.error("Unexpected error fetching cart products:", error);
     return [];
@@ -226,14 +230,10 @@ export const updateFormCoins = async (userId, newBalance) => {
 };
 
 // Place order and deduct Form Coins
-export const placeOrder = async (userId, name, shippingInfo, cart, cartTotal) => {
+export const placeOrder = async (userId, email, name, shippingInfo, cart, cartTotal) => {
   try {
     // Ensure `cart` is an array
-    if (!Array.isArray(cart) || cart.some(item => !item.productId)) {
-      console.error("⚠️ Cart is empty or invalid:", cart);
-      return { success: false, message: "Cart is empty or invalid." };
-    }
-
+   
     console.log("Cart at Checkout:", cart);
 
     // Fetch authentication session
@@ -254,23 +254,11 @@ export const placeOrder = async (userId, name, shippingInfo, cart, cartTotal) =>
 
     console.log("Fetched Cart Products:", cartProducts);
 
-    // Format product summary
-    const productSummary = cartProducts.map((p) => ({
-      name: p.products.name,
-      quantity: cart.find(ci => ci.productId === p.id)?.quantity || 1, // Match correct quantity
-      size: p.size,
-      price: p.price,
-    }));
+    // Format product summar
 
-    console.log("Product Summary:", productSummary);
+    
 
-    // Calculate total price accurately
-    const totalPrice = cartProducts.reduce((sum, p) => {
-      const cartItem = cart.find(ci => ci.productId === p.id);
-      return sum + (p.price * (cartItem?.quantity || 1));
-    }, 0);
-
-    console.log("Total Price Calculated:", totalPrice);
+    console.log("Total Price Calculated:", cartTotal);
 
     // Fetch user balance
     const { data: user, error: userError } = await supabase
@@ -287,7 +275,7 @@ export const placeOrder = async (userId, name, shippingInfo, cart, cartTotal) =>
     console.log("User Form Coins Balance:", user.form_coins_total);
 
     // Check if user has enough Form Coins
-    if (user.form_coins_total < totalPrice) {
+    if (user.form_coins_total < cartTotal) {
       return { success: false, message: "Insufficient Form Coins." };
     }
 
@@ -309,10 +297,11 @@ export const placeOrder = async (userId, name, shippingInfo, cart, cartTotal) =>
       .insert([
         {
           user_id: userId,
+          email: email,
           name: name,
           address: formattedAddress,
-          product_summary: JSON.stringify(productSummary),
-          total_price: totalPrice,
+          product_summary: cartProducts,
+          total_price: cartTotal,
           status: "pending",
         },
       ])
@@ -336,9 +325,9 @@ export const placeOrder = async (userId, name, shippingInfo, cart, cartTotal) =>
         .insert([
           {
             order_id: orderId,
-            product_id: item.product_id,
+            product_id: item.id,
             variant_size: item.size || "One Size",
-            quantity: cart.find(ci => ci.productId === item.id)?.quantity || 1,
+            quantity: item.quantity,
             price: item.price,
           },
         ]);
@@ -346,7 +335,7 @@ export const placeOrder = async (userId, name, shippingInfo, cart, cartTotal) =>
       // Update stock for the product variant
       await supabase
         .from("product_variants")
-        .update({ stock: item.stock - (cart.find(ci => ci.productId === item.id)?.quantity || 1) })
+        .update({ stock: item.stock - item.quantity})
         .eq("id", item.id);
     }
 
@@ -355,7 +344,7 @@ export const placeOrder = async (userId, name, shippingInfo, cart, cartTotal) =>
     // Deduct Form Coins and clear the cart
     const { error: balanceError } = await supabase
       .from("users")
-      .update({ form_coins_total: user.form_coins_total - totalPrice, cart: [] })
+      .update({ form_coins_total: user.form_coins_total - cartTotal, cart: [] })
       .eq("id", userId);
 
     if (balanceError) {

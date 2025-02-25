@@ -6,7 +6,7 @@ import { FaShoppingCart } from "react-icons/fa";
 import { motion } from "framer-motion"; 
 
 const Checkout = () => {
-  const { userData, setUserData, formCoins, modifyFormCoins, clearCart } = useUserContext();
+  const { userData, setUserData } = useUserContext();
   const navigate = useNavigate();
   const [cartItems, setCartItems] = useState([]);
   const [cartTotal, setCartTotal] = useState(0);
@@ -19,6 +19,7 @@ const Checkout = () => {
     state: "",
     zipcode: "",
     country: "United States",
+    email: ""
   });
 
   useEffect(() => {
@@ -45,90 +46,40 @@ const Checkout = () => {
       setLoading(false);
       return;
     }
+    const calculateCartTotal = (cart) => {
+      if (!Array.isArray(cart) || cart.length === 0) {
+        console.warn("Cart is empty or invalid.");
+        return 0;
+      }
 
-    const total = cartData.reduce((sum, item) => sum + item.price * item.quantity, 0);
-    setCartItems(cartData);
-    setCartTotal(total);
-    setLoading(false);
+      const total = cart.reduce((sum, item) => {
+        const itemTotal = (item.price || 0) * (item.quantity || 1);
+        return sum + itemTotal;
+      }, 0);
+
+      return total;
+    };
+
+    const total = await calculateCartTotal(cartData) 
+    setCartItems(cartData)
+    setCartTotal(total)
+    setLoading(false)
   };
 
-  const handleConfirmPurchase = async () => {
-    try {
-        console.log("Checking cart before purchase:", cart); // Debugging cart contents
-        console.log("Form Coins:", formCoins, " | Cart Total:", cartTotal);
-
-        // Ensure cart exists in state/context
-        if (!userData || !Array.isArray(userData.cart)) {
-            setCheckoutError("Your cart is empty or invalid. Please add items before checking out.");
-            console.error("⚠️ Cart is empty or invalid:", userData?.cart);
-            return;
-        }
-
-        if (userData.cart.length === 0) {
-            setCheckoutError("Your cart is empty. Please add items before checking out.");
-            console.error("⚠️ Cart is empty:", userData.cart);
-            return;
-        }
-
-        if (formCoins < cartTotal) {
-            setCheckoutError("You do not have enough Form Coins to complete this purchase.");
-            console.error("Insufficient Form Coins. Needed:", cartTotal, "Available:", formCoins);
-            return;
-        }
-
-        const response = await placeOrder(
-            userData.id,
-            userData.email,
-            shippingInfo.fullName,
-            shippingInfo,
-            userData.cart, 
-            cartTotal
-        );
-
-        if (!response.success) {
-            setCheckoutError(response.message || "An error occurred while placing your order.");
-            console.error("Order Failed:", response.message);
-            return;
-        }
-
-        console.log("Order placed successfully!", response);
-
-        clearCart();
-        setCheckoutError(null); 
-    } catch (error) {
-        console.error("Unexpected error in handleConfirmPurchase:", error);
-        setCheckoutError("An unexpected error occurred. Please try again.");
-    }
+ 
+    
   
-    if (!shippingInfo.address || !shippingInfo.city || !shippingInfo.state || !shippingInfo.zipcode) {
-      setCheckoutError("Please fill in all required shipping details.");
-      return;
-    }
-  
+  const handleConfirmPurchase = async () => {  
     setCheckoutError(null);
-  
-    const batchId = "your-generated-batch-id"; 
-    const batchDate = new Date().toISOString();
-  
-    const { data: { session } } = await supabase.auth.getSession();
-    const token = session?.access_token;
-  
-    if (!token) {
-      setCheckoutError("User authentication failed. Please log in again.");
-      return;
-    }
-  
     // Pass the full `shippingInfo` object to `placeOrder`
     const response = await placeOrder(
       userData.id,
-      userData.email,
+      shippingInfo.email,
       shippingInfo.fullName,
       shippingInfo, 
       userData.cart,
       cartTotal,
-      batchId,
-      batchDate,
-      token 
+      
     );
   
     if (!response.success) {
@@ -136,8 +87,8 @@ const Checkout = () => {
       return;
     }
   
-    await modifyFormCoins(-cartTotal);
-    await clearCart();
+    ;
+   
   
     setUserData((prev) => ({
       ...prev,
@@ -147,7 +98,7 @@ const Checkout = () => {
   
     navigate("/confirmation");
   };
-  
+
   return (
     <div className="container mt-24 min-h-screen mx-auto px-4 py-6">
       <h1 className="text-3xl font-bold mb-6 text-center text-black">Checkout</h1>
@@ -169,6 +120,14 @@ const Checkout = () => {
   <h2 className="text-xl font-bold mb-4 text-black">Shipping Address</h2>
 
   <div className="mb-4">
+    <input
+      type="text"
+      placeholder="Email"
+      value={shippingInfo.email || ""}
+      onChange={(e) => setShippingInfo({ ...shippingInfo, email: e.target.value })}
+      className="w-full p-3 mb-4 bg-gray-100 text-black rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
+      required
+    />
   <input
     type="text"
     placeholder="Full Name"
@@ -239,7 +198,7 @@ const Checkout = () => {
             {cartItems.map((item) => (
               <div key={item.id} className="flex justify-between items-center border-b py-2">
                 <div>
-                  <p className="font-semibold text-black">{item.products.name} (x{item.quantity})</p>
+                  <p className="font-semibold text-black">{item.productName} (x{item.quantity})</p>
                   <p className="text-black">{item.price * item.quantity} Form Coins</p>
                 </div>
               </div>
@@ -250,7 +209,7 @@ const Checkout = () => {
                 Total: <span className="text-yellow-500">{cartTotal} Form Coins</span>
               </p>
               <p className="text-lg text-black">
-                Available Balance: <span className="text-green-600 font-bold">{formCoins} Form Coins</span>
+                Available Balance: <span className="text-green-600 font-bold">{userData.form_coins_total} Form Coins</span>
               </p>
             </div>
           </div>
@@ -272,13 +231,13 @@ const Checkout = () => {
             </button>
 
             <button
-              onClick={handleConfirmPurchase}
+              onClick={()=>handleConfirmPurchase()}
               className={`w-1/2 py-2 rounded-lg text-white font-bold ${
-                cartTotal > formCoins
+                cartTotal > userData.form_coins_total
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-green-600 hover:bg-green-700 transition"
               }`}
-              disabled={cartTotal > formCoins}
+              disabled={cartTotal > userData.form_coins_total}
             >
               Confirm Purchase
             </button>

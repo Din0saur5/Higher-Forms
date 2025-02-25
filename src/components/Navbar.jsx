@@ -11,7 +11,7 @@ const Navbar = () => {
   const menuRef = useRef(null);
 
  
-
+  console.log(userData?.cart)
   const handleClick = () => setClick((prev) => !prev);
   const closeMobileMenu = () => setClick(false);
 
