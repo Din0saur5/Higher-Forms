@@ -19,33 +19,38 @@ export const UserProvider = ({ children }) => {
   const [cartTotal, setCartTotal] = useState(0);
 
   useEffect(() => {
-    let isMounted = true;  // ✅ Prevents state updates on unmounted components
-
+    let isMounted = true; 
+  
     const fetchUser = async () => {
       setLoading(true);
       try {
         const user = await getLoggedInUser();
-        if (isMounted) {
-          if (user) {
-            setUserData(user);
-            setFormCoins(user.form_coins_total || 0);
-            setCart(user.cart || []);
-            updateCartTotal(user.cart || []);
-          } else {
-            resetUserState();
+        if (user) {
+          const validCart = Array.isArray(user.cart) ? user.cart.filter(id => typeof id === "string" && id.length === 36) : [];
+    
+          if (validCart.length !== user.cart.length) {
+            console.warn("⚠️ Invalid cart detected. Resetting to a clean array.");
+            await supabase.from("users").update({ cart: validCart }).eq("id", user.id);
           }
+    
+          setUserData(user);
+          setFormCoins(user.form_coins_total || 0);
+          setCart(validCart);
+          updateCartTotal(validCart);
+        } else {
+          resetUserState();
         }
       } catch (error) {
         console.error("Error fetching user:", error);
-        if (isMounted) resetUserState();
+        resetUserState();
       } finally {
-        if (isMounted) setLoading(false);
+        setLoading(false);
       }
     };
-
+    
     fetchUser();
 
-    // ✅ Listen for Supabase Auth changes
+    // Listen for Supabase Auth changes
     const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
         fetchUser();
@@ -60,7 +65,7 @@ export const UserProvider = ({ children }) => {
     };
   }, []);
 
-  // ✅ Helper function to reset user state
+  // Helper function to reset user state
   const resetUserState = () => {
     setUserData(null);
     setCart([]);
@@ -68,22 +73,26 @@ export const UserProvider = ({ children }) => {
     setFormCoins(0);
   };
 
-  // ✅ Update cart total dynamically
+  // Update cart total dynamically
   const updateCartTotal = async (cartItems) => {
     if (!cartItems || cartItems.length === 0) {
       setCartTotal(0);
       return;
     }
+    console.log("🚀 Checking cart before fetching products:", cartItems); // 🛠️ Debugging step
+  
     try {
       const cartDetails = await fetchCartProds(cartItems);
-      const total = cartDetails.reduce((sum, item) => sum + item.price * item.quantity, 0);
+      console.log("🛒 Fetched Cart Details:", cartDetails); // 🛠️ Debugging step
+  
+      const total = cartDetails.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
       setCartTotal(total);
     } catch (error) {
-      console.error("Error updating cart total:", error);
+      console.error("🔥 Error updating cart total:", error);
     }
   };
-
-  // ✅ Modify Form Coins
+  
+  // Modify Form Coins
   const modifyFormCoins = async (amount) => {
     if (!userData) return;
 
@@ -101,7 +110,7 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-  // ✅ Add item to cart
+  // Add item to cart
   const handleAddToCart = async (variantId) => {
     if (!userData) return;
 
@@ -124,54 +133,35 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-  // ✅ Remove item from cart
-  const handleRemoveFromCart = async (userId, productVariantId) => {
-    if (!userId || !productVariantId) {
+  // Remove item from cart
+  const handleRemoveFromCart = async (productVariantId) => {
+    if (!userData || !productVariantId) {
       console.error("Invalid parameters for handleRemoveFromCart.");
       return { success: false, message: "Invalid parameters." };
     }
   
     try {
-      // Fetch current cart
-      const { data: user, error: fetchError } = await supabase
-        .from("users")
-        .select("cart")
-        .eq("id", userId)
-        .single();
+      // Optimistically update UI first
+      const updatedCart = cart.filter((item) => item !== productVariantId);
+      setCart(updatedCart);
+      updateCartTotal(updatedCart);
   
-      if (fetchError) {
-        console.error("Error fetching cart:", fetchError.message);
-        return { success: false, message: "Failed to fetch cart." };
+      // Update Supabase database
+      const response = await removeFromCart(userData.id, productVariantId);
+      if (response.success) {
+        setUserData((prev) => ({
+          ...prev,
+          cart: updatedCart,
+        }));
+      } else {
+        console.error("Error removing item from cart:", response.message);
       }
-  
-      let cart = user?.cart || [];
-      const updatedCart = cart.filter((item) => item !== productVariantId); // ✅ Remove the item
-  
-      // Update the cart in Supabase
-      const { error: updateError } = await supabase
-        .from("users")
-        .update({ cart: updatedCart })
-        .eq("id", userId);
-  
-      if (updateError) {
-        console.error("Error updating cart:", updateError.message);
-        return { success: false, message: "Failed to update cart." };
-      }
-  
-      // ✅ Update the global `UserContext` state
-      setUserData((prev) => ({
-        ...prev,
-        cart: updatedCart,
-      }));
-  
-      return { success: true, message: "Item removed from cart.", cart: updatedCart };
     } catch (error) {
       console.error("Unexpected error removing from cart:", error);
-      return { success: false, message: "An error occurred while removing the item." };
     }
   };
   
-  // ✅ Clear cart after checkout
+  // Clear cart after checkout
   const clearCart = async () => {
     if (!userData) return;
 
@@ -189,7 +179,7 @@ export const UserProvider = ({ children }) => {
     }
   };
 
-  // ✅ Logout handler
+  // Logout handler
   const handleLogout = async () => {
     try {
       await LogOut();

@@ -55,7 +55,7 @@ export const getLoggedInUser = async () => {
       return user;
   }
 
-  // ✅ Reset the cart if it's incorrectly formatted
+  // Reset the cart if it's incorrectly formatted
   let validCart = [];
   if (Array.isArray(userData?.cart)) {
     validCart = userData.cart.filter(item => typeof item === "string"); // Keep only UUIDs
@@ -98,14 +98,23 @@ export const addToCart = async (userId, productVariantId) => {
   }
 
   let cart = Array.isArray(user?.cart) ? user.cart : [];
-  
-  // ✅ Only store productVariantId (not object)
-  cart.push(productVariantId);
 
-  const { error: updateError } = await supabase
-    .from("users")
-    .update({ cart })
-    .eq("id", userId);
+// Check if item already exists in cart
+const existingItem = cart.find((item) => item.product_id === productVariantId);
+
+if (existingItem) {
+  // Increase quantity if item exists
+  existingItem.quantity += 1;
+} else {
+  // Add new item with quantity = 1
+  cart.push({ product_id: productVariantId, quantity: 1 });
+}
+
+const { error: updateError } = await supabase
+  .from("users")
+  .update({ cart })
+  .eq("id", userId);
+
 
   if (updateError) {
     console.error("Error updating cart:", updateError.message);
@@ -159,14 +168,15 @@ export const removeFromCart = async (userId, productVariantId) => {
 // Fetch full product details of cart items
 export const fetchCartProds = async (cart) => {
   if (!Array.isArray(cart) || cart.length === 0) {
-    console.error("Cart is empty or not an array.");
+    console.error("⚠️ Cart is empty or not an array:", cart);
     return [];
   }
 
-  // 🚨 Ensure all items are valid UUIDs
+  // Filter out any undefined or invalid product IDs
   const validCart = cart.filter(id => typeof id === "string" && id.length === 36);
+  
   if (validCart.length === 0) {
-    console.error("Cart contains invalid or empty product IDs.");
+    console.error("❌ Cart contains invalid or empty product IDs.");
     return [];
   }
 
@@ -177,7 +187,7 @@ export const fetchCartProds = async (cart) => {
       .in("id", validCart);
 
     if (error) {
-      console.error("Error fetching cart products:", error.message);
+      console.error("🔥 Error fetching cart products:", error.message);
       return [];
     }
 
@@ -191,6 +201,7 @@ export const fetchCartProds = async (cart) => {
     return [];
   }
 };
+
 
 // Update user's Form Coins balance
 export const updateFormCoins = async (userId, newBalance) => {

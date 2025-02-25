@@ -69,36 +69,6 @@ const Cart = () => {
       setLoading(false);
     }
   };
-
-  // ✅ Handle item removal
-  const handleRemoveItem = async (variantId) => {
-    if (!userData) return;
-  
-    // ✅ Ensure valid UUID before proceeding
-    if (typeof variantId !== "string" || variantId.length !== 36) {
-      console.error("Invalid product variant ID:", variantId);
-      return;
-    }
-  
-    setCartItems((prev) => prev.filter((item) => item.id !== variantId));
-    setUserData((prev) => ({
-      ...prev,
-      cart: prev.cart.filter((id) => id !== variantId),
-    }));
-  
-    try {
-      const response = await handleRemoveFromCart(userData.id, variantId);
-  
-      if (!response || !response.success) {
-        console.error("Failed to remove item from cart:", response?.message || "Unknown error");
-        return;
-      }
-  
-      setUserData((prev) => ({ ...prev, cart: response.cart }));
-    } catch (error) {
-      console.error("Error removing item from cart:", error);
-    }
-  };
   
   return (
     <div className="container mt-24 min-h-screen mx-auto px-4 py-6">
@@ -143,11 +113,11 @@ const Cart = () => {
                   </p>
                 </div>
                 <button
-                  onClick={() => handleRemoveItem(item.id)}
-                  className="text-red-500 hover:text-red-700 text-sm font-bold flex items-center gap-1"
-                >
-                  <FaTrash /> Remove
-                </button>
+  onClick={() => handleRemoveFromCart(item.id)} 
+  className="text-red-500 hover:text-red-700 text-sm font-bold flex items-center gap-1"
+>
+  <FaTrash /> Remove
+</button>
               </motion.div>
             ))}
 
