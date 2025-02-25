@@ -53,9 +53,51 @@ const Checkout = () => {
   };
 
   const handleConfirmPurchase = async () => {
-    if (formCoins < cartTotal) {
-      setCheckoutError("You do not have enough Form Coins to complete this purchase.");
-      return;
+    try {
+        console.log("Checking cart before purchase:", cart); // Debugging cart contents
+        console.log("Form Coins:", formCoins, " | Cart Total:", cartTotal);
+
+        // Ensure cart exists in state/context
+        if (!userData || !Array.isArray(userData.cart)) {
+            setCheckoutError("Your cart is empty or invalid. Please add items before checking out.");
+            console.error("⚠️ Cart is empty or invalid:", userData?.cart);
+            return;
+        }
+
+        if (userData.cart.length === 0) {
+            setCheckoutError("Your cart is empty. Please add items before checking out.");
+            console.error("⚠️ Cart is empty:", userData.cart);
+            return;
+        }
+
+        if (formCoins < cartTotal) {
+            setCheckoutError("You do not have enough Form Coins to complete this purchase.");
+            console.error("Insufficient Form Coins. Needed:", cartTotal, "Available:", formCoins);
+            return;
+        }
+
+        const response = await placeOrder(
+            userData.id,
+            userData.email,
+            shippingInfo.fullName,
+            shippingInfo,
+            userData.cart, 
+            cartTotal
+        );
+
+        if (!response.success) {
+            setCheckoutError(response.message || "An error occurred while placing your order.");
+            console.error("Order Failed:", response.message);
+            return;
+        }
+
+        console.log("Order placed successfully!", response);
+
+        clearCart();
+        setCheckoutError(null); 
+    } catch (error) {
+        console.error("Unexpected error in handleConfirmPurchase:", error);
+        setCheckoutError("An unexpected error occurred. Please try again.");
     }
   
     if (!shippingInfo.address || !shippingInfo.city || !shippingInfo.state || !shippingInfo.zipcode) {
@@ -122,7 +164,6 @@ const Checkout = () => {
         </p>
       ) : (
         <>
-          {/* Shipping Address Form */}
           {/* Shipping Address Form */}
 <div className="bg-white shadow-md rounded-lg p-6 mb-6">
   <h2 className="text-xl font-bold mb-4 text-black">Shipping Address</h2>

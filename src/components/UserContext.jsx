@@ -32,35 +32,39 @@ export const UserProvider = ({ children }) => {
           return;
         }
     
-        // ✅ Fix: Ensure cart validation does not mistakenly remove valid items
-        let validCart = Array.isArray(user.cart) 
-          ? user.cart.filter(id => typeof id === "string" && id.length > 0)  // ✅ Accept any non-empty string
-          : [];
+        console.log("Raw Cart Data Before Processing:", user.cart);
     
-        if (validCart.length === 0 && user.cart.length > 0) { 
+        // Ensure cart is always an array
+        let validCart = Array.isArray(user.cart) ? user.cart : [];
+    
+        // Ensure each cart item has an ID and quantity
+        validCart = validCart
+          .map(item => {
+            if (typeof item === "object" && item.id) {
+              return { productId: item.id, quantity: item.quantity ?? 1 }; // Keep quantity
+            }
+            return null;
+          })
+          .filter(item => item !== null); // Remove invalid entries
+    
+        console.log("Valid Cart After Processing:", validCart);
+    
+        if (validCart.length === 0 && user.cart && user.cart.length > 0) { 
           console.warn("⚠️ Cart contains only invalid items. Resetting.");
           await supabase.from("users").update({ cart: [] }).eq("id", user.id);
         }
     
-        // ✅ Refresh user data only if it was modified
-        if (validCart.length !== user.cart.length) {
-          const updatedUser = await getLoggedInUser();
-          setUserData(updatedUser);
-          validCart = updatedUser.cart;
-        }
-        
         setUserData(user);
         setFormCoins(user.form_coins_total || 0);
         setCart(validCart);
         updateCartTotal(validCart);
       } catch (error) {
-        console.error("❌ Error fetching user:", error);
+        console.error("Error fetching user:", error);
         resetUserState();
       } finally {
         setLoading(false);
       }
     };
-    
     
     fetchUser();
   
@@ -95,18 +99,23 @@ export const UserProvider = ({ children }) => {
       setCartTotal(0);
       return;
     }
-    console.log("🚀 Checking cart before fetching products:", cartItems); // 🛠️ Debugging step
+    console.log("Checking cart before fetching products:", cartItems);
   
     try {
-      const cartDetails = await fetchCartProds(cartItems);
-      console.log("🛒 Fetched Cart Details:", cartDetails); // 🛠️ Debugging step
+      const cartDetails = await fetchCartProds(cartItems.map(item => item.productId));
+      console.log("Fetched Cart Details:", cartDetails);
   
-      const total = cartDetails.reduce((sum, item) => sum + (item.price * (item.quantity || 1)), 0);
+      const total = cartDetails.reduce((sum, item) => {
+        const cartItem = cartItems.find(ci => ci.productId === item.id);
+        return sum + (item.price * (cartItem?.quantity || 1)); 
+      }, 0);
+  
       setCartTotal(total);
     } catch (error) {
-      console.error("🔥 Error updating cart total:", error);
+      console.error("Error updating cart total:", error);
     }
   };
+  
   
   // Modify Form Coins
   const modifyFormCoins = async (amount) => {

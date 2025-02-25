@@ -166,27 +166,25 @@ export const removeFromCart = async (userId, productVariantId) => {
 
 // Fetch full product details of cart items
 export const fetchCartProds = async (cart) => {
-  if (!Array.isArray(cart) || cart.length === 0) {
-    console.error("⚠️ Cart is empty or not an array:", cart);
+  if (!Array.isArray(cart)) {
+    console.error("⚠️ Cart is not an array:", cart);
     return [];
   }
 
-  // Log the cart before filtering
-  console.log("🛒 Raw Cart Data Before Filtering:", cart);
+  if (cart.length === 0) {
+    console.error("⚠️ Cart is empty.");
+    return [];
+  }
 
-  // Filter valid UUIDs
+  console.log("Fetching products for cart:", cart);
+
   const validCart = cart.filter(id => typeof id === "string" && id.length === 36);
-  console.log("Filtered Valid Cart IDs:", validCart);
-
   if (validCart.length === 0) {
     console.error("Cart contains invalid or empty product IDs.");
     return [];
   }
 
   try {
-    // Log the exact query being sent to Supabase
-    console.log("🔍 Fetching products with IDs:", validCart);
-
     const { data: products, error } = await supabase
       .from("product_variants")
       .select("id, product_id, size, stock, price, products(name, image_url)")
@@ -202,13 +200,14 @@ export const fetchCartProds = async (cart) => {
     return products.map((item) => ({
       ...item,
       price: item.price ?? 0,
-      quantity: 1, // Default quantity
+      quantity: 1,
     }));
   } catch (error) {
     console.error("Unexpected error fetching cart products:", error);
     return [];
   }
 };
+
 
 
 // Update user's Form Coins balance
@@ -227,119 +226,152 @@ export const updateFormCoins = async (userId, newBalance) => {
 };
 
 // Place order and deduct Form Coins
-export const placeOrder = async (userId, email, name, shippingInfo, cart, cartTotal) => {
-  if (!cart || cart.length === 0) {
-    return { success: false, message: "Cart is empty." };
-  }
+export const placeOrder = async (userId, name, shippingInfo, cart, cartTotal) => {
+  try {
+    // Ensure `cart` is an array
+    if (!Array.isArray(cart) || cart.some(item => !item.productId)) {
+      console.error("⚠️ Cart is empty or invalid:", cart);
+      return { success: false, message: "Cart is empty or invalid." };
+    }
 
-  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-  const token = sessionData?.session?.access_token;
+    console.log("Cart at Checkout:", cart);
 
-  if (!token) {
-    console.error("User authentication failed.");
-    return { success: false, message: "User authentication failed. Please log in again." };
-  }
+    // Fetch authentication session
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    const token = sessionData?.session?.access_token;
 
-  const cartProducts = await fetchCartProds(cart);
-  if (cartProducts.length === 0) {
-    return { success: false, message: "Invalid cart data." };
-  }
+    if (!token) {
+      console.error("⚠️ User authentication failed.");
+      return { success: false, message: "User authentication failed. Please log in again." };
+    }
 
-  const productSummary = cartProducts.map((p) => ({
-    name: p.products.name,
-    quantity: p.quantity,
-    size: p.size,
-    price: p.price,
-  }));
+    // Fetch product details from the cart
+    const cartProducts = await fetchCartProds(cart);
+    if (cartProducts.length === 0) {
+      console.error("⚠️ Invalid cart data. No matching products found.");
+      return { success: false, message: "Invalid cart data." };
+    }
 
-  const totalPrice = cartProducts.reduce((sum, p) => sum + p.price * p.quantity, 0);
+    console.log("Fetched Cart Products:", cartProducts);
 
-  // Fetch user Form Coins
-  const { data: user, error: userError } = await supabase
-    .from("users")
-    .select("form_coins_total")
-    .eq("id", userId)
-    .single();
+    // Format product summary
+    const productSummary = cartProducts.map((p) => ({
+      name: p.products.name,
+      quantity: cart.find(ci => ci.productId === p.id)?.quantity || 1, // Match correct quantity
+      size: p.size,
+      price: p.price,
+    }));
 
-  if (userError) {
-    console.error("Error fetching user:", userError.message);
-    return { success: false, message: "Failed to fetch user data." };
-  }
+    console.log("Product Summary:", productSummary);
 
-  if (user.form_coins_total < totalPrice) {
-    return { success: false, message: "Insufficient Form Coins." };
-  }
+    // Calculate total price accurately
+    const totalPrice = cartProducts.reduce((sum, p) => {
+      const cartItem = cart.find(ci => ci.productId === p.id);
+      return sum + (p.price * (cartItem?.quantity || 1));
+    }, 0);
 
-  // ✅ FIX: Properly use shippingInfo
-  const formattedAddress = JSON.stringify({
-    address: shippingInfo.address,
-    apt: shippingInfo.apt,
-    city: shippingInfo.city,
-    state: shippingInfo.state,
-    zipcode: shippingInfo.zipcode,
-    country: shippingInfo.country,
-  });
+    console.log("Total Price Calculated:", totalPrice);
 
-  // Insert order into Supabase
-  const { data: order, error: orderError } = await supabase
-    .from("orders")
-    .insert([
-      {
-        user_id: userId,
-        email: email,
-        name: name,
-        address: formattedAddress,
-        product_summary: JSON.stringify(productSummary),
-        total_price: totalPrice,
-        status: "pending",
-      },
-    ])
-    .select()
-    .single();
+    // Fetch user balance
+    const { data: user, error: userError } = await supabase
+      .from("users")
+      .select("form_coins_total")
+      .eq("id", userId)
+      .single();
 
-  console.log("🔍 Supabase Order Response:", order, orderError);
+    if (userError) {
+      console.error("Error fetching user:", userError.message);
+      return { success: false, message: "Failed to fetch user data." };
+    }
 
-  if (orderError || !order) {
-    console.error("Order creation failed:", orderError?.message || "No order returned");
-    return { success: false, message: "Failed to create order." };
-  }
+    console.log("User Form Coins Balance:", user.form_coins_total);
 
-  const orderId = order.id;
+    // Check if user has enough Form Coins
+    if (user.form_coins_total < totalPrice) {
+      return { success: false, message: "Insufficient Form Coins." };
+    }
 
-  // Insert items into order_items table
-  for (const item of cartProducts) {
-    await supabase
-      .from("order_items")
+    // Format shipping info (makes `apt` optional)
+    const formattedAddress = JSON.stringify({
+      address: shippingInfo.address,
+      apt: shippingInfo.apt?.trim() || null,  // If `apt` is empty, set to `null`
+      city: shippingInfo.city,
+      state: shippingInfo.state,
+      zipcode: shippingInfo.zipcode,
+      country: shippingInfo.country,
+    });
+
+    console.log("📦 Shipping Info:", formattedAddress);
+
+    // ✅ Insert order into Supabase
+    const { data: order, error: orderError } = await supabase
+      .from("orders")
       .insert([
         {
-          order_id: orderId,
-          product_id: item.product_id,
-          variant_size: item.size || "One Size",
-          quantity: item.quantity,
-          price: item.price,
+          user_id: userId,
+          name: name,
+          address: formattedAddress,
+          product_summary: JSON.stringify(productSummary),
+          total_price: totalPrice,
+          status: "pending",
         },
-      ]);
+      ])
+      .select()
+      .single();
 
-    // Update stock for the product variant
-    await supabase
-      .from("product_variants")
-      .update({ stock: item.stock - item.quantity })
-      .eq("id", item.id);
+    console.log("🔍 Supabase Order Response:", order, orderError);
+
+    if (orderError || !order) {
+      console.error("⚠️ Order creation failed:", orderError?.message || "No order returned.");
+      return { success: false, message: "Failed to create order." };
+    }
+
+    const orderId = order.id;
+    console.log("Order Created! Order ID:", orderId);
+
+    // Insert items into `order_items` table
+    for (const item of cartProducts) {
+      await supabase
+        .from("order_items")
+        .insert([
+          {
+            order_id: orderId,
+            product_id: item.product_id,
+            variant_size: item.size || "One Size",
+            quantity: cart.find(ci => ci.productId === item.id)?.quantity || 1,
+            price: item.price,
+          },
+        ]);
+
+      // Update stock for the product variant
+      await supabase
+        .from("product_variants")
+        .update({ stock: item.stock - (cart.find(ci => ci.productId === item.id)?.quantity || 1) })
+        .eq("id", item.id);
+    }
+
+    console.log("Order Items Inserted & Stock Updated");
+
+    // Deduct Form Coins and clear the cart
+    const { error: balanceError } = await supabase
+      .from("users")
+      .update({ form_coins_total: user.form_coins_total - totalPrice, cart: [] })
+      .eq("id", userId);
+
+    if (balanceError) {
+      console.error("Error updating user balance:", balanceError.message);
+      return { success: false, message: "Failed to update user balance." };
+    }
+
+    console.log("Form Coins Deducted & Cart Cleared");
+
+    return { success: true, message: "Order placed successfully!", orderId };
+  } catch (error) {
+    console.error("Unexpected error in placeOrder:", error);
+    return { success: false, message: "An unexpected error occurred." };
   }
-
-  // Deduct Form Coins and clear the cart
-  const { error: balanceError } = await supabase
-    .from("users")
-    .update({ form_coins_total: user.form_coins_total - totalPrice, cart: [] })
-    .eq("id", userId);
-
-  if (balanceError) {
-    console.error("Error updating user balance:", balanceError.message);
-    return { success: false, message: "Failed to update user balance." };
-  }
-
-  return { success: true, message: "Order placed successfully!", orderId };
 };
+
 
 // Fix missing LogOut function
 export const LogOut = async () => {
@@ -369,7 +401,7 @@ export const uploadProfilePicture = async (userId, file) => {
     return { success: false, message: "Failed to upload profile picture." };
   }
 
-  // ✅ Get Public URL
+  // Get Public URL
   const { data } = supabase.storage.from("profile-pics").getPublicUrl(filePath);
 
   // Update User Profile in Database
