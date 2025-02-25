@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useUserContext } from "../components/UserContext";
 import { useNavigate } from "react-router-dom";
-import { fetchProducts, addToCart, fetchCartProds } from "../../api";
+import { supabase,fetchProducts, addToCart, fetchCartProds,getLoggedInUser } from "../../api";
 import { FaCoins, FaExclamationTriangle } from "react-icons/fa";
 import { motion } from "framer-motion";
 
@@ -61,31 +61,37 @@ const RewardShop = () => {
   };
   
   // Handle adding an item to the cart
-  const handleAddToCart = async (productId, variantId) => {
-    if (!userData) {
-      alert("Please log in to add items to the cart.");
-      return;
-    }
+  const handleAddToCart = async (variantId) => {
+    if (!userData) return;
+  
+    console.log("🛒 Adding Variant ID:", variantId);
+  
+    // ✅ Use userData.cart instead of undefined cart
+    const newCart = [...(userData.cart || []), variantId];
+  
+    // ✅ Update UI immediately
+    setUserData((prevUserData) => ({
+      ...prevUserData,
+      cart: newCart,
+    }));
   
     try {
-      const response = await addToCart(userData.id, variantId);
-      if (response.success) {
-        setUserData((prevUserData) => ({
-          ...prevUserData,
-          cart: [...(prevUserData.cart || []), variantId], // Ensure `cart` is always an array
-        }));
+      // ✅ Update Supabase
+      const { error } = await supabase
+        .from("users")
+        .update({ cart: newCart })
+        .eq("id", userData.id);
   
-        await updateCartTotal(); // Wait for the cart to be updated
-        setSuccessMessage("Item added successfully to your cart!");
-        setTimeout(() => setSuccessMessage(null), 2000);
+      if (error) {
+        console.error("🔥 Error updating cart in Supabase:", error.message);
       } else {
-        console.error("Error adding to cart:", response.message);
+        console.log("✅ Successfully updated cart in Supabase");
       }
     } catch (error) {
-      console.error("Error adding to cart:", error);
+      console.error("🔥 Unexpected error adding to cart:", error);
     }
   };
-  
+
   return (
     <div className="reward-shop-container bg-black text-white font-roboto min-h-screen mt-24 p-6">
       {/* Header */}
@@ -186,7 +192,7 @@ const RewardShop = () => {
 
                   {/* Add to Cart Button */}
                   <button
-                    onClick={() => handleAddToCart(product.id, selectedVariant.id)}
+                    onClick={() => handleAddToCart(selectedVariant.id)}
                     className={`btn w-full text-sm p-3 rounded-full transition-all ${
                       selectedVariant.stock === 0
                         ? "bg-gray-600 cursor-not-allowed"

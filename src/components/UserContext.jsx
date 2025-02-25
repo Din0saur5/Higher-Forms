@@ -19,29 +19,44 @@ export const UserProvider = ({ children }) => {
   const [cartTotal, setCartTotal] = useState(0);
 
   useEffect(() => {
-    let isMounted = true; 
+    let isMounted = true;
   
     const fetchUser = async () => {
       setLoading(true);
       try {
         const user = await getLoggedInUser();
-        if (user) {
-          const validCart = Array.isArray(user.cart) ? user.cart.filter(id => typeof id === "string" && id.length === 36) : [];
     
-          if (validCart.length !== user.cart.length) {
-            console.warn("⚠️ Invalid cart detected. Resetting to a clean array.");
-            await supabase.from("users").update({ cart: validCart }).eq("id", user.id);
-          }
-    
-          setUserData(user);
-          setFormCoins(user.form_coins_total || 0);
-          setCart(validCart);
-          updateCartTotal(validCart);
-        } else {
+        if (!user) {
+          console.warn("⚠️ No active user session. Resetting state.");
           resetUserState();
+          return;
         }
+    
+        // ✅ Ensure cart is valid, but only update if it's actually incorrect
+        let validCart = Array.isArray(user.cart) 
+          ? user.cart.filter(id => typeof id === "string" && id.length === 36) 
+          : [];
+    
+        // 🛠️ Only update the cart if the old cart had **invalid entries**
+        if (validCart.length === 0 && user.cart.length > 0) { 
+          console.warn("⚠️ Cart contains only invalid items. Resetting.");
+          await supabase.from("users").update({ cart: [] }).eq("id", user.id);
+        }
+        
+    
+          // ✅ Refresh the user data after fixing the cart
+          const updatedUser = await getLoggedInUser();
+          setUserData(updatedUser);
+          validCart = updatedUser.cart;
+        
+        // ✅ Set states correctly
+        setUserData(user);
+        setFormCoins(user.form_coins_total || 0);
+        setCart(validCart);
+        updateCartTotal(validCart);
+    
       } catch (error) {
-        console.error("Error fetching user:", error);
+        console.error("❌ Error fetching user:", error);
         resetUserState();
       } finally {
         setLoading(false);
@@ -49,22 +64,24 @@ export const UserProvider = ({ children }) => {
     };
     
     fetchUser();
-
-    // Listen for Supabase Auth changes
-    const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
+  
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
         fetchUser();
       } else if (event === "SIGNED_OUT") {
         resetUserState();
+      } else if (!session) {
+        console.warn("No active session. Logging out.");
+        resetUserState();
       }
     });
-
+  
     return () => {
       isMounted = false;
       authListener?.subscription?.unsubscribe();
     };
   }, []);
-
+  
   // Helper function to reset user state
   const resetUserState = () => {
     setUserData(null);
@@ -114,7 +131,7 @@ export const UserProvider = ({ children }) => {
   const handleAddToCart = async (variantId) => {
     if (!userData) return;
 
-    const newCart = [...cart, variantId];
+    const newCart = [...cart, variantId].filter(id => typeof id === "string" && id.length === 36);
     setCart(newCart);
     updateCartTotal(newCart);
 
@@ -141,7 +158,7 @@ export const UserProvider = ({ children }) => {
     }
   
     try {
-      // ✅ Fetch current cart from Supabase
+      // Fetch current cart from Supabase
       const { data: user, error: fetchError } = await supabase
         .from("users")
         .select("cart")
@@ -156,22 +173,17 @@ export const UserProvider = ({ children }) => {
       let cart = user?.cart || [];
       const updatedCart = cart.filter((id) => id !== productVariantId); 
   
-      // ✅ Update Supabase
-      const { error: updateError } = await supabase
-        .from("users")
-        .update({ cart: updatedCart })
-        .eq("id", userId);
+      console.log("🛒 Cart before removal:", cart);
+      console.log("Updated Cart after removal:", updatedCart);
   
-      if (updateError) {
-        console.error("Error updating cart in Supabase:", updateError.message);
-        return { success: false, message: "Failed to update cart." };
-      }
-  
-      // ✅ Update global UserContext state
+      // Update local state first
       setUserData((prev) => ({
         ...prev,
         cart: updatedCart,
       }));
+  
+      // Also update Supabase to persist the change
+      await supabase.from("users").update({ cart: updatedCart }).eq("id", userId);
   
       return { success: true, message: "Item removed from cart.", cart: updatedCart };
     } catch (error) {

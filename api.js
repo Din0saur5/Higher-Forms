@@ -34,36 +34,34 @@ export const getLoggedInUser = async () => {
   const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
 
   if (sessionError || !sessionData.session) {
-      console.error("Error fetching session:", sessionError?.message || "No active session found.");
-      return null;
+    console.error("Error fetching session:", sessionError?.message || "No active session found.");
+    return null;
   }
 
   const user = sessionData.session.user;
   if (!user) {
-      console.error("User session missing.");
-      return null;
+    console.error("User session missing.");
+    return null;
   }
 
   const { data: userData, error: fetchError } = await supabase
-      .from("users")
-      .select("id, display_name, avatar_url, form_coins_total, cart, rank")
-      .eq("id", user.id)
-      .single();
+    .from("users")
+    .select("id, display_name, avatar_url, form_coins_total, cart, rank")
+    .eq("id", user.id)
+    .single();
 
   if (fetchError) {
-      console.error("Error fetching user details:", fetchError.message);
-      return user;
+    console.error("Error fetching user details:", fetchError.message);
+    return user;
   }
 
-  // Reset the cart if it's incorrectly formatted
+  // Ensure cart is properly formatted
   let validCart = [];
   if (Array.isArray(userData?.cart)) {
-    validCart = userData.cart.filter(item => typeof item === "string"); // Keep only UUIDs
-  }
-
-  if (validCart.length !== userData?.cart?.length) {
-    console.warn("⚠️ Invalid cart detected. Resetting to a clean array.");
-    await supabase.from("users").update({ cart: validCart }).eq("id", user.id);
+    validCart = userData.cart.map(item => ({
+      productId: item.productId, // Ensure the product ID exists
+      quantity: item.quantity ?? 1, // Default to 1 if undefined
+    }));
   }
 
   return { ...user, ...userData, cart: validCart };
@@ -172,15 +170,22 @@ export const fetchCartProds = async (cart) => {
     return [];
   }
 
-  // Filter out any undefined or invalid product IDs
+  // ✅ Log the cart before filtering
+  console.log("🛒 Raw Cart Data Before Filtering:", cart);
+
+  // ✅ Filter valid UUIDs
   const validCart = cart.filter(id => typeof id === "string" && id.length === 36);
-  
+  console.log("✅ Filtered Valid Cart IDs:", validCart);
+
   if (validCart.length === 0) {
     console.error("❌ Cart contains invalid or empty product IDs.");
     return [];
   }
 
   try {
+    // ✅ Log the exact query being sent to Supabase
+    console.log("🔍 Fetching products with IDs:", validCart);
+
     const { data: products, error } = await supabase
       .from("product_variants")
       .select("id, product_id, size, stock, price, products(name, image_url)")
@@ -191,13 +196,15 @@ export const fetchCartProds = async (cart) => {
       return [];
     }
 
+    console.log("✅ Fetched Product Data:", products);
+
     return products.map((item) => ({
       ...item,
       price: item.price ?? 0,
       quantity: 1, // Default quantity
     }));
   } catch (error) {
-    console.error("Unexpected error fetching cart products:", error);
+    console.error("🔥 Unexpected error fetching cart products:", error);
     return [];
   }
 };

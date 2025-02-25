@@ -17,59 +17,54 @@ const Cart = () => {
       navigate("/login");
       return;
     }
-    fetchCart();
-  }, [userData?.cart]);
-
-  // Fetch cart details and calculate total price
-  const fetchCart = async () => {
-    setLoading(true);
-    if (!userData || !Array.isArray(userData.cart) || userData.cart.length === 0) {
-      setCartItems([]);
-      setCartTotal(0);
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const cartData = await fetchCartProds(userData.cart);
-      console.log("Fetched Cart Data:", cartData);
-
-      if (!cartData || cartData.length === 0) {
+  
+    const fetchCart = async () => {
+      setLoading(true);
+      if (!userData || !Array.isArray(userData.cart) || userData.cart.length === 0) {
         setCartItems([]);
         setCartTotal(0);
         setLoading(false);
         return;
       }
-
-      // ✅ Group items by `id` and sum their quantity
-      const groupedCart = cartData.reduce((acc, item) => {
-        const existingItem = acc.find((cartItem) => cartItem.id === item.id);
-        if (existingItem) {
-          existingItem.quantity += 1; // Increase quantity if item already exists
-        } else {
-          acc.push({ ...item, quantity: 1 }); // Set initial quantity to 1
-        }
-        return acc;
-      }, []);
-
-      // ✅ Ensure valid price & quantity values
-      const total = groupedCart.reduce((sum, item) => {
-        const itemPrice = item.price ?? 0;
-        const itemQuantity = item.quantity ?? 1;
-        return sum + itemPrice * itemQuantity;
-      }, 0);
-
-      setCartItems(groupedCart);
-      setCartTotal(total);
-    } catch (error) {
-      console.error("Error fetching cart:", error);
-      setCartItems([]);
-      setCartTotal(0);
-    } finally {
-      setLoading(false);
-    }
-  };
   
+      try {
+        const cartData = await fetchCartProds(userData.cart);
+        console.log("Fetched Cart Data:", cartData);
+  
+        if (!cartData || cartData.length === 0) {
+          setCartItems([]);
+          setCartTotal(0);
+          setLoading(false);
+          return;
+        }
+  
+        const groupedCart = cartData.reduce((acc, item) => {
+          const existingItem = acc.find((cartItem) => cartItem.id === item.id);
+          if (existingItem) {
+            existingItem.quantity += 1;
+          } else {
+            acc.push({ ...item, quantity: 1 });
+          }
+          return acc;
+        }, []);
+  
+        const total = groupedCart.reduce((sum, item) => sum + (item.price ?? 0) * (item.quantity ?? 1), 0);
+  
+        setCartItems(groupedCart);
+        setCartTotal(total);
+      } catch (error) {
+        console.error("Error fetching cart:", error);
+        setCartItems([]);
+        setCartTotal(0);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchCart();
+  }, [userData?.cart]);
+  
+
   return (
     <div className="container mt-24 min-h-screen mx-auto px-4 py-6">
       <h1 className="text-3xl font-bold mb-6 text-center text-black">Your Cart</h1>
@@ -91,44 +86,55 @@ const Cart = () => {
               <FaShoppingCart /> Cart Summary
             </h2>
 
-            {cartItems.map((item) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="flex justify-between items-center border-b py-3"
-              >
-                <div>
-                  <p className="font-semibold text-black">{item.products.name}</p>
-                  <p className="text-gray-500">
-                    Price:{" "}
-                    <span className="font-bold text-lg text-yellow-500">
-                      {item.price} Coins
-                    </span>
-                  </p>
-                  <p className="text-gray-600">
-                    Quantity:{" "}
-                    <span className="font-bold text-lg">{item.quantity}</span>
-                  </p>
-                </div>
-                <button
-  onClick={async () => {
-    if (!userData) return;
-    const response = await handleRemoveFromCart(userData.id, item.id);
-    if (response.success) {
-      setCartItems((prev) => prev.filter((cartItem) => cartItem.id !== item.id)); // ✅ Update UI
-    } else {
-      console.error("Failed to remove item:", response.message);
-    }
-  }}
-  className="text-red-500 hover:text-red-700 text-sm font-bold flex items-center gap-1"
->
-  <FaTrash /> Remove
-</button>
-
-              </motion.div>
-            ))}
+            {cartItems.map((item, index) => (
+  <motion.div
+    key={`${item.id}-${index}`} // ✅ Ensure unique key
+    initial={{ opacity: 0, y: -10 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -10 }}
+    className="flex justify-between items-center border-b py-3"
+  >
+    <div>
+      <p className="font-semibold text-black">{item.products.name}</p>
+      <p className="text-gray-500">
+        Price:{" "}
+        <span className="font-bold text-lg text-yellow-500">
+          {item.price} Coins
+        </span>
+      </p>
+      <p className="text-gray-600">
+        Quantity:{" "}
+        <span className="font-bold text-lg">{item.quantity}</span>
+      </p>
+    </div>
+    
+    {/* ✅ Remove Item Button */}
+    <button
+      onClick={async () => {
+        if (!userData) return;
+        
+        // ✅ Attempt to remove from Supabase first
+        const response = await handleRemoveFromCart(userData.id, item.id);
+        
+        if (response.success) {
+          // ✅ Update cart UI immediately after removal
+          setCartItems((prev) => prev.filter((cartItem) => cartItem.id !== item.id));
+          
+          // ✅ Also update `userData.cart` to keep it in sync
+          setUserData((prev) => ({
+            ...prev,
+            cart: prev.cart.filter((cartItem) => cartItem !== item.id),
+          }));
+        } else {
+          console.error("Failed to remove item:", response.message);
+        }
+      }}
+      className="text-red-500 hover:text-red-700 text-sm font-bold flex items-center gap-1"
+    >
+      <FaTrash /> Remove
+    </button>
+  </motion.div>
+))}
 
             <div className="mt-6 text-center">
               <p className="text-2xl font-bold text-black">
