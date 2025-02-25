@@ -32,10 +32,11 @@ export const LogIn = async (email, password) => {
 // Get logged-in user, including Form Coins and Cart
 export const getLoggedInUser = async () => {
   const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-
-  if (sessionError || !sessionData.session) {
-    console.error("Error fetching session:", sessionError?.message || "No active session found.");
-    return null;
+  const token = sessionData?.session?.access_token;
+  
+  if (!token) {
+    console.error("User authentication failed.");
+    return { success: false, message: "User authentication failed. Please log in again." };
   }
 
   const user = sessionData.session.user;
@@ -59,8 +60,8 @@ export const getLoggedInUser = async () => {
   let validCart = [];
   if (Array.isArray(userData?.cart)) {
     validCart = userData.cart.map(item => ({
-      productId: item.productId, // Ensure the product ID exists
-      quantity: item.quantity ?? 1, // Default to 1 if undefined
+      productId: item.productId, 
+      quantity: item.quantity ?? 1, 
     }));
   }
 
@@ -170,20 +171,20 @@ export const fetchCartProds = async (cart) => {
     return [];
   }
 
-  // ✅ Log the cart before filtering
+  // Log the cart before filtering
   console.log("🛒 Raw Cart Data Before Filtering:", cart);
 
-  // ✅ Filter valid UUIDs
+  // Filter valid UUIDs
   const validCart = cart.filter(id => typeof id === "string" && id.length === 36);
-  console.log("✅ Filtered Valid Cart IDs:", validCart);
+  console.log("Filtered Valid Cart IDs:", validCart);
 
   if (validCart.length === 0) {
-    console.error("❌ Cart contains invalid or empty product IDs.");
+    console.error("Cart contains invalid or empty product IDs.");
     return [];
   }
 
   try {
-    // ✅ Log the exact query being sent to Supabase
+    // Log the exact query being sent to Supabase
     console.log("🔍 Fetching products with IDs:", validCart);
 
     const { data: products, error } = await supabase
@@ -192,11 +193,11 @@ export const fetchCartProds = async (cart) => {
       .in("id", validCart);
 
     if (error) {
-      console.error("🔥 Error fetching cart products:", error.message);
+      console.error("Error fetching cart products:", error.message);
       return [];
     }
 
-    console.log("✅ Fetched Product Data:", products);
+    console.log("Fetched Product Data:", products);
 
     return products.map((item) => ({
       ...item,
@@ -204,7 +205,7 @@ export const fetchCartProds = async (cart) => {
       quantity: 1, // Default quantity
     }));
   } catch (error) {
-    console.error("🔥 Unexpected error fetching cart products:", error);
+    console.error("Unexpected error fetching cart products:", error);
     return [];
   }
 };
@@ -226,11 +227,23 @@ export const updateFormCoins = async (userId, newBalance) => {
 };
 
 // Place order and deduct Form Coins
-export const placeOrder = async (userId, email, name, address, cart) => {
-  if (!cart || cart.length === 0) return { success: false, message: "Cart is empty." };
+export const placeOrder = async (userId, email, name, shippingInfo, cart, cartTotal) => {
+  if (!cart || cart.length === 0) {
+    return { success: false, message: "Cart is empty." };
+  }
+
+  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+  const token = sessionData?.session?.access_token;
+
+  if (!token) {
+    console.error("User authentication failed.");
+    return { success: false, message: "User authentication failed. Please log in again." };
+  }
 
   const cartProducts = await fetchCartProds(cart);
-  if (cartProducts.length === 0) return { success: false, message: "Invalid cart data." };
+  if (cartProducts.length === 0) {
+    return { success: false, message: "Invalid cart data." };
+  }
 
   const productSummary = cartProducts.map((p) => ({
     name: p.products.name,
@@ -257,25 +270,37 @@ export const placeOrder = async (userId, email, name, address, cart) => {
     return { success: false, message: "Insufficient Form Coins." };
   }
 
+  // ✅ FIX: Properly use shippingInfo
+  const formattedAddress = JSON.stringify({
+    address: shippingInfo.address,
+    apt: shippingInfo.apt,
+    city: shippingInfo.city,
+    state: shippingInfo.state,
+    zipcode: shippingInfo.zipcode,
+    country: shippingInfo.country,
+  });
+
   // Insert order into Supabase
   const { data: order, error: orderError } = await supabase
     .from("orders")
     .insert([
       {
         user_id: userId,
-        email,
-        name,
-        address: JSON.stringify(address),  // Store as JSON object
-        product_summary: JSON.stringify(productSummary), // Store summary as JSON
+        email: email,
+        name: name,
+        address: formattedAddress,
+        product_summary: JSON.stringify(productSummary),
         total_price: totalPrice,
-        status: "pending", // Default status
+        status: "pending",
       },
     ])
     .select()
     .single();
 
-  if (orderError) {
-    console.error("Error creating order:", orderError.message);
+  console.log("🔍 Supabase Order Response:", order, orderError);
+
+  if (orderError || !order) {
+    console.error("Order creation failed:", orderError?.message || "No order returned");
     return { success: false, message: "Failed to create order." };
   }
 

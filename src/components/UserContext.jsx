@@ -32,29 +32,27 @@ export const UserProvider = ({ children }) => {
           return;
         }
     
-        // ✅ Ensure cart is valid, but only update if it's actually incorrect
+        // ✅ Fix: Ensure cart validation does not mistakenly remove valid items
         let validCart = Array.isArray(user.cart) 
-          ? user.cart.filter(id => typeof id === "string" && id.length === 36) 
+          ? user.cart.filter(id => typeof id === "string" && id.length > 0)  // ✅ Accept any non-empty string
           : [];
     
-        // 🛠️ Only update the cart if the old cart had **invalid entries**
         if (validCart.length === 0 && user.cart.length > 0) { 
           console.warn("⚠️ Cart contains only invalid items. Resetting.");
           await supabase.from("users").update({ cart: [] }).eq("id", user.id);
         }
-        
     
-          // ✅ Refresh the user data after fixing the cart
+        // ✅ Refresh user data only if it was modified
+        if (validCart.length !== user.cart.length) {
           const updatedUser = await getLoggedInUser();
           setUserData(updatedUser);
           validCart = updatedUser.cart;
+        }
         
-        // ✅ Set states correctly
         setUserData(user);
         setFormCoins(user.form_coins_total || 0);
         setCart(validCart);
         updateCartTotal(validCart);
-    
       } catch (error) {
         console.error("❌ Error fetching user:", error);
         resetUserState();
@@ -62,6 +60,7 @@ export const UserProvider = ({ children }) => {
         setLoading(false);
       }
     };
+    
     
     fetchUser();
   

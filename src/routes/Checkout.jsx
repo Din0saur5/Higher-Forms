@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useUserContext } from "../components/UserContext";
-import { fetchCartProds, placeOrder } from "../../api"; 
+import { supabase,fetchCartProds, placeOrder } from "../../api"; 
 import { FaShoppingCart } from "react-icons/fa"; 
 import { motion } from "framer-motion"; 
 
@@ -65,17 +65,28 @@ const Checkout = () => {
   
     setCheckoutError(null);
   
-    const batchId = "your-generated-batch-id";  // Generate or fetch your batch ID
-    const batchDate = new Date().toISOString();  // Use the current date for batch date
+    const batchId = "your-generated-batch-id"; 
+    const batchDate = new Date().toISOString();
   
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token;
+  
+    if (!token) {
+      setCheckoutError("User authentication failed. Please log in again.");
+      return;
+    }
+  
+    // Pass the full `shippingInfo` object to `placeOrder`
     const response = await placeOrder(
       userData.id,
       userData.email,
       shippingInfo.fullName,
-      `${shippingInfo.address}, ${shippingInfo.apt ? shippingInfo.apt + ", " : ""}${shippingInfo.city}, ${shippingInfo.state} ${shippingInfo.zipcode}, ${shippingInfo.country}`,
+      shippingInfo, 
       userData.cart,
-      batchId,  // Add batchId
-      batchDate  // Add batchDate
+      cartTotal,
+      batchId,
+      batchDate,
+      token 
     );
   
     if (!response.success) {
@@ -116,15 +127,17 @@ const Checkout = () => {
 <div className="bg-white shadow-md rounded-lg p-6 mb-6">
   <h2 className="text-xl font-bold mb-4 text-black">Shipping Address</h2>
 
-  {/* Full Name Field */}
+  <div className="mb-4">
   <input
     type="text"
     placeholder="Full Name"
-    value={shippingInfo.fullName}
+    value={shippingInfo.fullName || ""}
     onChange={(e) => setShippingInfo({ ...shippingInfo, fullName: e.target.value })}
-    className="w-full p-3 bg-gray-100 text-black rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 mb-4"
+    className="w-full p-3 bg-gray-100 text-black rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
     required
   />
+</div>
+
 
   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
     <input
