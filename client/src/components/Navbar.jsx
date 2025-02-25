@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useUserContext } from "./UserContext";
+import { useUserContext } from "../components/UserContext";
 import ProfilePop from "./ProfilePop";
 import { HiOutlineShoppingCart } from "react-icons/hi2";
 import { getLoggedInUser, LogOut} from "../../api";

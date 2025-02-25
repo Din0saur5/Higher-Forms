@@ -1,7 +1,7 @@
-import { UserProvider } from "./UserContext.jsx"; 
+import { UserProvider } from "./UserContext"; 
 import { Outlet, ScrollRestoration, useLoaderData, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar.jsx";
-import Footer from "./Footer.jsx";
+import Footer from "./Footer";
 import { useEffect, useState } from "react";
 
 const AppLayout = () => { 

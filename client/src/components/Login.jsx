@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { LogIn, resetPassword } from "../../api"; // Ensure resetPassword is imported from api.js
-import { useUserContext } from "./UserContext";
+import { useUserContext } from "../components/UserContext";
 import { useNavigate } from "react-router-dom";
 
 function Login({ setLogin }) {
