@@ -1,8 +1,3 @@
-// notes for tmrw:
-// middle page fetches recovery url then user clicks next and we can set the session and change the CgPassword.
-//add redirects to supabase 
-
-
 import { useEffect, useState } from "react";
 
 export default function RecoveryProcessing() {
@@ -31,14 +26,23 @@ export default function RecoveryProcessing() {
         });
 
         const text = await response.text(); // Get the raw response
-        console.log(text)
-        const match = text.match(/href="(.*?)"/); // Extract the redirect link from the <a> tag
+        console.log(text);
 
-        if (match && match[1]) {
-          setRedirectUrl(match[1]); // Store the final auth URL
+        // Extract the access token and refresh token from the response HTML
+        const accessTokenMatch = text.match(/access_token=([\w.-]+)/);
+        const refreshTokenMatch = text.match(/refresh_token=([\w-]+)/);
+
+        if (accessTokenMatch && refreshTokenMatch) {
+          const accessToken = accessTokenMatch[1];
+          const refreshToken = refreshTokenMatch[1];
+
+          // Construct the reset password URL dynamically
+          const resetPasswordUrl = `https://higher-forms.com/reset-password?access_token=${accessToken}&refresh_token=${refreshToken}`;
+          
+          setRedirectUrl(resetPasswordUrl);
           setStatus("Authentication complete. Click below to continue.");
         } else {
-          setStatus("Failed to authenticate. Try again.");
+          setStatus("Failed to extract authentication tokens. Try again.");
         }
       } catch (error) {
         setStatus(`Error: ${error.message}`);
@@ -49,10 +53,10 @@ export default function RecoveryProcessing() {
   }, []);
 
   return (
-    <div>
+    <div className="h-screen flex flex-col items-center justify-center">
       <h2>{status}</h2>
       {redirectUrl && (
-        <a href={redirectUrl} style={{ padding: "10px 20px", background: "#4CAF50", color: "white", textDecoration: "none", borderRadius: "5px", fontWeight: "bold" }}>
+        <a href={redirectUrl} style={{ padding: "10px 20px", background: "#4CAF50", color: "white", textDecoration: "none", borderRadius: "5px", fontWeight: "bold", marginTop: "20px" }}>
           Continue to Reset Password
         </a>
       )}
