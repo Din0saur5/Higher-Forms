@@ -53,10 +53,7 @@ function ResetPassword() {
       return;
     }
 
-    if (!isAuthenticated) {
-      setErrorMessage("Authentication failed. Please request a new reset link.");
-      return;
-    }
+    
 
     try {
       setIsLoading(true);
