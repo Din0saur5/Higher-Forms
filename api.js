@@ -1,9 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
-import { Resend } from "resend";
 
 const SUPABASE_URL = import.meta.env.VITE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_ANON;
-const resend = new Resend(import.meta.env.VITE_RESEND_API_KEY);
+
 
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   console.error("Supabase environment variables are missing.");
@@ -49,7 +48,7 @@ export const getLoggedInUser = async () => {
 
   const { data: userData, error: fetchError } = await supabase
     .from("users")
-    .select("id, display_name, avatar_url, form_coins_total, cart, rank")
+    .select("id, display_name, avatar_url, form_coins_total, cart, rank, form_coins_historical_total")
     .eq("id", user.id)
     .single();
 
@@ -446,8 +445,12 @@ export const SignUp = async (email, password, displayName) => {
     // Insert new user into "users" table
     const { error: dbError } = await supabase
     .from("users")
-    .insert([{ id: userId, display_name: displayName, form_coins_total: 100, cart: [] }]);
-
+    .update({ 
+      display_name: displayName, 
+      form_coins_total: 100, 
+      cart: [] 
+    })
+    .eq("id", userId);
     if (dbError) {
       console.error("Error saving user details:", dbError.message);
       return { success: false, message: "Failed to save user details." };
@@ -524,40 +527,33 @@ export const resetPassword = async (email) => {
   }
 };
 
-// Fetch historical points for a user
-export const getHistoricalPoints = async (userId) => {
-  try {
-    const { data, error } = await supabase
-      .from("historical_points")
-      .select("points, date")
-      .eq("user_id", userId)
-      .order("date", { ascending: false });
 
-    if (error) {
-      console.error("Error fetching historical points:", error.message);
-      return { success: false, message: error.message };
-    }
-
-    return { success: true, data }; 
-  } catch (error) {
-    console.error("Unexpected error fetching historical points:", error);
-    return { success: false, message: "Failed to fetch historical points." };
-  }
-};
 
 
 export const sendContactEmail = async ({ firstName, lastName, email, subject, message }) => {
   try {
-    const response = await resend.emails.send({
-      from: "contact@higher-forms.com", // Must be a verified Resend domain
-      to: "sales@higher-forms.com", // Change this to your receiving email
-      subject: `Contact Form: ${subject}`,
-      text: `Name: ${firstName} ${lastName}\nEmail: ${email}\nMessage: ${message}`,
+    const response = await fetch("https://hf-mail-server.onrender.com/send-email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        to: "sales@higher-forms.com", // Replace with actual recipient email
+        subject: `New contact - ${subject}`,
+        html: `
+          <h3>New Contact Request</h3>
+          <p><strong>Name:</strong> ${firstName} ${lastName}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Message:</strong></p>
+          <p>${message}</p>
+        `
+      })
     });
 
-    return response;
+    const data = await response.json();
+    return data; // Returns Resend's response
   } catch (error) {
-    console.error("Error sending email:", error);
-    throw new Error("Failed to send email.");
+    console.error("Error sending contact email:", error);
+    return { error: "Failed to send email" };
   }
 };

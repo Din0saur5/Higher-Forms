@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useUserContext } from "../components/UserContext";
 import { NavLink, useNavigate } from "react-router-dom";
-import { LogOut, uploadProfilePicture, getHistoricalPoints } from "../../api"; // Import the getHistoricalPoints function
+import { LogOut, uploadProfilePicture } from "../../api"; // Import the getHistoricalPoints function
 import { motion } from "framer-motion";
 
 export default function ProfilePop() {
@@ -9,7 +9,7 @@ export default function ProfilePop() {
   const navigate = useNavigate();
   const [avatarUrl, setAvatarUrl] = useState(userData?.avatar_url || "https://via.placeholder.com/150");
   const [uploading, setUploading] = useState(false);
-  const [historicalPoints, setHistoricalPoints] = useState([]);
+
 
   useEffect(() => {
     if (!userData) {
@@ -17,21 +17,7 @@ export default function ProfilePop() {
     }
   }, [userData, navigate]);
 
-  useEffect(() => {
-    // Fetch historical points data for the logged-in user
-    const fetchHistoricalPoints = async () => {
-      try {
-        const points = await getHistoricalPoints(userData?.id);
-        setHistoricalPoints(points); // Store the historical points in state
-      } catch (error) {
-        console.error("Error fetching historical points:", error);
-      }
-    };
 
-    if (userData?.id) {
-      fetchHistoricalPoints();
-    }
-  }, [userData]);
 
   const handleLogout = async () => {
     await LogOut();
@@ -125,15 +111,14 @@ export default function ProfilePop() {
       </motion.div>
 
       {/* Historical Points Section */}
-      {historicalPoints.length > 0 && (
+      {userData.form_coins_historical_total > 0 && (
         <div className="mt-6 p-4 bg-gray-800 text-yellow-400 rounded-md w-full text-center border border-gray-700">
           <h3 className="text-lg font-bold text-gray-400">Historical Points:</h3>
           <div className="space-y-2 mt-2">
-            {historicalPoints.map((entry, index) => (
-              <p key={index} className="text-gray-300 text-sm">
-                {new Date(entry.date).toLocaleDateString()} - {entry.points} points
+            
+              <p> {userData.form_coins_historical_total}
               </p>
-            ))}
+     
           </div>
         </div>
       )}
