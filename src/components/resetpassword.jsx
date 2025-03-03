@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getLoggedInUser, supabase } from "../../api"; 
 import { useUserContext } from "./UserContext";
@@ -11,10 +11,12 @@ function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
+  const isAuthenticated = useRef(false); // ✅ Prevents repeated authentication calls
 
   useEffect(() => {
     const authenticateUser = async () => {
+      if (isAuthenticated.current) return; // ✅ Stops multiple calls
+
       const urlParams = new URLSearchParams(location.search);
       const access_token = urlParams.get("access_token");
       const refresh_token = urlParams.get("refresh_token");
@@ -29,21 +31,23 @@ function ResetPassword() {
 
         if (error) {
           setErrorMessage("Failed to authenticate. Please request a new reset link.");
-          return; // Stop execution here
+          return;
         } 
 
+        // ✅ Mark authentication as done to prevent re-renders
+        isAuthenticated.current = true;
+
+        // ✅ Fetch user info ONCE and update global state
         const user = await getLoggedInUser();
         setUserData(user);
-        // ✅ Set authenticated to true
       } catch (err) {
         console.error("Error authenticating:", err);
         setErrorMessage("Something went wrong while authenticating.");
-        return
       }
     };
 
     authenticateUser();
-  }, []);
+  }, [location.search, setUserData]); // ✅ Dependencies prevent unnecessary re-renders
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
@@ -54,7 +58,7 @@ function ResetPassword() {
       return;
     }
 
-    if (!isAuthenticated) {
+    if (!isAuthenticated.current) {
       setErrorMessage("Authentication failed. Please request a new reset link.");
       return;
     }
@@ -84,41 +88,39 @@ function ResetPassword() {
 
           {errorMessage && <div className="text-red-500 text-sm mb-4">{errorMessage}</div>}
 
-          
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">New Password</span>
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="New Password"
-                  className="input input-bordered mb-4"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text">New Password</span>
+            </label>
+            <input
+              type="password"
+              name="password"
+              placeholder="New Password"
+              className="input input-bordered mb-4"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
 
-                <label className="label">
-                  <span className="label-text">Confirm Password</span>
-                </label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  placeholder="Confirm Password"
-                  className="input input-bordered"
-                  required
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-              </div>
+            <label className="label">
+              <span className="label-text">Confirm Password</span>
+            </label>
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirm Password"
+              className="input input-bordered"
+              required
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+          </div>
 
-              <div className="form-control mt-6">
-                <button type="submit" className="btn btn-primary" disabled={isLoading}>
-                  {isLoading ? "Resetting..." : "Reset Password"}
-                </button>
-              </div>
-            
+          <div className="form-control mt-6">
+            <button type="submit" className="btn btn-primary" disabled={isLoading}>
+              {isLoading ? "Resetting..." : "Reset Password"}
+            </button>
+          </div>
         </form>
       </div>
     </div>
