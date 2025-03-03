@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "../../api"; 
 
@@ -11,28 +11,35 @@ function ResetPassword() {
   const [isLoading, setIsLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Extract the access token and refresh token from the URL
-  useEffect(() => {
-    const urlParams = new URLSearchParams(location.search);
-    const access_token = urlParams.get("access_token");
-    const refresh_token = urlParams.get("refresh_token");
+  const hasAttemptedAuth = useRef(false); // Prevents multiple calls
 
-    if (access_token && refresh_token) {
-      // Set the session in Supabase
-      supabase.auth.setSession({ access_token, refresh_token })
-        .then(({ error }) => {
-          if (error) {
-            setErrorMessage("Failed to authenticate. Please request a new reset link.");
-          } else {
-            setIsAuthenticated(true);
-          }
-        });
-    } else {
-      setErrorMessage("Missing authentication tokens. Please request a new reset link.");
-    }
+  useEffect(() => {
+    const authenticateUser = async () => {
+      const urlParams = new URLSearchParams(location.search);
+      const access_token = urlParams.get("access_token");
+      const refresh_token = urlParams.get("refresh_token");
+
+      if (!access_token || !refresh_token) {
+        setErrorMessage("Missing authentication tokens. Please request a new reset link.");
+        return;
+      }
+
+      if (!hasAttemptedAuth.current) {
+        hasAttemptedAuth.current = true; // Prevent multiple calls
+
+        const { error } = await supabase.auth.setSession({ access_token, refresh_token });
+
+        if (error) {
+          setErrorMessage("Failed to authenticate. Please request a new reset link.");
+        } else {
+          setIsAuthenticated(true);
+        }
+      }
+    };
+
+    authenticateUser();
   }, [location.search]);
 
-  // Handle Password Reset
   const handlePasswordChange = async (e) => {
     e.preventDefault();
     setErrorMessage("");
