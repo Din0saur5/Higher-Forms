@@ -1,17 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { supabase } from "../../api"; 
+import { getLoggedInUser, supabase } from "../../api"; 
+import { useUserContext } from "./UserContext";
 
 function ResetPassword() {
   const navigate = useNavigate();
   const location = useLocation();
+  const {userData, setUserData} =useUserContext()
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const hasAttemptedAuth = useRef(false); // Prevents multiple calls
+  
 
   useEffect(() => {
     const authenticateUser = async () => {
@@ -24,17 +26,20 @@ function ResetPassword() {
         return;
       }
 
-      if (!hasAttemptedAuth.current) {
-        hasAttemptedAuth.current = true; // Prevent multiple calls
+      else{
 
         const { error } = await supabase.auth.setSession({ access_token, refresh_token });
 
         if (error) {
           setErrorMessage("Failed to authenticate. Please request a new reset link.");
-        } else {
-          setIsAuthenticated(true);
+        } 
+        else{
+        const user = await getLoggedInUser()
+        setUserData(user)
         }
+        
       }
+      
     };
 
     authenticateUser();
@@ -56,12 +61,12 @@ function ResetPassword() {
 
     try {
       setIsLoading(true);
-      const { error } = await supabase.auth.updateUser({ password });
+      const { error } = await supabase.auth.updateUser({ password:password });
 
       if (error) {
         setErrorMessage(error.message);
       } else {
-        navigate("/login"); // Redirect to login after successful reset
+        navigate("/profile"); // Redirect to login after successful reset
       }
     } catch (error) {
       console.error("Error resetting password:", error);
