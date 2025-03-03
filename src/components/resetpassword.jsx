@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getLoggedInUser, supabase } from "../../api"; 
 import { useUserContext } from "./UserContext";
@@ -6,14 +6,12 @@ import { useUserContext } from "./UserContext";
 function ResetPassword() {
   const navigate = useNavigate();
   const location = useLocation();
-  const {userData, setUserData} =useUserContext()
+  const { userData, setUserData } = useUserContext();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  
 
   useEffect(() => {
     const authenticateUser = async () => {
@@ -26,24 +24,25 @@ function ResetPassword() {
         return;
       }
 
-      else{
-
+      try {
         const { error } = await supabase.auth.setSession({ access_token, refresh_token });
 
         if (error) {
           setErrorMessage("Failed to authenticate. Please request a new reset link.");
+          return; // Stop execution here
         } 
-        else{
-        const user = await getLoggedInUser()
-        setUserData(user)
-        }
-        
+
+        const user = await getLoggedInUser();
+        setUserData(user);
+        setIsAuthenticated(true); // ✅ Set authenticated to true
+      } catch (err) {
+        console.error("Error authenticating:", err);
+        setErrorMessage("Something went wrong while authenticating.");
       }
-      
     };
 
     authenticateUser();
-  }, []);
+  }, [location.search]);
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
@@ -61,12 +60,12 @@ function ResetPassword() {
 
     try {
       setIsLoading(true);
-      const { error } = await supabase.auth.updateUser({ password:password });
+      const { error } = await supabase.auth.updateUser({ password });
 
       if (error) {
         setErrorMessage(error.message);
       } else {
-        navigate("/profile"); // Redirect to login after successful reset
+        navigate("/profile"); // Redirect after successful reset
       }
     } catch (error) {
       console.error("Error resetting password:", error);
@@ -79,7 +78,7 @@ function ResetPassword() {
   return (
     <div className="flex h-screen items-center justify-center">
       <div className="card border rounded-xl p-4 bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-        <form onSubmit={(e)=>handlePasswordChange(e)} className="card-body">
+        <form onSubmit={handlePasswordChange} className="card-body">
           <h3 className="text-center text-xl mb-4">Reset Your Password</h3>
 
           {errorMessage && <div className="text-red-500 text-sm mb-4">{errorMessage}</div>}
