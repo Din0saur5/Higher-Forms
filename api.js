@@ -532,7 +532,7 @@ export const resetPassword = async (email) => {
 
 export const sendContactEmail = async ({ firstName, lastName, email, subject, message }) => {
   try {
-    const response = await fetch("https://hf-mail-server.onrender.com/send-email", {
+    const response = await fetch("https://hf-mail-server-9l7f.onrender.com/send-email", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
