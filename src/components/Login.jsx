@@ -72,7 +72,7 @@ function Login({ setLogin }) {
         <form onSubmit={isForgotPassword ? handleForgotPassword : login} className="card-body">
           <div className="form-control">
             <label className="label">
-              <span className="label-text">{isForgotPassword ? "Enter your email" : "Email"}</span>
+              <span className="label-text">{isForgotPassword ? "Enter your email" : ""}</span>
             </label>
             <input
               type="email"

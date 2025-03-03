@@ -14,11 +14,45 @@ function ResetPassword() {
   const urlParams = new URLSearchParams(location.search);
 const token = urlParams.get("access_token"); 
 
-  useEffect(() => {
-    if (!token) {
-      setErrorMessage("Invalid or expired reset token.");
-    }
-  }, [token]);
+
+    useEffect(() => {
+      const verifyToken = async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get("token");
+  
+        if (!token) {
+          setStatus("Invalid or missing token.");
+          return;
+        }
+  
+        // Construct Supabase verification URL
+        const supabaseUrl = "https://mlxvwhdswsfgelvuxicb.supabase.co/auth/v1/verify";
+        const confirmationUrl = `${supabaseUrl}?token=${token}&type=recovery&redirect_to=https://higher-forms.com/reset-password`;
+  
+        try {
+          // Fetch Supabase confirmation URL
+          const response = await fetch(confirmationUrl, {
+            method: "GET",
+            credentials: "include",
+          });
+  
+          const data = await response.json(); // Attempt to parse JSON response
+          setResponseData(data); // Store response data for debugging
+  
+          if (response.ok) {
+            setStatus("Authenticated! Enter your new password.");
+          } else {
+            setStatus(`Authentication failed: ${data.error || "Unknown error"}`);
+          }
+        } catch (error) {
+          setStatus(`Failed to authenticate: ${error.message}`);
+        }
+      };
+  
+      verifyToken();
+    }, []);
+
+ 
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
