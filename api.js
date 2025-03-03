@@ -1,7 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
+import { Resend } from "resend";
 
 const SUPABASE_URL = import.meta.env.VITE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_ANON;
+const resend = new Resend(import.meta.env.VITE_RESEND_API_KEY);
 
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
   console.error("Supabase environment variables are missing.");
@@ -540,5 +542,22 @@ export const getHistoricalPoints = async (userId) => {
   } catch (error) {
     console.error("Unexpected error fetching historical points:", error);
     return { success: false, message: "Failed to fetch historical points." };
+  }
+};
+
+
+export const sendContactEmail = async ({ firstName, lastName, email, subject, message }) => {
+  try {
+    const response = await resend.emails.send({
+      from: "contact@higher-forms.com", // Must be a verified Resend domain
+      to: "sales@higher-forms.com", // Change this to your receiving email
+      subject: `Contact Form: ${subject}`,
+      text: `Name: ${firstName} ${lastName}\nEmail: ${email}\nMessage: ${message}`,
+    });
+
+    return response;
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw new Error("Failed to send email.");
   }
 };

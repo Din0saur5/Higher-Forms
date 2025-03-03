@@ -1,9 +1,37 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { LuMail } from "react-icons/lu";
 import { FaInstagram } from "react-icons/fa";
+import { sendContactEmail } from "../../api"; // Import the function
 
 const Footer = () => {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    subject: "",
+    message: ""
+  });
+
+  const [status, setStatus] = useState("");
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus("Sending...");
+
+    try {
+      await sendContactEmail(formData);
+      setStatus("Email sent successfully!");
+      setFormData({ firstName: "", lastName: "", email: "", subject: "", message: "" });
+    } catch (error) {
+      setStatus("Failed to send email.");
+    }
+  };
+
   return (
     <>
       {/* CONTACT SECTION */}
@@ -15,7 +43,7 @@ const Footer = () => {
         transition={{ duration: 0.8 }}
       >
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center md:items-start gap-12 px-6 md:px-12">
-          {/* LEFT SECTION - Social Media & Contact Info (1/3 of the width) */}
+          {/* LEFT SECTION - Social Media & Contact Info */}
           <div className="flex-1 md:w-1/3 flex flex-col items-center md:items-start text-center md:text-left">
             <motion.img
               src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/logos/HF_gold_horz.svg"
@@ -44,32 +72,38 @@ const Footer = () => {
             </p>
           </div>
 
-          {/* RIGHT SECTION - Contact Form (2/3 of the width) */}
-          <form className="flex-1 w-full md:w-2/3 max-w-lg md:max-w-xl space-y-4">
+          {/* RIGHT SECTION - Contact Form */}
+          <form className="flex-1 w-full md:w-2/3 max-w-lg md:max-w-xl space-y-4" onSubmit={handleSubmit}>
             <p className="text-xl font-bold text-yellow-400">Contact Us</p>
 
             {/* FIRST & LAST NAME */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label htmlFor="first-name" className="block text-sm font-bold mb-1">
+                <label htmlFor="firstName" className="block text-sm font-bold mb-1">
                   First Name*
                 </label>
                 <input
-                  id="first-name"
+                  id="firstName"
                   type="text"
                   placeholder="First name"
                   className="input input-bordered w-full text-lg p-3 bg-gray-800 text-white border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  required
                 />
               </div>
               <div>
-                <label htmlFor="last-name" className="block text-sm font-bold mb-1">
+                <label htmlFor="lastName" className="block text-sm font-bold mb-1">
                   Last Name*
                 </label>
                 <input
-                  id="last-name"
+                  id="lastName"
                   type="text"
                   placeholder="Last name"
                   className="input input-bordered w-full text-lg p-3 bg-gray-800 text-white border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  required
                 />
               </div>
             </div>
@@ -85,6 +119,9 @@ const Footer = () => {
                   type="email"
                   placeholder="Email"
                   className="input input-bordered w-full text-lg p-3 bg-gray-800 text-white border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
                 />
               </div>
               <div>
@@ -96,6 +133,9 @@ const Footer = () => {
                   type="text"
                   placeholder="Subject"
                   className="input input-bordered w-full text-lg p-3 bg-gray-800 text-white border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  required
                 />
               </div>
             </div>
@@ -109,6 +149,9 @@ const Footer = () => {
                 id="message"
                 placeholder="Enter your message"
                 className="textarea textarea-bordered w-full text-lg p-3 h-28 bg-gray-800 text-white border-gray-600 focus:border-yellow-400 focus:ring-yellow-400"
+                value={formData.message}
+                onChange={handleChange}
+                required
               ></textarea>
             </div>
 
@@ -122,33 +165,10 @@ const Footer = () => {
               Submit
             </motion.button>
           </form>
+
+          {status && <p className="text-center mt-4">{status}</p>}
         </div>
       </motion.section>
-
-      {/* FOOTER */}
-      <motion.footer
-        className="bg-black text-white py-10"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1 }}
-      >
-        <div className="container mx-auto flex flex-col justify-center items-center gap-4 px-6">
-          {/* FOOTER LOGO */}
-          <motion.img
-            src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/logos/HF_white_sml.svg"
-            alt="Higher Forms Logo"
-            className="w-20"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1 }}
-          />
-
-          {/* COPYRIGHT TEXT */}
-          <p className="text-sm text-center">
-            &copy; {new Date().getFullYear()} Higher Forms. All Rights Reserved.
-          </p>
-        </div>
-      </motion.footer>
     </>
   );
 };
