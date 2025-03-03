@@ -78,7 +78,7 @@ function ResetPassword() {
   return (
     <div className="flex h-screen items-center justify-center">
       <div className="card border rounded-xl p-4 bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-        <form onSubmit={handlePasswordChange} className="card-body">
+        <form onSubmit={(e)=>handlePasswordChange(e)} className="card-body">
           <h3 className="text-center text-xl mb-4">Reset Your Password</h3>
 
           {errorMessage && <div className="text-red-500 text-sm mb-4">{errorMessage}</div>}
