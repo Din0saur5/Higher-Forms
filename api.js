@@ -541,7 +541,7 @@ export const sendContactEmail = async ({ firstName, lastName, email, subject, me
         to: "danhackworth@icloud.com", // Replace with actual recipient email
         subject: `New contact - ${subject}`,
         html: `
-          <h3>New Contact Request</h3>
+          <h3>New Contact Request!</h3>
           <p><strong>Name:</strong> ${firstName} ${lastName}</p>
           <p><strong>Email:</strong> ${email}</p>
           <p><strong>Message:</strong></p>
