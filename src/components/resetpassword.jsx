@@ -11,7 +11,7 @@ function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
 
   useEffect(() => {
     const authenticateUser = async () => {
@@ -34,15 +34,16 @@ function ResetPassword() {
 
         const user = await getLoggedInUser();
         setUserData(user);
-        setIsAuthenticated(true); // ✅ Set authenticated to true
+        // ✅ Set authenticated to true
       } catch (err) {
         console.error("Error authenticating:", err);
         setErrorMessage("Something went wrong while authenticating.");
+        return
       }
     };
 
     authenticateUser();
-  }, [location.search]);
+  }, []);
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
@@ -83,8 +84,7 @@ function ResetPassword() {
 
           {errorMessage && <div className="text-red-500 text-sm mb-4">{errorMessage}</div>}
 
-          {isAuthenticated ? (
-            <>
+          
               <div className="form-control">
                 <label className="label">
                   <span className="label-text">New Password</span>
@@ -118,10 +118,7 @@ function ResetPassword() {
                   {isLoading ? "Resetting..." : "Reset Password"}
                 </button>
               </div>
-            </>
-          ) : (
-            <p className="text-center">Authenticating...</p>
-          )}
+            
         </form>
       </div>
     </div>
