@@ -20,7 +20,7 @@ function ResetPassword() {
       const refresh_token = urlParams.get("refresh_token");
 
       if (!access_token || !refresh_token) {
-        setErrorMessage("Missing authentication tokens. Please request a new reset link.");
+        
         return;
       }
 
@@ -31,7 +31,7 @@ function ResetPassword() {
           setErrorMessage("Failed to authenticate. Please request a new reset link.");
           return; // Stop execution here
         } 
-
+        navigate("/reset-password")
         
         // ✅ Set authenticated to true
       } catch (err) {
