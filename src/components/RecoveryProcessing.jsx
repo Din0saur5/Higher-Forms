@@ -31,6 +31,7 @@ export default function RecoveryProcessing() {
         });
 
         const text = await response.text(); // Get the raw response
+        console.log(text)
         const match = text.match(/href="(.*?)"/); // Extract the redirect link from the <a> tag
 
         if (match && match[1]) {

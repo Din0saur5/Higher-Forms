@@ -9,51 +9,30 @@ function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Get the token from the URL (supabase sends it as a query param)
-  const urlParams = new URLSearchParams(location.search);
-const token = urlParams.get("access_token"); 
+  // Extract the access token and refresh token from the URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const access_token = urlParams.get("access_token");
+    const refresh_token = urlParams.get("refresh_token");
 
-
-    useEffect(() => {
-      const verifyToken = async () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const token = urlParams.get("token");
-  
-        if (!token) {
-          setStatus("Invalid or missing token.");
-          return;
-        }
-  
-        // Construct Supabase verification URL
-        const supabaseUrl = "https://mlxvwhdswsfgelvuxicb.supabase.co/auth/v1/verify";
-        const confirmationUrl = `${supabaseUrl}?token=${token}&type=recovery&redirect_to=https://higher-forms.com/reset-password`;
-  
-        try {
-          // Fetch Supabase confirmation URL
-          const response = await fetch(confirmationUrl, {
-            method: "GET",
-            credentials: "include",
-          });
-  
-          const data = await response.json(); // Attempt to parse JSON response
-          setResponseData(data); // Store response data for debugging
-  
-          if (response.ok) {
-            setStatus("Authenticated! Enter your new password.");
+    if (access_token && refresh_token) {
+      // Set the session in Supabase
+      supabase.auth.setSession({ access_token, refresh_token })
+        .then(({ error }) => {
+          if (error) {
+            setErrorMessage("Failed to authenticate. Please request a new reset link.");
           } else {
-            setStatus(`Authentication failed: ${data.error || "Unknown error"}`);
+            setIsAuthenticated(true);
           }
-        } catch (error) {
-          setStatus(`Failed to authenticate: ${error.message}`);
-        }
-      };
-  
-      verifyToken();
-    }, []);
+        });
+    } else {
+      setErrorMessage("Missing authentication tokens. Please request a new reset link.");
+    }
+  }, [location.search]);
 
- 
-
+  // Handle Password Reset
   const handlePasswordChange = async (e) => {
     e.preventDefault();
     setErrorMessage("");
@@ -63,14 +42,19 @@ const token = urlParams.get("access_token");
       return;
     }
 
+    if (!isAuthenticated) {
+      setErrorMessage("Authentication failed. Please request a new reset link.");
+      return;
+    }
+
     try {
       setIsLoading(true);
-      const { error } = await supabase.auth.api.updateUser(token, { password });
+      const { error } = await supabase.auth.updateUser({ password });
 
       if (error) {
         setErrorMessage(error.message);
       } else {
-        navigate("/login"); 
+        navigate("/login"); // Redirect to login after successful reset
       }
     } catch (error) {
       console.error("Error resetting password:", error);
@@ -86,41 +70,47 @@ const token = urlParams.get("access_token");
         <form onSubmit={handlePasswordChange} className="card-body">
           <h3 className="text-center text-xl mb-4">Reset Your Password</h3>
 
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">New Password</span>
-            </label>
-            <input
-              type="password"
-              name="password"
-              placeholder="New Password"
-              className="input input-bordered mb-4"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+          {errorMessage && <div className="text-red-500 text-sm mb-4">{errorMessage}</div>}
 
-            <label className="label">
-              <span className="label-text">Confirm Password</span>
-            </label>
-            <input
-              type="password"
-              name="confirmPassword"
-              placeholder="Confirm Password"
-              className="input input-bordered"
-              required
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-          </div>
+          {isAuthenticated ? (
+            <>
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text">New Password</span>
+                </label>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="New Password"
+                  className="input input-bordered mb-4"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
 
-          {errorMessage && <div className="text-red-500 text-sm mt-2">{errorMessage}</div>}
+                <label className="label">
+                  <span className="label-text">Confirm Password</span>
+                </label>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  placeholder="Confirm Password"
+                  className="input input-bordered"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                />
+              </div>
 
-          <div className="form-control mt-6">
-            <button type="submit" className="btn btn-primary" disabled={isLoading}>
-              {isLoading ? "Resetting..." : "Reset Password"}
-            </button>
-          </div>
+              <div className="form-control mt-6">
+                <button type="submit" className="btn btn-primary" disabled={isLoading}>
+                  {isLoading ? "Resetting..." : "Reset Password"}
+                </button>
+              </div>
+            </>
+          ) : (
+            <p className="text-center">Authenticating...</p>
+          )}
         </form>
       </div>
     </div>

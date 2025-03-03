@@ -538,7 +538,7 @@ export const sendContactEmail = async ({ firstName, lastName, email, subject, me
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        to: "danhackworth@icloud.com", // Replace with actual recipient email
+        to: "sales@higher-forms.com", // Replace with actual recipient email
         subject: `New contact - ${subject}`,
         html: `
           <h3>New Contact Request!</h3>
