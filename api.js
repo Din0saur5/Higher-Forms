@@ -434,7 +434,7 @@ export const SignUp = async (email, password, displayName) => {
     });
 
     if (authError) {
-      console.error("Signup error:", authError.message);
+      console.error("Signup error:", authError.message); 
       return { success: false, message: authError.message };
     }
 
