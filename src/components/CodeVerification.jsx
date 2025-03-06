@@ -50,7 +50,7 @@ const CodeVerification = ({ setValidationPage, setProduct, supabase }) => {
 
     const fetchProduct = async (code) => {
         setIsLoading(true); // Start loading
-        const formattedCode = code.trim().toLowerCase();
+        const formattedCode = code.trim().toUpperCase();
         const fetchProductUrl = `${SUPABASE_URL}/rest/v1/product_validations?select=*&product_id=eq.${encodeURIComponent(formattedCode)}`;
 
         try {
