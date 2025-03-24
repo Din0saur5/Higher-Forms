@@ -113,7 +113,7 @@ export default function ProfilePop() {
       {/* Historical Points Section */}
       {userData.form_coins_historical_total > 0 && (
         <div className="mt-6 p-4 bg-gray-800 text-yellow-400 rounded-md w-full text-center border border-gray-700">
-          <h3 className="text-lg font-bold text-gray-400">Historical Points:</h3>
+          <h3 className="text-lg font-bold text-gray-400">Historical Coin Total:</h3>
           <div className="space-y-2 mt-2">
             
               <p> {userData.form_coins_historical_total}
