@@ -481,22 +481,58 @@ export const PatchUser = async (id, newUserObject) => {
 
 
 
-export const AddCoins = async (product_id, userId) =>{
-  console.log('workind')
-  const { data, error } = await supabase
-  .rpc('redeem_product', { 
-    input_product_id: product_id, 
-    input_user_id: userId 
-  });
+export const AddCoins = async (product_id, userId) => {
+  console.log('Working on adding coins...');
 
-if (error) {
-  console.error("Error redeeming product:", error);
-} else {
-  console.log("Updated form_coins_total:", data);
-  return data
-}
+  // Step 1: Retrieve product points and check if it is already redeemed
+  let { data: productData, error: productError } = await supabase
+    .from('product_validations')
+    .select('points, been_redeemed')
+    .eq('product_id', product_id)
+    .single();
 
-}
+  if (productError) {
+    console.error("Error fetching product:", productError);
+    return { error: "Product not found or database error." };
+  }
+
+  if (!productData || productData.been_redeemed) {
+    console.error("Product already redeemed or does not exist.");
+    return { error: "Product already redeemed or does not exist." };
+  }
+
+  const productPoints = productData.points;
+
+  // Step 2: Mark product as redeemed
+  const { error: updateProductError } = await supabase
+    .from('product_validations')
+    .update({ been_redeemed: true })
+    .eq('product_id', product_id);
+
+  if (updateProductError) {
+    console.error("Error updating product as redeemed:", updateProductError);
+    return { error: "Failed to mark product as redeemed." };
+  }
+
+  // Step 3: Update user coins
+  const { data: userData, error: userUpdateError } = await supabase
+    .from('users')
+    .update({
+      form_coins_total: supabase.raw(`form_coins_total + ${productPoints}`),
+      form_coins_historical_total: supabase.raw(`form_coins_historical_total + ${productPoints}`)
+    })
+    .eq('id', userId)
+    .select('form_coins_total, form_coins_historical_total')
+    .single();
+
+  if (userUpdateError) {
+    console.error("Error updating user coins:", userUpdateError);
+    return { error: "User update failed." };
+  }
+
+  console.log("Coins updated successfully:", userData);
+  return { success: true, userData };
+};
 
 export const fetchStrains = async () => { 
   const { data, error } = await supabase
