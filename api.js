@@ -491,19 +491,35 @@ export const AddCoins = async (product_id, userId) => {
     .eq('product_id', product_id)
     .single();
 
-  if (productError) {
+  if (productError || !productData) {
     console.error("Error fetching product:", productError);
     return { error: "Product not found or database error." };
   }
 
-  if (!productData || productData.been_redeemed) {
-    console.error("Product already redeemed or does not exist.");
-    return { error: "Product already redeemed or does not exist." };
+  if (productData.been_redeemed) {
+    console.error("Product already redeemed.");
+    return { error: "Product already redeemed." };
   }
 
   const productPoints = productData.points;
 
-  // Step 2: Mark product as redeemed
+  // Step 2: Retrieve user's current coin values
+  let { data: userData, error: userError } = await supabase
+    .from('users')
+    .select('form_coins_total, form_coins_historical_total')
+    .eq('id', userId)
+    .single();
+
+  if (userError || !userData) {
+    console.error("Error fetching user data:", userError);
+    return { error: "User not found." };
+  }
+
+  // Calculate new values
+  const newCoinsTotal = userData.form_coins_total + productPoints;
+  const newHistoricalTotal = userData.form_coins_historical_total + productPoints;
+
+  // Step 3: Mark product as redeemed
   const { error: updateProductError } = await supabase
     .from('product_validations')
     .update({ been_redeemed: true })
@@ -514,24 +530,30 @@ export const AddCoins = async (product_id, userId) => {
     return { error: "Failed to mark product as redeemed." };
   }
 
-  // Step 3: Update user coins
-  const { data: userData, error: userUpdateError } = await supabase
+  // Step 4: Update user coins
+  const { error: userUpdateError } = await supabase
     .from('users')
     .update({
-      form_coins_total: supabase.raw(`form_coins_total + ${productPoints}`),
-      form_coins_historical_total: supabase.raw(`form_coins_historical_total + ${productPoints}`)
+      form_coins_total: newCoinsTotal,
+      form_coins_historical_total: newHistoricalTotal
     })
-    .eq('id', userId)
-    .select('form_coins_total, form_coins_historical_total')
-    .single();
+    .eq('id', userId);
 
   if (userUpdateError) {
     console.error("Error updating user coins:", userUpdateError);
     return { error: "User update failed." };
   }
 
-  console.log("Coins updated successfully:", userData);
-  return { success: true, userData };
+  console.log("Coins updated successfully:", {
+    form_coins_total: newCoinsTotal,
+    form_coins_historical_total: newHistoricalTotal
+  });
+
+  return { 
+    success: true, 
+    form_coins_total: newCoinsTotal, 
+    form_coins_historical_total: newHistoricalTotal 
+  };
 };
 
 export const fetchStrains = async () => { 
