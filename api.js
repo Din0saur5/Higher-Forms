@@ -558,18 +558,20 @@ export const AddCoins = async (product_id, userId) => {
 
 export const fetchStrains = async () => { 
   const { data, error } = await supabase
-    .from("strains")
-    .select("*")
-    .order("id", { ascending: true });
+  .from("strains_sorted")
+  .select("*")
+  .order("badge_priority", { ascending: false }) // NEW → HOT → none
+  .order("id", { ascending: true });    
 
   if (error) {
     console.error("Error fetching strains:", error);
-    return { v1Cartridges: [], duoStrains: [] };
+    return { v1Cartridges: [], duos: [], duos_dual: [] };
   }
 
   return {
     v1Cartridges: data.filter((strain) => strain.category === "v1"),
-    duoStrains: data.filter((strain) => strain.category === "duos"),
+    duos_dual: data.filter((strain) => strain.category === "duo-dual"),
+    duos: data.filter((strain)=> strain.category === "duo")
   };
 };
 
