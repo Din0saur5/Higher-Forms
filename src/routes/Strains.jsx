@@ -47,11 +47,11 @@ const Strains = () => {
           Meet Our Strains
         </h1>
       </motion.section>
-{/* 2g Premium Duo-Flare Section */}
+{/* 2g Ultra Premium Duo-Flare Section */}
 
  <motion.section className="py-8 bg-base-100 text-center">
         <h2 className="text-xl md:text-2xl font-bold uppercase border-b-2 border-primary inline-block pb-2">
-          2g Premium Duo-Flare™
+          2g Ultra Premium Duo-Flare™
         </h2>
       </motion.section>
 
