@@ -155,7 +155,7 @@ const Strains = () => {
 
                           case "COMING SOON":
                             badgeContent = (
-                              <div className="absolute top-[13%] left-[-15%]  bg-blue-500 text-white px-20 py-1 text-sm font-bold  rotate-[-45deg] shadow-md shadow-red-700">
+                              <div className="absolute  bg-blue-500 text-white px-20 py-1 text-sm font-bold rotate-[-30deg] shadow-md shadow-red-700">
                                 <span className=" drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,1)]"> {duo.badge}!</span> 
                               </div>
                             );
