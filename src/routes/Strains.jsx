@@ -21,7 +21,7 @@ const Strains = () => {
 
           console.log("Cartridges Loaded:", v1Cartridges); // ✅ Debugging
           console.log("Duos Loaded:", duos);
-          console.log("duods-dual:", duosDual)
+          console.log("duo-dual:", duosDual)
         }
       } catch (error) {
         console.error("Error fetching strains:", error);
@@ -86,6 +86,14 @@ const Strains = () => {
                             );
                             break;
 
+                          case "COMING-SOON":
+                            badgeContent = (
+                              <div className="absolute top-[3%] left-[-10%]  bg-orange-500 text-white px-12 py-1 text-sm font-bold text-center rotate-[-45deg] shadow-md shadow-red-700">
+                                <span className="drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,1)]"> {duo.badge}!</span> 
+                              </div>
+                            );
+                            break;
+
                           default:
                             badgeContent = null;
                         }
@@ -141,6 +149,14 @@ const Strains = () => {
                             badgeContent = (
                               <div className="absolute top-[3%] left-[-10%]  bg-orange-500 text-white px-12 py-1 text-sm font-bold text-center rotate-[-45deg] shadow-md shadow-red-700">
                                 <span className="drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,1)]"> {duo.badge}! 🔥</span> 
+                              </div>
+                            );
+                            break;
+
+                          case "COMING SOON":
+                            badgeContent = (
+                              <div className="absolute top-[13%] left-[-15%]  bg-blue-500 text-white px-20 py-1 text-sm font-bold  rotate-[-45deg] shadow-md shadow-red-700">
+                                <span className=" drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,1)]"> {duo.badge}!</span> 
                               </div>
                             );
                             break;
