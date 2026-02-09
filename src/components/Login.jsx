@@ -2,6 +2,7 @@ import { useState } from "react";
 import { LogIn, resetPassword } from "../../api"; // Ensure resetPassword is imported from api.js
 import { useUserContext } from "../components/UserContext";
 import { useNavigate } from "react-router-dom";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 function Login({ setLogin }) {
   const { setUserData } = useUserContext();
@@ -16,6 +17,7 @@ function Login({ setLogin }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isForgotPassword, setIsForgotPassword] = useState(false); 
   const [resetMessage, setResetMessage] = useState("");  
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setLoginValue({
@@ -68,7 +70,7 @@ function Login({ setLogin }) {
 
   return (
     <div className="flex h-screen items-center justify-center">
-      <div className="card border rounded-xl p-4 bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+      <div className="card auth-card border rounded-xl p-4 bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
         <form onSubmit={isForgotPassword ? handleForgotPassword : login} className="card-body">
           <div className="form-control">
             <label className="label">
@@ -87,16 +89,27 @@ function Login({ setLogin }) {
 
             {!isForgotPassword && (
               <>
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  className="input input-bordered"
-                  required
-                  value={loginValue.password}
-                  onChange={handleChange}
-                  autoComplete="current-password"
-                />
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    placeholder="Password"
+                    className="input input-bordered pr-12 w-full"
+                    inputMode="text"
+                    required
+                    value={loginValue.password}
+                    onChange={handleChange}
+                    autoComplete="current-password"
+                  />
+                  <button
+                    type="button"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                  >
+                    {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+                  </button>
+                </div>
                 <label className="label">
                   <a
                     href="#"

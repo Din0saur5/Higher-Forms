@@ -76,6 +76,7 @@ const Cart = () => {
         title="Cart"
         description="Review items in your Higher Forms rewards cart before checkout."
         path="/cart"
+        robots="noindex, nofollow"
       />
       <h1 className="text-3xl font-bold mb-6 text-center text-black">Your Cart</h1>
 

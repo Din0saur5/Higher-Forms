@@ -3,31 +3,25 @@
   <url>
     <loc>https://www.higher-forms.com/</loc>
     <lastmod>2026-02-09</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>yearly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.higher-forms.com/strains</loc>
     <lastmod>2026-02-09</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>yearly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://www.higher-forms.com/lab-results</loc>
     <lastmod>2026-02-09</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>yearly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.higher-forms.com/verify</loc>
     <lastmod>2026-02-09</lastmod>
-    <changefreq>monthly</changefreq>
+    <changefreq>yearly</changefreq>
     <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.higher-forms.com/login</loc>
-    <lastmod>2026-02-09</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.4</priority>
   </url>
 </urlset>

@@ -13,6 +13,7 @@ const Confirmation = ({ order }) => {
         title="Order Confirmed"
         description="Your Higher Forms rewards order is confirmed. Track your shipment or return to the Rewards Shop."
         path="/confirmation"
+        robots="noindex, nofollow"
       />
       {/* Success Icon Animation */}
       <motion.div

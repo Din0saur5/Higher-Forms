@@ -122,6 +122,15 @@ html {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
+/* Disable hover lift for auth cards */
+.auth-card {
+  transition: none;
+}
+.auth-card:hover {
+  transform: none;
+  box-shadow: none;
+}
+
 /* Fix Safari Issues with Flexbox */
 .flex {
   display: -webkit-box;

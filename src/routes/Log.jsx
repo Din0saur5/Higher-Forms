@@ -12,6 +12,7 @@ function Log() {
         title="Login or Sign Up"
         description="Access your Higher Forms account to view rewards, manage profile, and redeem Form Coins."
         path="/login"
+        robots="noindex, nofollow"
       />
       <Login setLogin={setLogin} />
     </>
@@ -21,6 +22,7 @@ function Log() {
         title="Create an Account"
         description="Join Higher Forms to earn Form Coins, redeem rewards, and track your profile."
         path="/login"
+        robots="noindex, nofollow"
       />
       <SignUp setLogin={setLogin} />
     </>

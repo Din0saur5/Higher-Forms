@@ -14,6 +14,7 @@ const SEO = ({
   path = "/",
   image = DEFAULT_IMAGE,
   type = "website",
+  robots,
 }) => {
   const fullTitle = title ? `${title} | Higher Forms` : DEFAULT_TITLE;
   const url = `${SITE_URL}${path}`;
@@ -23,6 +24,7 @@ const SEO = ({
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
       <link rel="canonical" href={url} />
+      {robots && <meta name="robots" content={robots} />}
 
       {/* Open Graph */}
       <meta property="og:type" content={type} />

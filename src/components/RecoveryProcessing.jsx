@@ -59,6 +59,7 @@ export default function RecoveryProcessing() {
         title="Recovery Processing"
         description="Verifying your Higher Forms recovery link. You’ll be redirected to reset your password."
         path="/reset-proccessing"
+        robots="noindex, nofollow"
       />
       <h2>{status}</h2>
       {redirectUrl && (

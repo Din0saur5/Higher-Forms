@@ -106,6 +106,7 @@ const Checkout = () => {
         title="Checkout"
         description="Confirm your Higher Forms reward order and shipping details."
         path="/checkout"
+        robots="noindex, nofollow"
       />
       <h1 className="text-3xl font-bold mb-6 text-center text-black">Checkout</h1>
 

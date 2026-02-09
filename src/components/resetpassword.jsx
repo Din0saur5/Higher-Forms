@@ -79,6 +79,7 @@ function ResetPassword() {
         title="Reset Password"
         description="Reset your Higher Forms account password securely."
         path="/reset-password"
+        robots="noindex, nofollow"
       />
       <div className="card border rounded-xl p-4 bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
         <form onSubmit={(e)=>handlePasswordChange(e)} className="card-body">

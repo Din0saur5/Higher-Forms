@@ -65,6 +65,7 @@ const Profile = () => {
         title="Your Profile"
         description="Manage your Higher Forms account, avatar, Form Coins balance, and reward history."
         path="/profile"
+        robots="noindex, nofollow"
       />
       {/* Profile Card */}
       <motion.div

@@ -99,6 +99,7 @@ const RewardShop = () => {
         title="Rewards Shop"
         description="Redeem Form Coins for exclusive Higher Forms gear, devices, and merchandise."
         path="/rewards"
+        robots="noindex, nofollow"
       />
       {/* Header */}
       <div className="text-center mb-8">

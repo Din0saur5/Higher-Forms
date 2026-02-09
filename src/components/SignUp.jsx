@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { SignUp } from "../../api";
 import { useUserContext } from "../components/UserContext";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 //Form Validation 
 const validationSchema = Yup.object({
@@ -15,8 +16,8 @@ const validationSchema = Yup.object({
   displayName: Yup.string().required("Required"),
   password: Yup.string()
     .matches(
-      /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}$/,
-      "Password must be at least 8 characters with at least one uppercase letter and one number"
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/,
+      "Min 8 characters with uppercase, lowercase, number, and special character"
     )
     .required("Required"),
   confirmPassword: Yup.string()
@@ -29,6 +30,8 @@ const SignupForm = ({ setLogin }) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const handleSubmit = async (values, { setSubmitting }) => {
     setIsLoading(true);
@@ -57,7 +60,7 @@ const SignupForm = ({ setLogin }) => {
 
   return (
     <div className="flex h-screen items-center justify-center">
-      <div className="card border rounded-xl p-6 bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+      <div className="card auth-card border rounded-xl p-6 bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
         <Formik
           initialValues={{ email: "", displayName: "", password: "", confirmPassword: "" }}
           validationSchema={validationSchema}
@@ -83,7 +86,26 @@ const SignupForm = ({ setLogin }) => {
 
               <div>
                 <label htmlFor="password">Password</label>
-                <Field name="password" type="password" className="input input-bordered w-full" />
+                <Field name="password">
+                  {({ field }) => (
+                    <div className="relative">
+                      <input
+                        {...field}
+                        type={showPassword ? "text" : "password"}
+                        inputMode="text"
+                        className="input input-bordered w-full pr-12"
+                      />
+                      <button
+                        type="button"
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                        className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                      >
+                        {showPassword ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+                      </button>
+                    </div>
+                  )}
+                </Field>
                 {errors.password && touched.password && (
                   <div className="text-red-500">{errors.password}</div>
                 )}
@@ -91,7 +113,26 @@ const SignupForm = ({ setLogin }) => {
 
               <div>
                 <label htmlFor="confirmPassword">Confirm Password</label>
-                <Field name="confirmPassword" type="password" className="input input-bordered w-full" />
+                <Field name="confirmPassword">
+                  {({ field }) => (
+                    <div className="relative">
+                      <input
+                        {...field}
+                        type={showConfirm ? "text" : "password"}
+                        inputMode="text"
+                        className="input input-bordered w-full pr-12"
+                      />
+                      <button
+                        type="button"
+                        aria-label={showConfirm ? "Hide password" : "Show password"}
+                        className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+                        onClick={() => setShowConfirm((prev) => !prev)}
+                      >
+                        {showConfirm ? <AiOutlineEyeInvisible /> : <AiOutlineEye />}
+                      </button>
+                    </div>
+                  )}
+                </Field>
                 {errors.confirmPassword && touched.confirmPassword && (
                   <div className="text-red-500">{errors.confirmPassword}</div>
                 )}
