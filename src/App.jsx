@@ -54,10 +54,20 @@ const router = createBrowserRouter([
   },
 ]);
 
+const BOT_REGEX =
+  /(bot|crawler|spider|crawling|googlebot|bingbot|duckduckbot|baiduspider|yandex|slurp|sogou|facebot|ia_archiver|ahrefs|semrush|mediapartners-google|google-inspectiontool|facebookexternalhit|twitterbot|linkedinbot|pinterest|bingpreview)/i;
+
 const App = () => {
-  const [ageConfirmed, setAgeConfirmed] = React.useState(
-    localStorage.getItem("ageVerified") === "true"
-  );
+  const isBot =
+    typeof navigator !== "undefined" &&
+    !!navigator.userAgent &&
+    BOT_REGEX.test(navigator.userAgent);
+
+  const [ageConfirmed, setAgeConfirmed] = React.useState(() => {
+    if (isBot) return true;
+    return typeof localStorage !== "undefined" &&
+      localStorage.getItem("ageVerified") === "true";
+  });
 
   return (
     <HelmetProvider>

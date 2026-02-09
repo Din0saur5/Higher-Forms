@@ -6,7 +6,7 @@ const AgeVerification = ({ onConfirm }) => {
   const isBot = () => {
     if (typeof navigator === "undefined") return false;
     const ua = navigator.userAgent?.toLowerCase() || "";
-    return /(bot|crawler|spider|crawling|googlebot|bingbot|duckduckbot|baiduspider|yandex|slurp|sogou|facebot|ia_archiver)/.test(
+    return /(bot|crawler|spider|crawling|googlebot|bingbot|duckduckbot|baiduspider|yandex|slurp|sogou|facebot|ia_archiver|ahrefs|semrush|mediapartners-google|google-inspectiontool|facebookexternalhit|twitterbot|linkedinbot|pinterest|bingpreview)/.test(
       ua
     );
   };
