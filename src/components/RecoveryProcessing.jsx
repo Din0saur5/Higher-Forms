@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import SEO from "./SEO";
 
 export default function RecoveryProcessing() {
   const [status, setStatus] = useState("Verifying...");
@@ -54,6 +55,11 @@ export default function RecoveryProcessing() {
 
   return (
     <div className="h-screen flex flex-col items-center justify-center">
+      <SEO
+        title="Recovery Processing"
+        description="Verifying your Higher Forms recovery link. You’ll be redirected to reset your password."
+        path="/reset-proccessing"
+      />
       <h2>{status}</h2>
       {redirectUrl && (
         <a href={redirectUrl} style={{ padding: "10px 20px", background: "#4CAF50", color: "white", textDecoration: "none", borderRadius: "5px", fontWeight: "bold", marginTop: "20px" }}>

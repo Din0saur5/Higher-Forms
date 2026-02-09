@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { UserProvider } from "./components/UserContext";
 import AgeVerification from "./components/AgeVerification";
+import { HelmetProvider } from "react-helmet-async";
 import "./App.css";
 import Home from "./routes/Home";
 import Profile from "./routes/Profile";
@@ -59,15 +60,17 @@ const App = () => {
   );
 
   return (
-    <UserProvider>
-      <Suspense fallback={<div>Loading...</div>}>
-        {!ageConfirmed ? (
-          <AgeVerification onConfirm={() => setAgeConfirmed(true)} />
-        ) : (
-          <RouterProvider router={router} />
-        )}
-      </Suspense>
-    </UserProvider>
+    <HelmetProvider>
+      <UserProvider>
+        <Suspense fallback={<div>Loading...</div>}>
+          {!ageConfirmed ? (
+            <AgeVerification onConfirm={() => setAgeConfirmed(true)} />
+          ) : (
+            <RouterProvider router={router} />
+          )}
+        </Suspense>
+      </UserProvider>
+    </HelmetProvider>
   );
 };
 

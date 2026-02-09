@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /profile
+Disallow: /checkout
+Disallow: /cart
+Disallow: /confirmation
+Disallow: /rewards
+Allow: /
+
+Sitemap: https://www.higher-forms.com/sitemap.xml

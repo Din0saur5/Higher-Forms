@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import CodeVerification from "../components/CodeVerification";
 import ValidationPage from "../components/ValidationPage";
+import SEO from "../components/SEO";
 
 
 function Verify() {
@@ -16,6 +17,11 @@ function Verify() {
 
   return (
     <div className="h-screen flex items-center justify-center">
+      <SEO
+        title="Verify Your Higher Forms Product"
+        description="Enter your Higher Forms verification code to confirm authenticity."
+        path="/verify"
+      />
       
 
       {validationPage ? (

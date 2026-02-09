@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getLoggedInUser, supabase } from "../../api"; 
 import { useUserContext } from "./UserContext";
+import SEO from "./SEO";
 
 function ResetPassword() {
   const navigate = useNavigate();
@@ -74,6 +75,11 @@ function ResetPassword() {
 
   return (
     <div className="flex h-screen items-center justify-center">
+      <SEO
+        title="Reset Password"
+        description="Reset your Higher Forms account password securely."
+        path="/reset-password"
+      />
       <div className="card border rounded-xl p-4 bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
         <form onSubmit={(e)=>handlePasswordChange(e)} className="card-body">
           <h3 className="text-center text-xl mb-4">Reset Your Password</h3>

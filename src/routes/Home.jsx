@@ -1,10 +1,34 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Parallax } from "react-parallax";
+import SEO from "../components/SEO";
+import { Helmet } from "react-helmet-async";
 
 const Home = () => {
+  const orgJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "Higher Forms",
+    url: "https://www.higher-forms.com",
+    logo: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/Hero800.png",
+    sameAs: [
+      "https://www.instagram.com/higherforms", // update to real profiles as available
+      "https://www.facebook.com/higherforms"
+    ]
+  };
+
   return (
     <div className="mt-24 min-h-screen home-container">
+      <SEO
+        title="Home | Introducing the Duo-Flare™ Experience"
+        description="Discover Higher Forms Duo-Flare™ devices and ceramic core cartridges engineered for pure, consistent vapor and bold strain-specific flavor."
+        path="/" 
+      />
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify(orgJsonLd)}
+        </script>
+      </Helmet>
       {/* Hero Section */}
       <motion.section
         className="hero bg-black flex justify-center items-center px-4 pt-20 pb-10 md:pb-20"

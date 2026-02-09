@@ -3,12 +3,26 @@ import React, { useState, useEffect } from "react";
 const AgeVerification = ({ onConfirm }) => {
   const [showModal, setShowModal] = useState(true);
 
+  const isBot = () => {
+    if (typeof navigator === "undefined") return false;
+    const ua = navigator.userAgent?.toLowerCase() || "";
+    return /(bot|crawler|spider|crawling|googlebot|bingbot|duckduckbot|baiduspider|yandex|slurp|sogou|facebot|ia_archiver)/.test(
+      ua
+    );
+  };
+
   useEffect(() => {
     const ageConfirmed = localStorage.getItem("ageVerified");
-    if (ageConfirmed === "true") {
+    const botDetected = isBot();
+
+    if (ageConfirmed === "true" || botDetected) {
+      if (botDetected) {
+        localStorage.setItem("ageVerified", "true");
+        onConfirm();
+      }
       setShowModal(false);
     }
-  }, []);
+  }, [onConfirm]);
 
   const handleConfirm = () => {
     localStorage.setItem("ageVerified", "true");

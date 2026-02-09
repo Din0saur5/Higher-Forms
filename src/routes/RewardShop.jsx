@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase,fetchProducts, addToCart, fetchCartProds,getLoggedInUser } from "../../api";
 import { FaCoins, FaExclamationTriangle } from "react-icons/fa";
 import { motion } from "framer-motion";
+import SEO from "../components/SEO";
 
 const RewardShop = () => {
   const { userData, setUserData } = useUserContext();
@@ -94,6 +95,11 @@ const RewardShop = () => {
 
   return (
     <div className="reward-shop-container bg-black text-white font-roboto min-h-screen mt-24 p-6">
+      <SEO
+        title="Rewards Shop"
+        description="Redeem Form Coins for exclusive Higher Forms gear, devices, and merchandise."
+        path="/rewards"
+      />
       {/* Header */}
       <div className="text-center mb-8">
         <h1 className="text-4xl font-bold uppercase tracking-wide text-gold">Rewards Shop</h1>

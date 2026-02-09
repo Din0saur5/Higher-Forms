@@ -2,12 +2,18 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaCheckCircle } from "react-icons/fa";
+import SEO from "../components/SEO";
 
 const Confirmation = ({ order }) => {
   const navigate = useNavigate();
 
   return (
     <div className="container mt-24 min-h-screen mx-auto px-4 py-10 text-center flex flex-col items-center">
+      <SEO
+        title="Order Confirmed"
+        description="Your Higher Forms rewards order is confirmed. Track your shipment or return to the Rewards Shop."
+        path="/confirmation"
+      />
       {/* Success Icon Animation */}
       <motion.div
         initial={{ scale: 0.5, opacity: 0 }}

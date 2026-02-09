@@ -1,5 +1,6 @@
 import { useRouteError } from "react-router-dom";
 import { Link } from "react-router-dom";
+import SEO from "../components/SEO";
 
 export default function ErrorPage() {
   const error = useRouteError();
@@ -7,6 +8,11 @@ export default function ErrorPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-black text-white text-center px-6">
+      <SEO
+        title="Page Not Found"
+        description="We couldn’t find that Higher Forms page. Return home to keep exploring premium ceramic vapes."
+        path="/404"
+      />
       <h1 className="text-6xl font-bold text-red-500">Oops!</h1>
       <p className="text-xl mt-4 text-white">Sorry, an unexpected error has occurred.</p>
       <p className="text-gray-400 italic mt-2">

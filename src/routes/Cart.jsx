@@ -4,6 +4,7 @@ import { useUserContext } from "../components/UserContext";
 import { fetchCartProds, removeFromCart } from "../../api";
 import { FaCoins, FaTrash, FaShoppingCart } from "react-icons/fa";
 import { motion } from "framer-motion";
+import SEO from "../components/SEO";
 
 const Cart = () => {
   const { userData, setUserData } = useUserContext();
@@ -71,6 +72,11 @@ const Cart = () => {
 
   return (
     <div className="container mt-24 min-h-screen mx-auto px-4 py-6">
+      <SEO
+        title="Cart"
+        description="Review items in your Higher Forms rewards cart before checkout."
+        path="/cart"
+      />
       <h1 className="text-3xl font-bold mb-6 text-center text-black">Your Cart</h1>
 
       {loading ? (

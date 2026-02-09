@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { fetchStrains } from "../../api";
+import SEO from "../components/SEO";
+import { Helmet } from "react-helmet-async";
 
 const Strains = () => {
   const [cartridges, setCartridges] = useState([]);
@@ -34,8 +36,54 @@ const Strains = () => {
     };
   }, []);
 
+  const itemList = useMemo(() => {
+    const products = [
+      ...duos.map((item) => ({
+        name: item.title || item.name || "Higher Forms Duo-Flare",
+        url: "https://www.higher-forms.com/strains",
+        image: item.image_url
+      })),
+      ...duosDual.map((item) => ({
+        name: item.title || item.name || "Higher Forms Duo-Flare Dual",
+        url: "https://www.higher-forms.com/strains",
+        image: item.image_url
+      })),
+      ...cartridges.map((item) => ({
+        name: item.title || item.name || "Higher Forms Cartridge",
+        url: item.leafly_link || "https://www.higher-forms.com/strains",
+        image: item.image_url
+      })),
+    ];
+
+    return products.slice(0, 12).map((product, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      url: product.url,
+      name: product.name,
+      image: product.image
+    }));
+  }, [duos, duosDual, cartridges]);
+
+  const productListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "Higher Forms Strains and Devices",
+    url: "https://www.higher-forms.com/strains",
+    itemListElement: itemList
+  };
+
   return (
     <div className="strains-container mt-24 px-4 md:px-8">
+      <SEO
+        title="Strains & Devices"
+        description="Explore Duo-Flare™ disposables, dual chambers, and 1g ceramic cartridges. See what’s new, hot, and coming soon from Higher Forms."
+        path="/strains"
+      />
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify(productListJsonLd)}
+        </script>
+      </Helmet>
       {/* Hero Section */}
       <motion.section
         className="hero bg-black text-white py-16 text-center"
@@ -86,7 +134,7 @@ const Strains = () => {
                             );
                             break;
 
-                          case "COMING-SOON":
+                          case "COMING SOON":
                             badgeContent = (
                               <div className="absolute top-[3%] left-[-10%]  bg-orange-500 text-white px-12 py-1 text-sm font-bold text-center rotate-[-45deg] shadow-md shadow-red-700">
                                 <span className="drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,1)]"> {duo.badge}!</span> 
@@ -139,7 +187,7 @@ const Strains = () => {
                         switch (duo.badge.toUpperCase()) {
                           case "NEW":
                             badgeContent = (
-                              <div className="absolute top-[3%] left-[-10%] bg-blue-300 px-12 py-1 text-sm font-bold text-center rotate-[-45deg] shadow-md shadow-blue-700">
+                              <div className="absolute bg-blue-500 px-20 py-1 text-sm font-bold rotate-[-30deg] shadow-md shadow-blue-700">
                                <span className="drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,1)]"> {duo.badge}!</span>
                               </div>
                             );

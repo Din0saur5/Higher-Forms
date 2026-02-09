@@ -4,6 +4,7 @@ import { useUserContext } from "../components/UserContext";
 import { supabase,fetchCartProds, placeOrder } from "../../api"; 
 import { FaShoppingCart } from "react-icons/fa"; 
 import { motion } from "framer-motion"; 
+import SEO from "../components/SEO";
 
 const Checkout = () => {
   const { userData, setUserData } = useUserContext();
@@ -101,6 +102,11 @@ const Checkout = () => {
 
   return (
     <div className="container mt-24 min-h-screen mx-auto px-4 py-6">
+      <SEO
+        title="Checkout"
+        description="Confirm your Higher Forms reward order and shipping details."
+        path="/checkout"
+      />
       <h1 className="text-3xl font-bold mb-6 text-center text-black">Checkout</h1>
 
       {loading ? (

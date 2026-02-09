@@ -4,6 +4,7 @@ import { supabase } from "../../api";
 import { useNavigate } from "react-router-dom";
 import { uploadProfilePicture } from "../../api"; 
 import { motion } from "framer-motion";
+import SEO from "../components/SEO";
 
 const Profile = () => {
   const { userData, setUserData } = useUserContext();
@@ -60,6 +61,11 @@ const Profile = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
     >
+      <SEO
+        title="Your Profile"
+        description="Manage your Higher Forms account, avatar, Form Coins balance, and reward history."
+        path="/profile"
+      />
       {/* Profile Card */}
       <motion.div
         className="bg-gray-900 p-6 rounded-xl shadow-xl w-full max-w-lg text-center border border-gray-700"

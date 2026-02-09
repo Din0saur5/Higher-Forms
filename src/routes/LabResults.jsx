@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { motion } from "framer-motion";
+import SEO from "../components/SEO";
 
 const LabResults = () => {
   const [fullScreenImage, setFullScreenImage] = useState(null);
@@ -23,6 +24,12 @@ const LabResults = () => {
 
   return (
     <div className="mt-24 min-h-screen bg-black text-white font-roboto">
+      <SEO
+        title="Third-Party Lab Results"
+        description="View Higher Forms full-panel and pesticide compliance lab results. Transparency and quality control for every batch."
+        path="/lab-results"
+        type="article"
+      />
       {/* Header Section */}
       <motion.section
         className="text-center py-12 px-6"
