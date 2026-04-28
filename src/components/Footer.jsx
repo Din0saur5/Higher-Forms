@@ -62,12 +62,12 @@ const Footer = () => {
             <p className="flex items-center mt-2 text-lg justify-center md:justify-start">
               <FaInstagram className="text-yellow-400 text-xl" />
               <a
-                href="https://instagram.com/higherforms"
+                href="https://www.instagram.com/higherformsart"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="ml-2 underline text-sm hover:text-yellow-400 transition"
               >
-                @higherforms
+                @higherformsart
               </a>
             </p>
           </div>

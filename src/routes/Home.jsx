@@ -12,7 +12,7 @@ const Home = () => {
     url: "https://www.higher-forms.com",
     logo: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/Hero800.png",
     sameAs: [
-      "https://www.instagram.com/higherforms", // update to real profiles as available
+      "https://www.instagram.com/higherformsart",
       "https://www.facebook.com/higherforms"
     ]
   };
