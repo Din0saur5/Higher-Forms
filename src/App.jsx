@@ -19,7 +19,7 @@ import Cart from "./routes/Cart";
 import Verify from "./routes/Verify";
 import ResetPassword from "./components/resetpassword";
 import { useUserContext } from "./components/UserContext"; 
-import RecoveryProcessing from "./components/RecoveryProcessing";
+import Confirmed from "./routes/Confirmed";
 
 
 const ProtectedRoute = ({ element }) => {
@@ -48,8 +48,8 @@ const router = createBrowserRouter([
       { path: "/confirmation", element: <ProtectedRoute element={<Confirmation />} /> },
       { path: "/cart", element: <Cart /> },
       { path: "/verify", element: <Verify /> },
-      { path: "/reset-password", element: <ResetPassword /> },
-      { path: "/reset-proccessing", element: <RecoveryProcessing /> }
+      { path: "/confirmed", element: <Confirmed /> },
+      { path: "/reset-password", element: <ResetPassword /> }
     ],
   },
 ]);

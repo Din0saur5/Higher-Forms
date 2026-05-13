@@ -4,7 +4,7 @@ import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { SignUp } from "../../api";
+import { SignUp, getLoggedInUser } from "../../api";
 import { useUserContext } from "../components/UserContext";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
@@ -30,26 +30,33 @@ const SignupForm = ({ setLogin }) => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
   const handleSubmit = async (values, { setSubmitting }) => {
     setIsLoading(true);
     setErrorMessage("");
+    setSuccessMessage("");
 
     try {
       const email = values.email.trim().toLowerCase();
       const displayName = values.displayName.trim();
 
       //Call SignUp function
-      const userData = await SignUp(email, values.password, displayName);
+      const signupResult = await SignUp(email, values.password, displayName);
 
-      if (!userData) {
+      if (!signupResult?.success) {
         throw new Error("Signup failed. Please try again.");
       }
 
-      setUserData(userData);
-      navigate("/"); 
+      if (signupResult.needsEmailConfirmation) {
+        setSuccessMessage("Check your email to confirm your account before signing in.");
+      } else {
+        const user = await getLoggedInUser();
+        setUserData(user);
+        navigate("/profile");
+      }
     } catch (error) {
       setErrorMessage(error.message || "Signup failed. Please try again.");
     }
@@ -139,6 +146,7 @@ const SignupForm = ({ setLogin }) => {
               </div>
 
               {errorMessage && <div className="text-red-500 text-center">{errorMessage}</div>}
+              {successMessage && <div className="text-green-500 text-center">{successMessage}</div>}
 
               <button type="submit" className="btn btn-primary w-full" disabled={isLoading}>
                 {isLoading ? "Signing up..." : "Sign Up"}

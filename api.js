@@ -467,10 +467,18 @@ export const handleFileChange = async (event) => {
 // User Sign Up Function
 export const SignUp = async (email, password, displayName) => {
   try {
+    const emailRedirectTo =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/confirmed`
+        : "https://www.higher-forms.com/confirmed";
+
     // Create new user in Supabase Auth
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        emailRedirectTo,
+      },
     });
 
     if (authError) {
@@ -495,7 +503,12 @@ export const SignUp = async (email, password, displayName) => {
       return { success: false, message: "Failed to save user details." };
     }
 
-    return { success: true, user: authData.user };
+    return {
+      success: true,
+      user: authData.user,
+      session: authData.session,
+      needsEmailConfirmation: !authData.session,
+    };
   } catch (error) {
     console.error("Signup failed:", error);
     return { success: false, message: "Signup error. Please try again." };
@@ -616,7 +629,14 @@ export const fetchStrains = async () => {
 
 export const resetPassword = async (email) => {
   try {
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    const redirectTo =
+      typeof window !== "undefined"
+        ? `${window.location.origin}/reset-password`
+        : "https://www.higher-forms.com/reset-password";
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo,
+    });
     if (error) {
       return { success: false, message: error.message };
     }
