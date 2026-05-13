@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Parallax } from "react-parallax";
 import SEO from "../components/SEO";
 import { Helmet } from "react-helmet-async";
+import { assetUrl } from "../assetUrl";
 
 const Home = () => {
   const orgJsonLd = {
@@ -10,7 +11,7 @@ const Home = () => {
     "@type": "Organization",
     name: "Higher Forms",
     url: "https://www.higher-forms.com",
-    logo: "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/Hero800.png",
+    logo: assetUrl("web-assets/Small/Hero800.png"),
     sameAs: [
       "https://www.instagram.com/higherformsart",
       "https://www.facebook.com/higherforms"
@@ -39,7 +40,7 @@ const Home = () => {
         <div className="relative w-full max-w-7xl mx-auto">
           <div className="w-full flex justify-center">
             <img
-              src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/Hero1500.png"
+              src={assetUrl("web-assets/Small/Hero1500.png")}
               alt="Higher Forms Banner"
               className="w-auto max-w-full md:max-w-5xl h-auto object-contain mx-auto"
             />
@@ -68,7 +69,7 @@ const Home = () => {
         </div>
         <div className="flex-1 bg-black flex items-center justify-center p-6">
           <motion.img
-            src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/Hardware.png"
+            src={assetUrl("web-assets/Small/Hardware.png")}
             alt="Hardware"
             className="h-96 w-2/3 object-contain"
             initial={{ opacity: 0, scale: 0.7 }}  // Start at a smaller scale
@@ -132,7 +133,7 @@ const Home = () => {
               ].map((item, index) => (
                 <div key={index} className="bg-gray-100 p-2 md:p-6 rounded-xl shadow-lg flex flex-col items-center text-center border border-gray-300">
                   <img
-                    src={`https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/icons/${item.icon}`}
+                    src={assetUrl(`web-assets/icons/${item.icon}`)}
                     alt={item.title}
                     className="h-12 w-12 mb-2"
                   />

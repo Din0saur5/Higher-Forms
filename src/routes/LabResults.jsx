@@ -3,15 +3,16 @@ import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { motion } from "framer-motion";
 import SEO from "../components/SEO";
+import { assetUrl } from "../assetUrl";
 
 const LabResults = () => {
   const [fullScreenImage, setFullScreenImage] = useState(null);
 
   const images = [
-    "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/labresults/l1.jpg",
-    "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/labresults/l2.jpg",
-    "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/labresults/l3.jpg",
-    "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/labresults/l4.jpg",
+    assetUrl("web-assets/labresults/l1.jpg"),
+    assetUrl("web-assets/labresults/l2.jpg"),
+    assetUrl("web-assets/labresults/l3.jpg"),
+    assetUrl("web-assets/labresults/l4.jpg"),
   ];
 
   const handleImageClick = (src) => {

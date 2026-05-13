@@ -4,6 +4,7 @@ import { useUserContext } from "../components/UserContext";
 import ProfilePop from "./ProfilePop";
 import { HiOutlineShoppingCart } from "react-icons/hi2";
 import { getLoggedInUser, LogOut} from "../../api";
+import { assetUrl } from "../assetUrl";
 
 const Navbar = () => {
   const { userData, setUserData } = useUserContext();
@@ -66,7 +67,7 @@ const handleFetchUpdate = async ()=>{
         <div className="flex items-center pr-8">
           <NavLink to="/" className="flex items-center hover:opacity-80 transition  duration-300">
             <img
-              src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/logos/HF_gold_stacked.svg"
+              src={assetUrl("web-assets/logos/HF_gold_stacked.svg")}
               alt="Higher Forms Logo"
               className="h-12 w-auto"
             />

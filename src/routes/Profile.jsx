@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { uploadProfilePicture } from "../../api"; 
 import { motion } from "framer-motion";
 import SEO from "../components/SEO";
+import { assetUrl } from "../assetUrl";
 
 const Profile = () => {
   const { userData, setUserData } = useUserContext();
@@ -116,7 +117,7 @@ const Profile = () => {
             <p className="text-2xl font-semibold">{userData?.form_coins_total || 0}</p>
             <img
               className="w-6 h-6 ml-2"
-              src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/formcoin/coinAnim.gif"
+              src={assetUrl("web-assets/formcoin/coinAnim.gif")}
               alt="Form Coin"
             />
           </div>

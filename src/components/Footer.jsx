@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { LuMail } from "react-icons/lu";
 import { FaInstagram } from "react-icons/fa";
 import { sendContactEmail } from "../../api"; // Import the function
+import { assetUrl } from "../assetUrl";
 
 const Footer = () => {
   const [formData, setFormData] = useState({
@@ -46,7 +47,7 @@ const Footer = () => {
           {/* LEFT SECTION - Social Media & Contact Info */}
           <div className="flex-1 md:w-1/3 flex flex-col items-center md:items-start text-center md:text-left">
             <motion.img
-              src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/logos/HF_gold_horz.svg"
+              src={assetUrl("web-assets/logos/HF_gold_horz.svg")}
               className="h-12 mb-4"
               alt="Higher Forms Logo"
               initial={{ opacity: 0 }}

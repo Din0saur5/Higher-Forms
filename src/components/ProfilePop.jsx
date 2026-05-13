@@ -3,6 +3,7 @@ import { useUserContext } from "../components/UserContext";
 import { NavLink, useNavigate } from "react-router-dom";
 import { LogOut, uploadProfilePicture } from "../../api"; // Import the getHistoricalPoints function
 import { motion } from "framer-motion";
+import { assetUrl } from "../assetUrl";
 
 export default function ProfilePop() {
   const { userData, setUserData } = useUserContext();
@@ -104,7 +105,7 @@ export default function ProfilePop() {
           <p className="text-2xl font-semibold">{userData?.form_coins_total || 0}</p>
           <img
             className="w-8 h-8 ml-2"
-            src="https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/formcoin/coinAnim.gif"
+            src={assetUrl("web-assets/formcoin/coinAnim.gif")}
             alt="Form Coin"
           />
         </div>

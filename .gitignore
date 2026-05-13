@@ -26,3 +26,10 @@ dist-ssr
 
 .env
 .env.local
+
+# Empty local backend/serverless scratch dir
+/api/
+
+# Supabase local/generated files
+/supabase/.branches/
+/supabase/.temp/

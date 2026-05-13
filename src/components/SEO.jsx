@@ -1,12 +1,12 @@
 import React from "react";
 import { Helmet } from "react-helmet-async";
+import { assetUrl } from "../assetUrl";
 
 const SITE_URL = "https://www.higher-forms.com";
 const DEFAULT_TITLE = "Higher Forms | Premium Ceramic Vape Experiences";
 const DEFAULT_DESCRIPTION =
   "Higher Forms delivers premium Duo-Flare™ devices and ceramic core cartridges engineered for pure, consistent vapor and bold strain flavor.";
-const DEFAULT_IMAGE =
-  "https://mlxvwhdswsfgelvuxicb.supabase.co/storage/v1/object/public/web-assets/Small/Hero800.png";
+const DEFAULT_IMAGE = assetUrl("web-assets/Small/Hero800.png");
 
 const SEO = ({
   title,

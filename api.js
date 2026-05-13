@@ -371,33 +371,53 @@ export const LogOut = async () => {
   console.log("User logged out.");
 };
 
-// Upload Profile Picture to Supabase Storage
+// Upload profile picture through the signed R2 edge function flow
 export const uploadProfilePicture = async (userId, file) => {
   if (!userId || !file) {
     console.error("Invalid user ID or file.");
     return { success: false, message: "Invalid user ID or file." };
   }
 
-  const fileExt = file.name.split(".").pop();
-  const fileName = `${userId}-${Date.now()}.${fileExt}`;
-  const filePath = `${fileName}`;
+  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
 
-  const { error } = await supabase.storage
-    .from("profile-pics")
-    .upload(filePath, file, { cacheControl: "3600", upsert: true });
-
-  if (error) {
-    console.error("Error uploading profile picture:", error.message);
-    return { success: false, message: "Failed to upload profile picture." };
+  if (sessionError || !sessionData?.session?.access_token) {
+    console.error("Missing authenticated session for avatar upload.", sessionError?.message);
+    return { success: false, message: "Please log in again before uploading a profile picture." };
   }
 
-  // Get Public URL
-  const { data } = supabase.storage.from("profile-pics").getPublicUrl(filePath);
+  const { data: signPayload, error: signError } = await supabase.functions.invoke("profile-picture", {
+    body: {
+      action: "sign",
+      fileName: file.name,
+      contentType: file.type,
+    },
+  });
+
+  if (signError || !signPayload?.uploadUrl || !signPayload?.avatarUrl || !signPayload?.objectKey) {
+    console.error("Error signing profile picture upload:", signError?.message || signPayload?.message);
+    return {
+      success: false,
+      message: signError?.message || signPayload?.message || "Failed to prepare profile picture upload.",
+    };
+  }
+
+  const uploadResponse = await fetch(signPayload.uploadUrl, {
+    method: "PUT",
+    headers: {
+      "Content-Type": file.type || "application/octet-stream",
+    },
+    body: file,
+  });
+
+  if (!uploadResponse.ok) {
+    console.error("Error uploading profile picture to R2:", uploadResponse.statusText);
+    return { success: false, message: "Failed to upload profile picture." };
+  }
 
   // Update User Profile in Database
   const { error: updateError } = await supabase
     .from("users")
-    .update({ avatar_url: data.publicUrl })
+    .update({ avatar_url: signPayload.avatarUrl })
     .eq("id", userId);
 
   if (updateError) {
@@ -405,7 +425,26 @@ export const uploadProfilePicture = async (userId, file) => {
     return { success: false, message: "Failed to update avatar." };
   }
 
-  return { success: true, message: "Profile picture uploaded successfully!", avatarUrl: data.publicUrl };
+  try {
+    const { error: cleanupError } = await supabase.functions.invoke("profile-picture", {
+      body: {
+        action: "finalize",
+        objectKey: signPayload.objectKey,
+      },
+    });
+
+    if (cleanupError) {
+      console.error("Avatar cleanup warning:", cleanupError.message);
+    }
+  } catch (cleanupError) {
+    console.error("Avatar cleanup warning:", cleanupError);
+  }
+
+  return {
+    success: true,
+    message: "Profile picture uploaded successfully!",
+    avatarUrl: signPayload.avatarUrl,
+  };
 };
 
 export const handleFileChange = async (event) => {
